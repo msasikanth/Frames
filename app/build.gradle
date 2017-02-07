@@ -1,0 +1,47 @@
+apply plugin: 'com.android.application'
+
+ext {
+    TARGET_SDK = 25
+    BUILD_TOOLS = "25.0.2"
+    ANDROID_SUPPORT_LIBS = "25.1.1"
+}
+
+android {
+    compileSdkVersion TARGET_SDK
+    buildToolsVersion BUILD_TOOLS
+
+    dexOptions {
+        preDexLibraries = false
+        javaMaxHeapSize "2g"
+    }
+
+    lintOptions {
+        abortOnError false
+        disable 'MissingTranslation'
+    }
+
+    defaultConfig {
+        applicationId "jahirfiquitiva.walls.frames"
+        minSdkVersion 16
+        targetSdkVersion TARGET_SDK
+        versionCode 1
+        versionName "0.0.1"
+        vectorDrawables.useSupportLibrary = true
+        consumerProguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            zipAlignEnabled true
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':library')
+}

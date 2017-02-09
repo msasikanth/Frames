@@ -36,9 +36,9 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return CollectionFragment.newInstance(true, null);
+                return CollectionFragment.newInstance(false, "featured");
             case 1:
-                return CollectionFragment.newInstance(false, "all");
+                return CollectionFragment.newInstance(true, null);
             default:
                 return null;
         }

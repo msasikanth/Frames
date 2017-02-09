@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package jahirfiquitiva.walls.frames;
+package jahirfiquitiva.libs.frames.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import jahirfiquitiva.libs.frames.activities.LaunchActivity;
+public class LaunchActivity extends AppCompatActivity {
 
-public class MainActivity extends LaunchActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent studio = new Intent(this, StudioActivity.class);
+        studio.putExtra("key", getKey());
+        startActivity(studio);
+        finish();
     }
 
-    @Override
     protected String getKey() {
-        return "your_key_goes_here";
+        return "";
     }
+
 }

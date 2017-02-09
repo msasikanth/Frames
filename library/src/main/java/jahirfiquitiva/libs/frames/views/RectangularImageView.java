@@ -46,6 +46,6 @@ public class RectangularImageView extends ImageView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         //noinspection SuspiciousNameCombination
-        setMeasuredDimension(widthMeasureSpec, (int) (widthMeasureSpec / 2.5f));
+        setMeasuredDimension(widthMeasureSpec, widthMeasureSpec / 2);
     }
 }

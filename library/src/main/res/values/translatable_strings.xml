@@ -24,4 +24,7 @@
     <string name="lock_screen">Lock screen</string>
     <string name="home_lock_screens">Home and lock screens</string>
     <string name="crop_and_set_as">Crop wallpaper and set as…</string>
+    <string name="heart_description">Heart icon to fav wallpaper</string>
+    <string name="featured">Featured</string>
+    <string name="collections">Collections</string>
 </resources>

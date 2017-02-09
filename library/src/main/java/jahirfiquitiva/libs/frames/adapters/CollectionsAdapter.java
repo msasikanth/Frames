@@ -20,16 +20,15 @@ import android.content.Context;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.holders.WallpaperHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
-import jahirfiquitiva.libs.frames.utils.Utils;
 
 public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
@@ -41,8 +40,7 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
         this.collections = new ArrayList<>();
         if (nCollections != null) {
             for (Collection collection : nCollections) {
-                Log.d(Utils.LOG_TAG, "Adding collection: " + collection.getName());
-                if (!(collection.getName().toLowerCase().equals("all"))) {
+                if (!(collection.getName().toLowerCase().equals("featured"))) {
                     collections.add(collection);
                 }
             }
@@ -50,9 +48,9 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     }
 
     @Override
-    public WallpaperHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public WallpaperHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         return new WallpaperHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
-                .item_wallpaper, parent, false), null, true);
+                .item_wallpaper, parent, false), null, null, null, true);
     }
 
     @Override
@@ -71,6 +69,17 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
     private void runOnUIThread(Context context, Runnable r) {
         handler(context).post(r);
+    }
+
+    private void doOnPressed(final Object item) {
+        runOnUIThread(activity, new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, "Pressed collection: " + ((Collection) item).getName(),
+                        Toast
+                                .LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

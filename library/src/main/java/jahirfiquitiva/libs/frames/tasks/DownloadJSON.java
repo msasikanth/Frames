@@ -71,7 +71,7 @@ public class DownloadJSON extends AsyncTask<Void, Void, Boolean> {
         if (json != null) {
             try {
                 JSONArray jsonCollections = json.getJSONArray("Collections");
-                collections.add(new Collection("All", null, null));
+                collections.add(new Collection("Featured", null, null));
                 for (int i = 0; i < jsonCollections.length(); i++) {
                     JSONObject nCollection = jsonCollections.getJSONObject(i);
                     String name = nCollection.getString("name");

@@ -31,7 +31,7 @@ public class JSONParser {
 
     public static JSONObject getJSONFromURL(Context context, String url) {
         try {
-            if (Utils.hasNetwork(context)) {
+            if (Utils.isConnected(context)) {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
                         .url(url)

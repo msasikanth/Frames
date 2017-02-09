@@ -55,6 +55,14 @@
                 android:scaleType="centerCrop"
                 tools:ignore="ContentDescription, UnusedAttribute"/>
 
+        <jahirfiquitiva.libs.frames.views.SquaredImageView
+                android:id="@+id/bigHeart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                android:scaleType="centerCrop"
+                tools:ignore="ContentDescription, UnusedAttribute"/>
+
     </FrameLayout>
 
     <RelativeLayout
@@ -71,7 +79,6 @@
                 android:id="@+id/heart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/heart_animated_selector"
                 android:layout_centerInParent="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
@@ -79,13 +86,15 @@
                 android:contentDescription="@string/heart_description"/>
 
         <LinearLayout
+                android:id="@+id/details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_toStartOf="@id/heart"
-                android:layout_toLeftOf="@id/heart"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/amount"
+                android:layout_toStartOf="@+id/amount">
 
             <TextView
                     android:id="@+id/name"
@@ -113,6 +122,21 @@
                     tools:text="Author"/>
 
         </LinearLayout>
+
+        <TextView
+                android:id="@+id/amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@id/details"
+                android:maxLines="1"
+                android:maxLength="3"
+                android:ellipsize="none"
+                android:visibility="gone"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@android:color/white"
+                tools:text="99+"/>
 
     </RelativeLayout>
 </RelativeLayout>

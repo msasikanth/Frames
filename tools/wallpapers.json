@@ -26,7 +26,7 @@
             "name":"ShotA",
             "author":"Someone",
             "url":"https://raw.githubusercontent.com/jahirfiquitiva/MinDesigns-Wallpapers/master/Wallpapers/Free/walla.jpg",
-            "collections":"all,landscapes,people"
+            "collections":"featured,landscapes,people"
         },
         {
             "name":"ShotB",
@@ -50,7 +50,7 @@
             "thumbnail":"https://github.com/jahirfiquitiva/Website-Resources/raw/master/wallpapers/thumbnails/unsplash_a.png",
             "dimensions":"3200x2560",
             "copyright":"Free (do whatever you want)",
-            "collections":"all,landscapes,people,city"
+            "collections":"featured,landscapes,people,city"
         },
         {
             "name":"Wallsplash 2",
@@ -59,7 +59,7 @@
             "thumbnail":"https://github.com/jahirfiquitiva/Website-Resources/raw/master/wallpapers/thumbnails/unsplash_b.png",
             "dimensions":"3200x2560",
             "copyright":"Free (do whatever you want)",
-            "collections":"all,landscapes,people,food"
+            "collections":"featured,landscapes,people,food"
         },
         {
             "name":"Wallsplash 3",
@@ -68,7 +68,7 @@
             "thumbnail":"https://github.com/jahirfiquitiva/Website-Resources/raw/master/wallpapers/thumbnails/unsplash_c.png",
             "dimensions":"3200x2560",
             "copyright":"Free (do whatever you want)",
-            "collections":"all,food,people"
+            "collections":"featured,food,people"
         },
         {
             "name":"Wallsplash 4",
@@ -86,7 +86,7 @@
             "thumbnail":"https://github.com/jahirfiquitiva/Website-Resources/raw/master/wallpapers/thumbnails/unsplash_e.png",
             "dimensions":"3200x2560",
             "copyright":"Free (do whatever you want)",
-            "collections":"all,landscapes"
+            "collections":"featured,landscapes"
         },
         {
             "name":"Wallsplash 6",
@@ -95,7 +95,7 @@
             "thumbnail":"https://github.com/jahirfiquitiva/Website-Resources/raw/master/wallpapers/thumbnails/unsplash_f.png",
             "dimensions":"3200x2560",
             "copyright":"Free (do whatever you want)",
-            "collections":"all,people"
+            "collections":"featured,people"
         },
         {
             "name":"Wallsplash 7",

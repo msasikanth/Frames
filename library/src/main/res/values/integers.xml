@@ -20,4 +20,5 @@
     <integer name="wallpapers_grid_width">2</integer>
     <integer name="toolbar_elevation">4</integer>
     <integer name="heart_anim_partial_duration">50</integer>
+    <integer name="app_theme">1</integer>
 </resources>

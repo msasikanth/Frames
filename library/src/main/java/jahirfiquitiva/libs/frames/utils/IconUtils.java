@@ -90,7 +90,7 @@ public class IconUtils {
     }
 
     public static Drawable getVectorDrawable(@NonNull Context context, @DrawableRes int drawable) {
-        Drawable vectorDrawable = null;
+        Drawable vectorDrawable;
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 vectorDrawable = ContextCompat.getDrawable(context, drawable);
@@ -102,7 +102,7 @@ public class IconUtils {
                 }
             }
         } catch (Resources.NotFoundException ex) {
-            // vectorDrawable = ContextCompat.getDrawable(context, R.drawable.ic_android);
+            vectorDrawable = ContextCompat.getDrawable(context, R.drawable.ic_android);
         }
         return vectorDrawable != null ? vectorDrawable : null;
     }

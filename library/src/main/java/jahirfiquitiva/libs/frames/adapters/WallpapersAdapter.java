@@ -22,10 +22,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
+import jahirfiquitiva.libs.frames.callbacks.WallpaperGestureDetector;
 import jahirfiquitiva.libs.frames.holders.WallpaperHolder;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
 
@@ -42,7 +44,22 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     @Override
     public WallpaperHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new WallpaperHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
-                .item_wallpaper, parent, false), null, false);
+                .item_wallpaper, parent, false), null, new WallpaperGestureDetector
+                .OnWallpaperDoubleTapListener() {
+            @Override
+            public void onDoubleTap(WallpaperHolder holder) {
+                showDoubleTapAnimation(holder);
+            }
+        }, null, false);
+    }
+
+    private void showDoubleTapAnimation(final WallpaperHolder holder) {
+        runOnUIThread(activity, new Runnable() {
+            @Override
+            public void run() {
+                holder.doFav();
+            }
+        });
     }
 
     @Override
@@ -61,6 +78,16 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
     private void runOnUIThread(Context context, Runnable r) {
         handler(context).post(r);
+    }
+
+    private void doOnPressed(final Object item) {
+        runOnUIThread(activity, new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, "Pressed wallpaper: " + ((Wallpaper) item).getName(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

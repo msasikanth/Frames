@@ -24,7 +24,7 @@
         <item name="colorControlHighlight">@color/primary_text</item>
     </style>
 
-    <style name="Toolbar.AppCompat.Responsive" parent="AppTheme">
+    <style name="Toolbar.AppCompat.Responsive" parent="AppTheme.Base">
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>

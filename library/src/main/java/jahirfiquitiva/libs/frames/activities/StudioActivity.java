@@ -16,11 +16,9 @@
 
 package jahirfiquitiva.libs.frames.activities;
 
-import android.content.Context;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,57 +26,38 @@ import android.support.v7.widget.Toolbar;
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.adapters.PagerAdapter;
 import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
-import jahirfiquitiva.libs.frames.utils.IconUtils;
+import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 
 public class StudioActivity extends AppCompatActivity {
 
     private ViewPager pager;
+    private TabLayout tabs;
     private PagerAdapter pagerAdapter;
     private int lastSelected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Replace with ThemeUtils
-        setTheme(R.style.AppTheme);
+        ThemeUtils.onActivityCreateSetTheme(this);
+        ThemeUtils.onActivityCreateSetNavBar(this);
+
         super.onCreate(savedInstanceState);
 
         new DownloadJSON(this).execute();
 
         setContentView(R.layout.activity_studio);
 
-        final Context context = this;
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+        tabs = (TabLayout) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.pager);
 
         tabs.removeAllTabs();
-        tabs.addTab(tabs.newTab().setIcon(IconUtils.getTintedIcon(this, R.drawable.ic_collection,
-                ContextCompat.getColor(context, (lastSelected == 0) ? R.color
-                        .tabsSelectedTextColor : R.color.tabsTextColor))));
-        tabs.addTab(tabs.newTab().setIcon(IconUtils.getTintedIcon(this, R.drawable.ic_wallpapers,
-                ContextCompat.getColor(context, (lastSelected == 1) ? R.color
-                        .tabsSelectedTextColor : R.color.tabsTextColor))));
 
-        tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(pager) {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                super.onTabSelected(tab);
-                if (tab.getIcon() != null)
-                    tab.getIcon().setColorFilter(ContextCompat.getColor(context, android.R.color
-                            .white), PorterDuff.Mode.SRC_IN);
-            }
+        tabs.addTab(tabs.newTab().setText(R.string.featured));
+        tabs.addTab(tabs.newTab().setText(R.string.collections));
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                super.onTabUnselected(tab);
-                if (tab.getIcon() != null)
-                    tab.getIcon().setColorFilter(ContextCompat.getColor(context, R.color
-                            .tabsTextColor), PorterDuff.Mode.SRC_IN);
-            }
-        });
+        tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(pager));
         pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs) {
             @Override
             public void onPageSelected(int position) {
@@ -93,8 +72,10 @@ public class StudioActivity extends AppCompatActivity {
 
     public void setupPagerAdapter() {
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
-        if (pager != null)
+        if (pager != null) {
             pager.setAdapter(pagerAdapter);
+            pager.setCurrentItem(lastSelected, true);
+        }
     }
 
     public PagerAdapter getPagerAdapter() {
@@ -103,6 +84,18 @@ public class StudioActivity extends AppCompatActivity {
 
     public int getCurrentFragmentPosition() {
         return lastSelected;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("lastSelected", lastSelected);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        lastSelected = savedInstanceState.getInt("lastSelected", 0);
     }
 
 }

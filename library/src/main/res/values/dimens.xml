@@ -42,4 +42,8 @@
     <dimen name="card_little_margin">6dp</dimen>
 
     <dimen name="grid_padding_vertical">8dp</dimen>
+
+    <!-- Splash screen dimens -->
+    <dimen name="splash_logo_bottom">16dp</dimen>
+    <dimen name="splash_brand_bottom">48dp</dimen>
 </resources>

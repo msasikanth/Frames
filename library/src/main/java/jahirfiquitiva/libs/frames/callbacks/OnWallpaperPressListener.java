@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package jahirfiquitiva.walls.frames;
+package jahirfiquitiva.libs.frames.callbacks;
 
-import android.os.Bundle;
+public abstract class OnWallpaperPressListener {
+    public abstract void onPressed(Object item);
 
-import jahirfiquitiva.libs.frames.activities.LaunchActivity;
-
-public class MainActivity extends LaunchActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected String getKey() {
-        return "your_key_goes_here";
+    public void onLongPressed(Object item) {
     }
 }

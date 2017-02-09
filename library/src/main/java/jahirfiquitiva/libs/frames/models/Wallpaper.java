@@ -44,7 +44,7 @@ public class Wallpaper implements Parcelable {
         if (collections != null) {
             this.collections = collections;
         } else {
-            this.collections = "all";
+            this.collections = "featured";
         }
         this.downloadable = downloadable;
     }

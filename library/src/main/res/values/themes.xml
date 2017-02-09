@@ -1,0 +1,46 @@
+<!--
+  ~ Copyright (c) 2017. Jahir Fiquitiva
+  ~
+  ~ Licensed under the CreativeCommons Attribution-ShareAlike
+  ~ 4.0 International License. You may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~    http://creativecommons.org/licenses/by-sa/4.0/legalcode
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <style name="ColdStart" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="AppTheme" parent="ColdStart">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/windowBg</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/Responsive.ActionMode</item>
+        <item name="actionModeCloseButtonStyle">@style/Responsive.ActionButton.CloseMode</item>
+        <item name="toolbarStyle">@style/Responsive.Toolbar</item>
+        <item name="toolbarNavigationButtonStyle">@style/Responsive.Toolbar.Button.Navigation</item>
+        <item name="actionOverflowButtonStyle">@style/Responsive.ActionButton.Overflow</item>
+        <item name="actionBarTheme">@style/Toolbar.AppCompat.Responsive</item>
+        <item name="actionBarPopupTheme">@style/Toolbar.Popup.AppCompat</item>
+    </style>
+
+    <style name="DatePicker" parent="AppTheme">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+</resources>

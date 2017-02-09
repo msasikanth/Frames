@@ -47,8 +47,9 @@ public class CollectionFragment extends Fragment {
     private EmptyViewRecyclerView mRecyclerView;
     private RecyclerFastScroller fastScroller;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private RecyclerView.ItemDecoration decoration;
+    private RecyclerView.Adapter mAdapter;
     private boolean isCollections;
+    private boolean isFavorites;
     private String collectionName;
 
     public static CollectionFragment newInstance(boolean isCollections, String collectionName) {
@@ -60,6 +61,15 @@ public class CollectionFragment extends Fragment {
         return fragment;
     }
 
+    public static CollectionFragment newInstance(boolean isFavorites) {
+        CollectionFragment fragment = new CollectionFragment();
+        Bundle args = new Bundle();
+        args.putBoolean("collection", false);
+        args.putBoolean("favorites", isFavorites);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +77,7 @@ public class CollectionFragment extends Fragment {
         if (getArguments() != null) {
             this.isCollections = getArguments().getBoolean("collection");
             this.collectionName = getArguments().getString("collectionName");
+            this.isFavorites = getArguments().getBoolean("favorites");
         }
     }
 
@@ -83,11 +94,19 @@ public class CollectionFragment extends Fragment {
         fastScroller = (RecyclerFastScroller) layout.findViewById(R.id.rvFastScroller);
         mSwipeRefreshLayout = (SwipeRefreshLayout) layout.findViewById(R.id.swipeRefreshLayout);
 
-        ImageView noConnection = (ImageView) layout.findViewById(R.id.no_connected_icon);
+        ImageView noConnection = (ImageView) layout.findViewById(R.id.no_connected_view);
         noConnection.setImageDrawable(IconUtils.getTintedDrawable(getActivity(),
                 "ic_no_connection"));
+        noConnection.setScaleX(0.65f);
+        noConnection.setScaleY(0.65f);
+
+        ImageView noFavorites = (ImageView) layout.findViewById(R.id.no_favorites_view);
+        noFavorites.setImageDrawable(IconUtils.getTintedDrawable(getActivity(), "ic_no_favorites"));
+        noFavorites.setScaleX(0.65f);
+        noFavorites.setScaleY(0.65f);
+
         ProgressBar progress = (ProgressBar) layout.findViewById(R.id.progress);
-        mRecyclerView.setEmptyViews(progress, noConnection);
+        mRecyclerView.setEmptyViews(isFavorites ? noFavorites : progress, noConnection);
 
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(
                 ThemeUtils.darkOrLight(getActivity(), R.color.drawable_tint_light,
@@ -113,28 +132,30 @@ public class CollectionFragment extends Fragment {
                 .STATE_NORMAL : EmptyViewRecyclerView.STATE_NOT_CONNECTED);
 
         if (mRecyclerView.getState() != EmptyViewRecyclerView.STATE_NOT_CONNECTED) {
-            RecyclerView.Adapter mAdapter = null;
+            mAdapter = null;
             if (isCollections) {
                 if (!(FullListHolder.get().getCollections().getList().isEmpty())) {
                     mAdapter = new CollectionsAdapter(getActivity(),
                             FullListHolder.get().getCollections().getList());
                 }
             } else {
-                int index = FullListHolder.get().getCollections().getIndexForCollectionWithName
-                        (collectionName.toLowerCase());
-                if (index >= 0) {
-                    mAdapter = new WallpapersAdapter(getActivity(), FullListHolder.get()
-                            .getCollections().getList().get(index).getWallpapers());
+                if (!isFavorites) {
+                    int index = FullListHolder.get().getCollections().getIndexForCollectionWithName
+                            (collectionName.toLowerCase());
+                    if (index >= 0) {
+                        mAdapter = new WallpapersAdapter(getActivity(), FullListHolder.get()
+                                .getCollections().getList().get(index).getWallpapers());
+                    }
+                } else {
+                    mAdapter = new WallpapersAdapter(getActivity());
                 }
             }
-
             if (mAdapter != null) {
                 mRecyclerView.setAdapter(mAdapter);
                 fastScroller.attachRecyclerView(mRecyclerView);
                 fastScroller.setVisibility(View.VISIBLE);
             }
         }
-
         mSwipeRefreshLayout.setEnabled(false);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
@@ -151,23 +172,10 @@ public class CollectionFragment extends Fragment {
         if (getActivity().getResources().getConfiguration().orientation == 2) {
             columnsNumber *= 1.5f;
         }
-
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnsNumber));
-
-        if (isCollections) {
-            /*
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),
-                    LinearLayoutManager.VERTICAL, false)); */
-            // decoration = new DividerItemDecoration(getActivity(), DividerItemDecoration
-            // .VERTICAL);
-        } else {
-            decoration = new GridSpacingItemDecoration(columnsNumber, getActivity().getResources()
-                    .getDimensionPixelSize(R.dimen.item_margin), true);
-        }
-
-        if (decoration != null)
-            mRecyclerView.addItemDecoration(decoration);
-
+        mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(columnsNumber,
+                isCollections ? 0 : getActivity().getResources().getDimensionPixelSize(R.dimen
+                        .item_margin), true));
         mRecyclerView.setHasFixedSize(true);
     }
 
@@ -180,5 +188,9 @@ public class CollectionFragment extends Fragment {
             }
         });
         setupContent();
+    }
+
+    public RecyclerView.Adapter getRVAdapter() {
+        return mAdapter;
     }
 }

@@ -16,16 +16,21 @@
 
 package jahirfiquitiva.libs.frames.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.adapters.PagerAdapter;
+import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
+import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 
 public class StudioActivity extends AppCompatActivity {
@@ -38,11 +43,10 @@ public class StudioActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.onActivityCreateSetTheme(this);
-        ThemeUtils.onActivityCreateSetNavBar(this);
-
         super.onCreate(savedInstanceState);
 
         new DownloadJSON(this).execute();
+        FavoritesUtils.init(this);
 
         setContentView(R.layout.activity_studio);
 
@@ -68,6 +72,58 @@ public class StudioActivity extends AppCompatActivity {
         });
         pager.setOffscreenPageLimit(2);
         setupPagerAdapter();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (lastSelected == 0 && pager != null) {
+            if (pager.getAdapter() != null && pager.getAdapter().getCount() > 0) {
+                try {
+                    if (((PagerAdapter) pager.getAdapter()).getFragmentAtPosition(0) != null) {
+                        if (((CollectionFragment) ((PagerAdapter) pager.getAdapter())
+                                .getFragmentAtPosition(0)).getRVAdapter() != null)
+                            ((CollectionFragment) ((PagerAdapter) pager.getAdapter())
+                                    .getFragmentAtPosition(0)).getRVAdapter()
+                                    .notifyDataSetChanged();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FavoritesUtils.destroy(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        int i = item.getItemId();
+        if (i == R.id.favs) {
+            startActivity(new Intent(this, FavoritesActivity.class));
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (lastSelected > 0) {
+            lastSelected = 0;
+            pager.setCurrentItem(lastSelected, true);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     public void setupPagerAdapter() {

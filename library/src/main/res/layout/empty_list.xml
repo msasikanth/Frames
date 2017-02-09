@@ -30,15 +30,24 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:visibility="gone"/>
 
     <ImageView
-            android:id="@+id/no_connected_icon"
+            android:id="@+id/no_favorites_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:padding="56dp"
+            android:visibility="gone"
+            tools:ignore="ContentDescription"/>
+
+    <ImageView
+            android:id="@+id/no_connected_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
             android:visibility="gone"
             tools:ignore="ContentDescription"/>
 

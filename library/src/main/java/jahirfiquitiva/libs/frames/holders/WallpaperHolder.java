@@ -44,6 +44,7 @@ import jahirfiquitiva.libs.frames.callbacks.WallpaperGestureDetector;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
+import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.Utils;
 import jahirfiquitiva.libs.frames.views.CheckableImageView;
 
@@ -144,6 +145,8 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
         title.setText(item.getName());
         author.setText(item.getAuthor());
         amount.setVisibility(View.GONE);
+
+        heart.setChecked(FavoritesUtils.isFavorited(itemView.getContext(), nItem.getName()));
 
         loadPicture(item.getURL(), item.getThumbnailURL());
     }
@@ -259,6 +262,11 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     private void checkHeart(boolean check) {
         boolean prevState = heart.isChecked();
         heart.setChecked(check);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (check != prevState) {
             if (heart.isChecked()) {
                 if (onFavedListener != null && item != null)

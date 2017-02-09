@@ -14,8 +14,5 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">Frames</string>
-    <string name="walls_save_location">%1$s/IconShowcase/Wallpapers/</string>
-    <string name="wallpapers_json_link">https://www.jahirfiquitiva.me/frames/wallpapers.json</string>
+<resources>
 </resources>

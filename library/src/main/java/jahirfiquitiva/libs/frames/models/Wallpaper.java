@@ -19,19 +19,39 @@ package jahirfiquitiva.libs.frames.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.afollestad.inquiry.annotations.Column;
+import com.afollestad.inquiry.annotations.Table;
+
+@Table
 public class Wallpaper implements Parcelable {
+
+    @Column(name = "_name", primaryKey = true, notNull = true, autoIncrement = false)
     private String name;
+    @Column
     private String author;
+    @Column
     private String copyright;
+    @Column
     private String dimensions;
+    @Column
     private String URL;
+    @Column
     private String thumbnailURL;
+    @Column
     private String collections;
+    @Column
     private boolean downloadable;
+
+    public Wallpaper() {
+    }
+
+    public Wallpaper(String name) {
+        this.name = name;
+    }
 
     public Wallpaper(String name, String author, String copyright, String dimensions, String URL,
                      String thumbnailURL, String collections, boolean downloadable) {
-        this.name = name;
+        this(name);
         this.author = author;
         this.copyright = copyright;
         this.dimensions = dimensions;
@@ -120,4 +140,5 @@ public class Wallpaper implements Parcelable {
     public boolean isDownloadable() {
         return downloadable;
     }
+
 }

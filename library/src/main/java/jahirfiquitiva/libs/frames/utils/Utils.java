@@ -26,6 +26,16 @@ public class Utils {
 
     public static final String LOG_TAG = "Frames";
 
+    public static int getAppVersionCode(Context context) {
+        try {
+            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0)
+                    .versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // this should never happen
+            return -1;
+        }
+    }
+
     public static String getAppVersion(Context context) {
         try {
             return context.getPackageManager().getPackageInfo(context.getPackageName(), 0)

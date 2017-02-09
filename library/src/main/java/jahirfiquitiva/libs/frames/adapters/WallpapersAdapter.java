@@ -27,14 +27,23 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
+import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
 import jahirfiquitiva.libs.frames.callbacks.WallpaperGestureDetector;
 import jahirfiquitiva.libs.frames.holders.WallpaperHolder;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
+import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 
 public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
-    private final FragmentActivity activity;
-    private final ArrayList<Wallpaper> wallpapers;
+    private FragmentActivity activity;
+    private ArrayList<Wallpaper> wallpapers = null;
+    private boolean isFavs = false;
+
+    public WallpapersAdapter(FragmentActivity activity) {
+        this.activity = activity;
+        setupFavorites(activity);
+        this.isFavs = true;
+    }
 
     public WallpapersAdapter(FragmentActivity activity, ArrayList<Wallpaper> wallpapers) {
         this.activity = activity;
@@ -50,7 +59,17 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
             public void onDoubleTap(WallpaperHolder holder) {
                 showDoubleTapAnimation(holder);
             }
-        }, null, false);
+        }, new OnWallpaperFavedListener() {
+            @Override
+            public void onFaved(Wallpaper item) {
+                doFav(item);
+            }
+
+            @Override
+            public void onUnfaved(Wallpaper item) {
+                doUnfav(item);
+            }
+        }, false);
     }
 
     private void showDoubleTapAnimation(final WallpaperHolder holder) {
@@ -88,6 +107,21 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void doFav(Wallpaper item) {
+        FavoritesUtils.favorite(activity, item);
+    }
+
+    private void doUnfav(Wallpaper item) {
+        FavoritesUtils.unfavorite(activity, item.getName());
+        if (isFavs)
+            setupFavorites(activity);
+    }
+
+    private void setupFavorites(FragmentActivity activity) {
+        this.wallpapers = FavoritesUtils.getFavorites(activity);
+        notifyDataSetChanged();
     }
 
 }

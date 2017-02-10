@@ -16,8 +16,10 @@
 
 package jahirfiquitiva.libs.frames.callbacks;
 
+import android.widget.ImageView;
+
 public abstract class OnWallpaperPressListener {
-    public abstract void onPressed(Object item);
+    public abstract void onPressed(Object item, ImageView wall);
 
     public void onLongPressed(Object item) {
     }

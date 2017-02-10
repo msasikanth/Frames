@@ -25,10 +25,12 @@
     <dimen name="second_keyline">72dp</dimen>
     <dimen name="toolbar_horizontal_padding">4dp</dimen>
 
-    <dimen name="icon_margin">20dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="item_margin">8dp</dimen>
-    <dimen name="dialog_content_margin">8dp</dimen>
+    <dimen name="mini_fab_right_margin">24dp</dimen>
+    <dimen name="mini_fab_space">8dp</dimen>
+
+    <dimen name="dialog_margin">24dp</dimen>
+    <dimen name="dialog_margin_bottom">16dp</dimen>
 
     <dimen name="cards_padding">16dp</dimen>
     <dimen name="cards_elevation">2dp</dimen>

@@ -16,11 +16,26 @@
 
 package jahirfiquitiva.libs.frames.utils;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
 import android.util.DisplayMetrics;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import jahirfiquitiva.libs.frames.R;
 
 public class Utils {
 
@@ -69,9 +84,68 @@ public class Utils {
         return installed;
     }
 
+    public static void openLink(Context context, String link) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            //Do nothing
+        }
+    }
+
     public static int dpToPx(Context context, int dp) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        Bitmap bitmap;
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if (bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, GlideConfiguration.getBitmapsConfig());
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable
+                    .getIntrinsicHeight(), GlideConfiguration.getBitmapsConfig());
+        }
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    public static int getNavigationBarHeight(Activity activity) {
+        // getRealMetrics is only available with API 17 and +
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int usableHeight = activity.getResources().getBoolean(R.bool.isTablet) ? metrics
+                    .heightPixels : activity.getResources().getConfiguration().orientation ==
+                    Configuration.ORIENTATION_LANDSCAPE ? metrics.widthPixels : metrics
+                    .heightPixels;
+            activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+            int realHeight = activity.getResources().getBoolean(R.bool.isTablet) ? metrics
+                    .heightPixels : activity.getResources().getConfiguration().orientation ==
+                    Configuration.ORIENTATION_LANDSCAPE ? metrics.widthPixels : metrics
+                    .heightPixels;
+            if (realHeight > usableHeight)
+                return realHeight - usableHeight;
+            else
+                return 0;
+        }
+        return 0;
     }
 }

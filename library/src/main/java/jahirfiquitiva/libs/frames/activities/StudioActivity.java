@@ -30,11 +30,14 @@ import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.adapters.PagerAdapter;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
+import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
+import jahirfiquitiva.libs.frames.utils.ToolbarTinter;
 
 public class StudioActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
     private ViewPager pager;
     private TabLayout tabs;
     private PagerAdapter pagerAdapter;
@@ -50,7 +53,7 @@ public class StudioActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_studio);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         tabs = (TabLayout) findViewById(R.id.tabs);
@@ -77,21 +80,12 @@ public class StudioActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (lastSelected == 0 && pager != null) {
-            if (pager.getAdapter() != null && pager.getAdapter().getCount() > 0) {
-                try {
-                    if (((PagerAdapter) pager.getAdapter()).getFragmentAtPosition(0) != null) {
-                        if (((CollectionFragment) ((PagerAdapter) pager.getAdapter())
-                                .getFragmentAtPosition(0)).getRVAdapter() != null)
-                            ((CollectionFragment) ((PagerAdapter) pager.getAdapter())
-                                    .getFragmentAtPosition(0)).getRVAdapter()
-                                    .notifyDataSetChanged();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        /*
+        if (toolbar != null)
+            ToolbarColorizer.colorizeToolbar(toolbar, ColorUtils.getMaterialPrimaryTextColor
+                    (ColorUtils.isLightColor(ThemeUtils.darkOrLight(this, R.color
+                            .light_theme_primary, R.color.dark_theme_primary))));
+                            */
     }
 
     @Override
@@ -103,6 +97,13 @@ public class StudioActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        ToolbarTinter.on(menu, toolbar)
+                .setIconsColor(ColorUtils.getMaterialSecondaryTextColor(!(ColorUtils.isLightColor
+                        (ThemeUtils.darkOrLight(this, R.color.dark_theme_primary, R.color
+                                .light_theme_primary)))))
+                .forceIcons()
+                .reapplyOnChange(true)
+                .apply(this);
         return true;
     }
 
@@ -111,9 +112,36 @@ public class StudioActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         int i = item.getItemId();
         if (i == R.id.favs) {
-            startActivity(new Intent(this, FavoritesActivity.class));
+            startActivityForResult(new Intent(this, FavoritesActivity.class), 11);
         }
         return true;
+    }
+
+    @Override
+    public void onActivityResult(int request, int result, Intent data) {
+        super.onActivityResult(request, result, data);
+        if (request == 11) {
+            if (data != null) {
+                if (data.getBooleanExtra("hasModified", false)) {
+                    if (lastSelected == 0 && pager != null) {
+                        if (pager.getAdapter() != null && pager.getAdapter().getCount() > 0) {
+                            try {
+                                if (((PagerAdapter) pager.getAdapter()).getFragmentAtPosition(0)
+                                        != null) {
+                                    if (((CollectionFragment) ((PagerAdapter) pager.getAdapter())
+                                            .getFragmentAtPosition(0)).getRVAdapter() != null)
+                                        ((CollectionFragment) ((PagerAdapter) pager.getAdapter())
+                                                .getFragmentAtPosition(0)).getRVAdapter()
+                                                .notifyDataSetChanged();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override

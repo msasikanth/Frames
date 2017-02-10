@@ -24,6 +24,8 @@ import android.widget.ImageView;
 
 public class RectangularImageView extends ImageView {
 
+    private static final int PARTS = 3;
+
     public RectangularImageView(Context context) {
         super(context);
     }
@@ -46,6 +48,6 @@ public class RectangularImageView extends ImageView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         //noinspection SuspiciousNameCombination
-        setMeasuredDimension(widthMeasureSpec, widthMeasureSpec / 2);
+        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth() / PARTS);
     }
 }

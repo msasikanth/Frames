@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:title="@string/app_name"
-                android:theme="@style/Toolbar.AppCompat.Responsive"
+                android:theme="@style/Toolbar.AppCompat.Responsive.Light"
                 android:popupTheme="@style/Toolbar.Popup.AppCompat"
                 app:layout_scrollFlags="enterAlways"/>
 

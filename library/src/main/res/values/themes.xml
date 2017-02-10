@@ -24,29 +24,70 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="AppTheme.Base" parent="ColdStart">
+    <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/light_theme_primary</item>
+        <item name="colorPrimaryDark">@color/light_theme_primary_dark</item>
+        <item name="colorAccent">@color/light_theme_accent</item>
+        <item name="android:windowBackground">@color/light_theme_background</item>
+        <item name="md_title_color">#de000000</item>
+        <item name="md_content_color">#8a000000</item>
+        <item name="md_positive_color">@color/light_theme_dialogs_button_color</item>
+        <item name="md_negative_color">@color/light_theme_dialogs_button_color</item>
+        <item name="md_neutral_color">@color/light_theme_dialogs_button_color</item>
+        <item name="md_background_color">@color/light_theme_card_background</item>
+        <item name="cardColorBackground">@color/light_theme_card_background</item>
+        <item name="tabsIndicatorColor">@color/light_theme_selected_tab_color</item>
+        <item name="tabsSelectedTextColor">@color/light_theme_selected_tab_color</item>
+        <item name="tabsNormalTextColor">@color/light_theme_unselected_tab_color</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/Responsive.ActionMode</item>
         <item name="actionModeCloseButtonStyle">@style/Responsive.ActionButton.CloseMode</item>
         <item name="toolbarStyle">@style/Responsive.Toolbar</item>
         <item name="toolbarNavigationButtonStyle">@style/Responsive.Toolbar.Button.Navigation</item>
         <item name="actionOverflowButtonStyle">@style/Responsive.ActionButton.Overflow</item>
-        <item name="actionBarTheme">@style/Toolbar.AppCompat.Responsive</item>
+        <item name="actionBarTheme">@style/Toolbar.AppCompat.Responsive.Light</item>
         <item name="actionBarPopupTheme">@style/Toolbar.Popup.AppCompat</item>
     </style>
 
-    <style name="AppTheme.Light" parent="AppTheme.Base">
-        <item name="colorPrimary">@color/light_theme_primary</item>
-        <item name="colorPrimaryDark">@color/light_theme_primary_dark</item>
-        <item name="colorAccent">@color/light_theme_accent</item>
-        <item name="android:windowBackground">@color/light_theme_background</item>
-    </style>
-
-    <style name="AppTheme.Dark" parent="AppTheme.Base">
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/dark_theme_primary</item>
         <item name="colorPrimaryDark">@color/dark_theme_primary_dark</item>
         <item name="colorAccent">@color/dark_theme_accent</item>
         <item name="android:windowBackground">@color/dark_theme_background</item>
+        <item name="md_title_color">#ffffffff</item>
+        <item name="md_content_color">#b3ffffff</item>
+        <item name="md_positive_color">@color/dark_theme_dialogs_button_color</item>
+        <item name="md_negative_color">@color/dark_theme_dialogs_button_color</item>
+        <item name="md_neutral_color">@color/dark_theme_dialogs_button_color</item>
+        <item name="md_background_color">@color/dark_theme_card_background</item>
+        <item name="cardColorBackground">@color/dark_theme_card_background</item>
+        <item name="tabsIndicatorColor">@color/dark_theme_selected_tab_color</item>
+        <item name="tabsSelectedTextColor">@color/dark_theme_selected_tab_color</item>
+        <item name="tabsNormalTextColor">@color/dark_theme_unselected_tab_color</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/Responsive.ActionMode</item>
+        <item name="actionModeCloseButtonStyle">@style/Responsive.ActionButton.CloseMode</item>
+        <item name="toolbarStyle">@style/Responsive.Toolbar</item>
+        <item name="toolbarNavigationButtonStyle">@style/Responsive.Toolbar.Button.Navigation</item>
+        <item name="actionOverflowButtonStyle">@style/Responsive.ActionButton.Overflow</item>
+        <item name="actionBarTheme">@style/Toolbar.AppCompat.Responsive.Dark</item>
+        <item name="actionBarPopupTheme">@style/Toolbar.Popup.AppCompat</item>
     </style>
+
+    <!-- These are the standard attributes that make up a complete theme. -->
+    <declare-styleable name="Theme">
+        <!-- ============== -->
+        <!-- Generic styles -->
+        <!-- ============== -->
+        <eat-comment/>
+        <!-- Default color of cardview background. -->
+        <attr name="cardColorBackground" format="color"/>
+        <!-- Tabs Indicator Color. -->
+        <attr name="tabsIndicatorColor" format="color"/>
+        <!-- Tabs Normal Text Color. -->
+        <attr name="tabsNormalTextColor" format="color"/>
+        <!-- Tabs Selected Text Color. -->
+        <attr name="tabsSelectedTextColor" format="color"/>
+    </declare-styleable>
 
 </resources>

@@ -13,7 +13,7 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
--->
+  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="jahirfiquitiva.libs.frames">
@@ -111,7 +111,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".activities.LaunchActivity"
+                android:name=".activities.base.LaunchActivity"
                 android:excludeFromRecents="true"
                 android:noHistory="true"/>
         <activity
@@ -122,6 +122,13 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="jahirfiquitiva.libs.frames.activities.StudioActivity"/>
         </activity>
+        <!-- Wallpapers Activities -->
+        <activity
+                android:name=".activities.WallpaperViewerActivity"
+                android:theme="@style/AppTheme.Light"/>
+        <activity
+                android:name=".activities.FabbedViewerActivity"
+                android:theme="@style/AppTheme.Light"/>
     </application>
 
 </manifest>

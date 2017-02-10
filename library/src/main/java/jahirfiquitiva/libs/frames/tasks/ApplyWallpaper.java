@@ -114,9 +114,9 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
     @Override
     protected Boolean doInBackground(Void... params) {
         if (dialog != null) {
-            applyWallpaper(resource);
+            return applyWallpaper(resource);
         } else if (resource != null) {
-            applyWallpaper(resource);
+            return applyWallpaper(resource);
         } else if (url != null) {
             wrActivity.get().runOnUiThread(new Runnable() {
                 @Override
@@ -148,30 +148,12 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
                             });
                 }
             });
+            return true;
         }
-
-//        Boolean worked;
-//        if ((!wasCancelled) && (activity != null)) {
-//            WallpaperManager wm = WallpaperManager.getInstance(activity);
-//            try {
-//                try {
-//                    wm.setBitmap(scaleToActualAspectRatio(resource));
-//                } catch (OutOfMemoryError ex) {
-//                    Timber.d("OutOfMemoryError: " + ex.getLocalizedMessage());
-//                    showRetrySnackbar();
-//                }
-//                worked = true;
-//            } catch (IOException e2) {
-//                worked = false;
-//            }
-//        } else {
-//            worked = false;
-//        }
-//        return worked;
-        return true;
+        return false;
     }
 
-    private void applyWallpaper(Bitmap resource) {
+    private boolean applyWallpaper(Bitmap resource) {
         WallpaperManager wm = WallpaperManager.getInstance(wrActivity.get());
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -190,12 +172,12 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
             if (callback != null) {
                 callback.afterApplied();
             }
-        } catch (OutOfMemoryError ex) {
-            showRetrySnackbar();
-            cancel(true);
-        } catch (IOException e2) {
+            return true;
+        } catch (OutOfMemoryError | IOException ex) {
+            ex.printStackTrace();
             cancel(true);
         }
+        return false;
     }
 
     @Override
@@ -214,53 +196,6 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
                 }
             }
         }
-//        if (!isCancelled()) {
-//            if (worked) {
-//                dialog.dismiss();
-//                if (!isPicker) {
-//                    if (toHide1 != null && toHide2 != null) {
-//                        toHide1.setVisibility(View.GONE);
-//                        toHide2.setVisibility(View.GONE);
-//                    } else {
-//                        ((ShowcaseActivity) activity).setupToolbarHeader();
-//                        ColorUtils.setupToolbarIconsAndTextsColors(activity,
-//                                ((ShowcaseActivity) activity).getAppbar(), ((ShowcaseActivity)
-// activity).getToolbar());
-//                    }
-//
-//                    Snackbar longSnackbar = Snackbar.make(layout,
-//                            activity.getString(R.string.set_as_wall_done), Snackbar.LENGTH_LONG);
-//                    final int snackbarLight = ContextCompat.getColor(activity, R.color
-// .snackbar_light);
-//                    final int snackbarDark = ContextCompat.getColor(activity, R.color
-// .snackbar_dark);
-//                    ViewGroup snackbarView = (ViewGroup) longSnackbar.getView();
-//                    snackbarView.setBackgroundColor(ThemeUtils.darkTheme ? snackbarDark :
-// snackbarLight);
-//                    snackbarView.setPadding(snackbarView.getPaddingLeft(),
-//                            snackbarView.getPaddingTop(), snackbarView.getPaddingRight(),
-//                            Utils.getNavigationBarHeight((Activity) context.get()));
-//                    longSnackbar.show();
-//                    longSnackbar.addCallback(
-//                            new Snackbar.Callback() {
-//                                @Override
-//                                public void onDismissed(Snackbar snackbar, int event) {
-//                                    super.onDismissed(snackbar, event);
-//                                    if (toHide1 != null && toHide2 != null) {
-//                                        toHide1.setVisibility(View.VISIBLE);
-//                                        toHide2.setVisibility(View.VISIBLE);
-//                                    }
-//                                    EventBus.getDefault().post(new WallpaperEvent(true));
-//                                }
-//                            });
-//                }
-//            } else {
-//                showRetrySnackbar();
-//            }
-//            if (isPicker) {
-//                activity.finish();
-//            }
-//        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -306,31 +241,6 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
             }
         }
         return bitmap;
-    }
-
-    private void showRetrySnackbar() {
-//        String retry = wrActivity.get().getResources().getString(R.string.retry);
-//        Snackbar snackbar = Snackbar
-//                .make(layout, R.string.error, Snackbar.LENGTH_INDEFINITE)
-//                .setAction(retry.toUpperCase(), new DebouncedClickListener() {
-//                    @Override
-//                    public void onDebouncedClick(View view) {
-//                        new ApplyWallpaper(activity, dialog, resource, isPicker, layout);
-//                    }
-//                });
-//        final int snackbarLight = ContextCompat.getColor(context.get(), R.color.snackbar_light);
-//        final int snackbarDark = ContextCompat.getColor(context.get(), R.color.snackbar_dark);
-//        ViewGroup snackbarView = (ViewGroup) snackbar.getView();
-//        snackbarView.setBackgroundColor(ThemeUtils.darkTheme ? snackbarDark : snackbarLight);
-//        snackbarView.setPadding(snackbarView.getPaddingLeft(),
-//                snackbarView.getPaddingTop(), snackbarView.getPaddingRight(),
-//                Utils.getNavigationBarHeight((Activity) context.get()));
-//        TypedValue typedValue = new TypedValue();
-//        Resources.Theme theme = activity.getTheme();
-//        theme.resolveAttribute(R.attr.accentColor, typedValue, true);
-//        int actionTextColor = typedValue.data;
-//        snackbar.setActionTextColor(actionTextColor);
-//        snackbar.show();
     }
 
     public interface ApplyCallback {

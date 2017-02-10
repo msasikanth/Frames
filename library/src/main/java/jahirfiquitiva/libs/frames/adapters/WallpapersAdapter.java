@@ -17,27 +17,38 @@
 package jahirfiquitiva.libs.frames.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Handler;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ImageView;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
+import jahirfiquitiva.libs.frames.activities.FabbedViewerActivity;
+import jahirfiquitiva.libs.frames.activities.WallpaperViewerActivity;
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
+import jahirfiquitiva.libs.frames.callbacks.OnWallpaperPressListener;
 import jahirfiquitiva.libs.frames.callbacks.WallpaperGestureDetector;
 import jahirfiquitiva.libs.frames.holders.WallpaperHolder;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
+import jahirfiquitiva.libs.frames.utils.Utils;
 
 public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
     private FragmentActivity activity;
     private ArrayList<Wallpaper> wallpapers = null;
     private boolean isFavs = false;
+    private boolean hasModifiedFavs = false;
+    private WallpaperHolder holder;
 
     public WallpapersAdapter(FragmentActivity activity) {
         this.activity = activity;
@@ -52,8 +63,13 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
     @Override
     public WallpaperHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new WallpaperHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
-                .item_wallpaper, parent, false), null, new WallpaperGestureDetector
+        holder = new WallpaperHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
+                .item_wallpaper, parent, false), new OnWallpaperPressListener() {
+            @Override
+            public void onPressed(Object item, ImageView wall) {
+                doOnPressed(item, wall);
+            }
+        }, new WallpaperGestureDetector
                 .OnWallpaperDoubleTapListener() {
             @Override
             public void onDoubleTap(WallpaperHolder holder) {
@@ -61,15 +77,16 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
             }
         }, new OnWallpaperFavedListener() {
             @Override
-            public void onFaved(Wallpaper item) {
-                doFav(item);
+            public void onFaved() {
+                doFav(wallpapers.get(holder.getAdapterPosition()));
             }
 
             @Override
-            public void onUnfaved(Wallpaper item) {
-                doUnfav(item);
+            public void onUnfaved() {
+                doUnfav(wallpapers.get(holder.getAdapterPosition()));
             }
         }, false);
+        return holder;
     }
 
     private void showDoubleTapAnimation(final WallpaperHolder holder) {
@@ -99,21 +116,42 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
         handler(context).post(r);
     }
 
-    private void doOnPressed(final Object item) {
-        runOnUIThread(activity, new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(activity, "Pressed wallpaper: " + ((Wallpaper) item).getName(),
-                        Toast.LENGTH_SHORT).show();
+    private void doOnPressed(final Object item, final ImageView wall) {
+        Intent wallpaperViewer = new Intent(activity, activity.getResources().getBoolean(R.bool
+                .fabbed_viewer) ? FabbedViewerActivity.class : WallpaperViewerActivity.class);
+        wallpaperViewer.putExtra("item", (Wallpaper) item);
+        wallpaperViewer.putExtra("transitionName", ViewCompat.getTransitionName(wall));
+
+        if (wall.getDrawable() != null) {
+            Bitmap bitmap = Utils.drawableToBitmap(wall.getDrawable());
+
+            try {
+                String filename = "temp.png";
+                FileOutputStream stream = activity.openFileOutput(filename, Context
+                        .MODE_PRIVATE);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                stream.close();
+                wallpaperViewer.putExtra("image", filename);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
+
+            ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(activity, wall, ViewCompat
+                            .getTransitionName(wall));
+            activity.startActivityForResult(wallpaperViewer, 11, options.toBundle());
+        } else {
+            activity.startActivityForResult(wallpaperViewer, 11);
+        }
     }
 
     private void doFav(Wallpaper item) {
+        hasModifiedFavs = true;
         FavoritesUtils.favorite(activity, item);
     }
 
     private void doUnfav(Wallpaper item) {
+        hasModifiedFavs = true;
         FavoritesUtils.unfavorite(activity, item.getName());
         if (isFavs)
             setupFavorites(activity);
@@ -122,6 +160,10 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     private void setupFavorites(FragmentActivity activity) {
         this.wallpapers = FavoritesUtils.getFavorites(activity);
         notifyDataSetChanged();
+    }
+
+    public boolean hasModifiedFavs() {
+        return hasModifiedFavs;
     }
 
 }

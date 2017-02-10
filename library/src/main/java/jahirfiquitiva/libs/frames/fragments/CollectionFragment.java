@@ -51,6 +51,7 @@ public class CollectionFragment extends Fragment {
     private boolean isCollections;
     private boolean isFavorites;
     private String collectionName;
+    private boolean hasModifiedFavs = false;
 
     public static CollectionFragment newInstance(boolean isCollections, String collectionName) {
         CollectionFragment fragment = new CollectionFragment();
@@ -175,7 +176,7 @@ public class CollectionFragment extends Fragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnsNumber));
         mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(columnsNumber,
                 isCollections ? 0 : getActivity().getResources().getDimensionPixelSize(R.dimen
-                        .item_margin), true));
+                        .cards_margin), true));
         mRecyclerView.setHasFixedSize(true);
     }
 
@@ -192,5 +193,10 @@ public class CollectionFragment extends Fragment {
 
     public RecyclerView.Adapter getRVAdapter() {
         return mAdapter;
+    }
+
+    public boolean hasModifiedFavs() {
+        return isFavorites && getRVAdapter() != null && ((WallpapersAdapter) getRVAdapter())
+                .hasModifiedFavs();
     }
 }

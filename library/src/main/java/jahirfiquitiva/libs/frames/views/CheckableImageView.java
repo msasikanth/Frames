@@ -21,6 +21,8 @@ import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.ImageView;
 
+import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
+
 /**
  * A {@link Checkable} {@link ImageView} which can be offset vertically.
  */
@@ -30,6 +32,8 @@ public class CheckableImageView extends ImageView implements Checkable {
 
     private boolean isChecked = false;
     private int minOffset;
+
+    private OnWallpaperFavedListener listener;
 
     public CheckableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,12 +57,22 @@ public class CheckableImageView extends ImageView implements Checkable {
     public void setChecked(boolean isChecked) {
         if (this.isChecked != isChecked) {
             this.isChecked = isChecked;
+            if (isChecked())
+                listener.onFaved();
+            else
+                listener.onUnfaved();
             refreshDrawableState();
         }
     }
 
     public void toggle() {
         setChecked(!isChecked);
+        if (listener != null) {
+            if (isChecked())
+                listener.onFaved();
+            else
+                listener.onUnfaved();
+        }
     }
 
     @Override
@@ -68,5 +82,9 @@ public class CheckableImageView extends ImageView implements Checkable {
             mergeDrawableStates(drawableState, CHECKED_STATE_SET);
         }
         return drawableState;
+    }
+
+    public void setOnWallpaperFavedListener(OnWallpaperFavedListener listener) {
+        this.listener = listener;
     }
 }

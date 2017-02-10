@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package jahirfiquitiva.libs.frames.activities;
+package jahirfiquitiva.libs.frames.activities.base;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import jahirfiquitiva.libs.frames.activities.StudioActivity;
 
 public class LaunchActivity extends AppCompatActivity {
 

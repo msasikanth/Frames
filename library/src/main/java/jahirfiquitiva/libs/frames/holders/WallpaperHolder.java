@@ -103,10 +103,11 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
             }
         });
 
+        heart.setOnWallpaperFavedListener(onFavedListener);
         heart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkHeart(!heart.isChecked());
+                heart.toggle();
             }
         });
 
@@ -243,7 +244,7 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
                         public void onAnimationEnd(Animator animation) {
                             super.onAnimationEnd(animation);
                             if (!heart.isChecked())
-                                checkHeart(true);
+                                checkHeart();
                             bigHeart.animate().alpha(0).scaleX(0).scaleY(0).setStartDelay
                                     (SHOWN_DURATION)
                                     .setDuration(HIDE_ANIMATION_DURATION)
@@ -259,23 +260,12 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    private void checkHeart(boolean check) {
-        boolean prevState = heart.isChecked();
-        heart.setChecked(check);
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (check != prevState) {
-            if (heart.isChecked()) {
-                if (onFavedListener != null && item != null)
-                    onFavedListener.onFaved(item);
-            } else {
-                if (onFavedListener != null && item != null)
-                    onFavedListener.onUnfaved(item);
-            }
-        }
+    private void checkHeart() {
+        heart.setChecked(true);
+    }
+
+    public ImageView getWall() {
+        return wall;
     }
 
 }

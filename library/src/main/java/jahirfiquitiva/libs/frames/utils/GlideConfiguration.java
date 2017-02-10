@@ -18,6 +18,7 @@ package jahirfiquitiva.libs.frames.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Build;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +27,8 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.module.GlideModule;
 
 public class GlideConfiguration implements GlideModule {
+
+    private static Bitmap.Config bitmapsConfig = Bitmap.Config.RGB_565;
 
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
@@ -43,6 +46,8 @@ public class GlideConfiguration implements GlideModule {
             lowRAMDevice = memInfo.lowMemory;
         }
 
+        bitmapsConfig = runsMinSDK ? lowRAMDevice ? Bitmap.Config.RGB_565 : Bitmap.Config
+                .ARGB_8888 : Bitmap.Config.RGB_565;
         builder.setDecodeFormat(runsMinSDK ?
                 lowRAMDevice ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888 :
                 DecodeFormat.PREFER_RGB_565);
@@ -52,4 +57,9 @@ public class GlideConfiguration implements GlideModule {
     public void registerComponents(Context context, Glide glide) {
         // register ModelLoaders here.
     }
+
+    public static Bitmap.Config getBitmapsConfig() {
+        return bitmapsConfig;
+    }
+
 }

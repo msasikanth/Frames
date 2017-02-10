@@ -16,16 +16,23 @@
 
 package jahirfiquitiva.libs.frames.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
+import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
+import jahirfiquitiva.libs.frames.utils.ToolbarTinter;
 
 public class FavoritesActivity extends AppCompatActivity {
+
+    private CollectionFragment favsFragment;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,22 +42,47 @@ public class FavoritesActivity extends AppCompatActivity {
         FavoritesUtils.init(this);
 
         setContentView(R.layout.activity_favorites);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CollectionFragment favsFragment = CollectionFragment.newInstance(true);
+        favsFragment = CollectionFragment.newInstance(true);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.content, favsFragment, "favs")
                 .commit();
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        ToolbarTinter.on(menu, toolbar)
+                .setIconsColor(ColorUtils.getMaterialPrimaryTextColor(!(ColorUtils.isLightColor
+                        (ThemeUtils.darkOrLight(this, R.color.dark_theme_primary, R.color
+                                .light_theme_primary)))))
+                .forceIcons()
+                .reapplyOnChange(true)
+                .apply(this);
+        return true;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         FavoritesUtils.destroy(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishAndSendData();
+    }
+
+    private void finishAndSendData() {
+        Intent intent = new Intent();
+        intent.putExtra("hasModified", favsFragment != null && favsFragment.hasModifiedFavs());
+        setResult(11, intent);
+        finish();
     }
 
 }

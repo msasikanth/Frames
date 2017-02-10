@@ -34,4 +34,6 @@
     <color name="inactive_drawable_tint_dark">#80ffffff</color>
     <color name="light_divider">#1f000000</color>
     <color name="dark_divider">#1fffffff</color>
+    <string name="sherry_link">https://plus.google.com/+SherrySabatine</string>
+    <string name="clear_cache_dialog_title">@string/pref_title_cache</string>
 </resources>

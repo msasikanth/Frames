@@ -83,6 +83,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:visibility="gone"
+                android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/heart_description"/>
 
         <LinearLayout

@@ -49,7 +49,7 @@ public class WallpaperGestureDetector implements GestureDetector.OnGestureListen
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         if (onPressListener != null && item != null)
-            onPressListener.onPressed(item);
+            onPressListener.onPressed(item, holder != null ? holder.getWall() : null);
         return true;
     }
 

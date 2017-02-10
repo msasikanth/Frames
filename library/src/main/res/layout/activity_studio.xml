@@ -16,10 +16,10 @@
   -->
 
 <jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout
-        android:id="@+id/main"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:title="@string/app_name"
-                android:theme="@style/Toolbar.AppCompat.Responsive"
+                android:theme="@style/Toolbar.AppCompat.Responsive.Light"
                 android:popupTheme="@style/Toolbar.Popup.AppCompat"
                 app:layout_scrollFlags="scroll"/>
 
@@ -46,10 +46,10 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
                 app:tabGravity="fill"
-                app:tabIndicatorColor="@color/tabsIndicatorColor"
+                app:tabIndicatorColor="?tabsIndicatorColor"
                 app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/tabsSelectedTextColor"
-                app:tabTextColor="@color/tabsTextColor"
+                app:tabSelectedTextColor="?tabsSelectedTextColor"
+                app:tabTextColor="?tabsNormalTextColor"
                 tools:ignore="NewApi,RtlSymmetry,UnusedAttribute"/>
 
     </jahirfiquitiva.libs.frames.views.FixedElevationAppBarLayout>

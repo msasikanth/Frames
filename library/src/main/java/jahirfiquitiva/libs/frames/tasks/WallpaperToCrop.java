@@ -23,7 +23,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -33,6 +35,8 @@ import java.lang.ref.WeakReference;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.utils.Preferences;
+import jahirfiquitiva.libs.frames.utils.ThemeUtils;
+import jahirfiquitiva.libs.frames.utils.Utils;
 
 public class WallpaperToCrop extends AsyncTask<Void, String, Boolean> {
 
@@ -104,12 +108,11 @@ public class WallpaperToCrop extends AsyncTask<Void, String, Boolean> {
                         context.getResources().getString(R.string.crop_and_set_as)), 1);
             } else {
                 dialog.dismiss();
-                /*
                 Snackbar snackbar = Snackbar.make(layout,
                         context.getResources().getString(R.string.error), Snackbar.LENGTH_SHORT);
                 ViewGroup snackbarView = (ViewGroup) snackbar.getView();
                 snackbarView.setBackgroundColor(ThemeUtils.darkOrLight(context, R.color
-                        .snackbar_light, R.color.snackbar_dark));
+                        .light_theme_snackbar, R.color.dark_theme_snackbar));
                 snackbarView.setPadding(snackbarView.getPaddingLeft(),
                         snackbarView.getPaddingTop(), snackbarView.getPaddingRight(),
                         Utils.getNavigationBarHeight((Activity) context));
@@ -124,7 +127,6 @@ public class WallpaperToCrop extends AsyncTask<Void, String, Boolean> {
                         }
                     }
                 });
-                */
             }
         }
     }

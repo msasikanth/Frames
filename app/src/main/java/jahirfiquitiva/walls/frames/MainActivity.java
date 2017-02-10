@@ -18,7 +18,7 @@ package jahirfiquitiva.walls.frames;
 
 import android.os.Bundle;
 
-import jahirfiquitiva.libs.frames.activities.LaunchActivity;
+import jahirfiquitiva.libs.frames.activities.base.LaunchActivity;
 
 public class MainActivity extends LaunchActivity {
     @Override

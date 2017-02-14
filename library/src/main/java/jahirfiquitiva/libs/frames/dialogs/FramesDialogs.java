@@ -179,7 +179,6 @@ public final class FramesDialogs {
         dialog.show();
     }
 
-
     public static void showPermissionNotGrantedDialog(Context context) {
         String appName = context.getResources().getString(R.string.app_name);
         new MaterialDialog.Builder(context)
@@ -194,20 +193,21 @@ public final class FramesDialogs {
         final int current = mPrefs.getWallsColumnsNumber();
         ArrayList<String> columnOptions = new ArrayList<>();
         for (int i = 2; i < 6; i++) {
+            int nColumns = (int) (i * 1.5f);
             String option = context.getResources().getString(R.string.column_option, String
-                    .valueOf(i), String.valueOf(i * 1.5f));
+                    .valueOf(i), String.valueOf(nColumns));
             columnOptions.add(option);
         }
         new MaterialDialog.Builder(context)
                 .title(R.string.columns)
                 .content(R.string.columns_desc)
                 .items(columnOptions)
-                .itemsCallbackSingleChoice(current - 1, new MaterialDialog
+                .itemsCallbackSingleChoice(current - 2, new MaterialDialog
                         .ListCallbackSingleChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int position,
                                                CharSequence text) {
-                        int newSelected = position + 1;
+                        int newSelected = position + 2;
                         if (newSelected != current) {
                             mPrefs.setWallsColumnsNumber(newSelected);
                         }
@@ -216,6 +216,17 @@ public final class FramesDialogs {
                 })
                 .positiveText(android.R.string.ok)
                 .negativeText(android.R.string.cancel)
+                .show();
+    }
+
+    public static void showClearCacheDialog(Context context, MaterialDialog.SingleButtonCallback
+            singleButtonCallback) {
+        new MaterialDialog.Builder(context)
+                .title(R.string.clear_cache_dialog_title)
+                .content(R.string.clear_cache_dialog_content)
+                .positiveText(android.R.string.yes)
+                .negativeText(android.R.string.no)
+                .onPositive(singleButtonCallback)
                 .show();
     }
 
@@ -236,15 +247,19 @@ public final class FramesDialogs {
                 .show();
     }
 
-    public static void showClearCacheDialog(Context context, MaterialDialog.SingleButtonCallback
-            singleButtonCallback) {
+    public static void showUICollaboratorsDialog(final Context context, final String[]
+            uiCollaboratorsLinks) {
         new MaterialDialog.Builder(context)
-                .title(R.string.clear_cache_dialog_title)
-                .content(R.string.clear_cache_dialog_content)
-                .positiveText(android.R.string.yes)
-                .negativeText(android.R.string.no)
-                .onPositive(singleButtonCallback)
-                .show();
+                .title(R.string.ui_design)
+                .negativeText(R.string.close)
+                .items(R.array.ui_collaborators_names)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog materialDialog, View view,
+                                            final int i, CharSequence charSequence) {
+                        Utils.openLink(context, uiCollaboratorsLinks[i]);
+                    }
+                }).show();
     }
 
 }

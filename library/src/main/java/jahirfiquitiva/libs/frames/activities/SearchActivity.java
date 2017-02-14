@@ -36,6 +36,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
+import jahirfiquitiva.libs.frames.activities.base.ThemedActivity;
 import jahirfiquitiva.libs.frames.adapters.CollectionsAdapter;
 import jahirfiquitiva.libs.frames.adapters.PagerAdapter;
 import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
@@ -46,10 +47,11 @@ import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
+import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends ThemedActivity {
 
     private TabLayout tabs;
     private ViewPager pager;
@@ -61,7 +63,6 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.onActivityCreateSetTheme(this);
         super.onCreate(savedInstanceState);
 
         if ((FullListHolder.get().getCollections() == null) || (FullListHolder.get()

@@ -38,23 +38,24 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
+import jahirfiquitiva.libs.frames.activities.base.ThemedActivity;
 import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
+import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 import jahirfiquitiva.libs.frames.utils.Utils;
 import jahirfiquitiva.libs.frames.views.FixedElevationAppBarLayout;
 import jahirfiquitiva.libs.frames.views.RectangularImageView;
 
-public class CollectionActivity extends AppCompatActivity {
+public class CollectionActivity extends ThemedActivity {
 
     private CollectionFragment listFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.onActivityCreateSetTheme(this);
         super.onCreate(savedInstanceState);
 
         FavoritesUtils.init(this);

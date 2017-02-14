@@ -28,6 +28,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,7 +55,10 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     private ProgressBar progressBar;
     private ImageView wall;
     private RelativeLayout detailsBg;
+    private LinearLayout wallDetails;
+    private LinearLayout collDetails;
     private TextView title;
+    private TextView colTitle;
     private TextView author;
     private TextView amount;
     private ImageView bigHeart;
@@ -82,7 +86,10 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
         progressBar = (ProgressBar) itemView.findViewById(R.id.progress);
         wall = (ImageView) itemView.findViewById(isCollection ? R.id.rWall : R.id.sWall);
         detailsBg = (RelativeLayout) itemView.findViewById(R.id.detailsBg);
+        wallDetails = (LinearLayout) itemView.findViewById(R.id.wallpaper_details);
+        collDetails = (LinearLayout) itemView.findViewById(R.id.collection_details);
         title = (TextView) itemView.findViewById(R.id.name);
+        colTitle = (TextView) itemView.findViewById(R.id.collection_name);
         author = (TextView) itemView.findViewById(R.id.author);
         amount = (TextView) itemView.findViewById(R.id.amount);
         bigHeart = (ImageView) itemView.findViewById(R.id.bigHeart);
@@ -136,11 +143,14 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     public void setItem(Wallpaper nItem) {
         this.item = nItem;
         wgd.setItem(item);
-        wall.setVisibility(View.VISIBLE);
+        collDetails.setVisibility(View.GONE);
+        colTitle.setVisibility(View.GONE);
+        amount.setVisibility(View.GONE);
 
         title.setText(item.getName());
         author.setText(item.getAuthor());
-        amount.setVisibility(View.GONE);
+        wall.setVisibility(View.VISIBLE);
+        wallDetails.setVisibility(View.VISIBLE);
 
         heart.setWallpaperItem(item);
         heart.setChecked(FavoritesUtils.isFavorited(itemView.getContext(), nItem.getName()));
@@ -151,15 +161,20 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     public void setItem(Collection nCollection) {
         this.collection = nCollection;
         wgd.setItem(collection);
+        wallDetails.setVisibility(View.GONE);
+        title.setVisibility(View.GONE);
         author.setVisibility(View.GONE);
         heart.setVisibility(View.GONE);
         bigHeart.setVisibility(View.GONE);
+
         wall.setVisibility(View.VISIBLE);
+        collDetails.setVisibility(View.VISIBLE);
+        colTitle.setVisibility(View.VISIBLE);
 
         int pad = Utils.dpToPx(itemView.getContext(), 12);
         detailsBg.setPadding(pad, pad, pad, pad);
 
-        title.setText(collection.getName());
+        colTitle.setText(collection.getName());
 
         String exactAmount = collection.getWallpapers().size() > 99 ? "99+" : String.valueOf
                 (collection.getWallpapers().size());

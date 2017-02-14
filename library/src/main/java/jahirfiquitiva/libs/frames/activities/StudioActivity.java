@@ -20,14 +20,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import jahirfiquitiva.libs.frames.R;
+import jahirfiquitiva.libs.frames.activities.base.ThemedActivity;
 import jahirfiquitiva.libs.frames.adapters.PagerAdapter;
 import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
@@ -38,7 +39,7 @@ import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 
-public class StudioActivity extends AppCompatActivity {
+public class StudioActivity extends ThemedActivity {
 
     private TabLayout tabs;
     private ViewPager pager;
@@ -54,7 +55,6 @@ public class StudioActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        ThemeUtils.onActivityCreateSetTheme(this);
         super.onCreate(savedInstanceState);
 
         FavoritesUtils.init(this);
@@ -73,6 +73,20 @@ public class StudioActivity extends AppCompatActivity {
         pager = (ViewPager) findViewById(R.id.pager);
 
         setupTabsAndPager();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (getPagerAdapter() != null) {
+            if (getPagerAdapter().getFragments() != null) {
+                for (Fragment fragment : getPagerAdapter().getFragments()) {
+                    if (fragment instanceof CollectionFragment) {
+                        ((CollectionFragment) fragment).setupRecyclerView();
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -102,6 +116,10 @@ public class StudioActivity extends AppCompatActivity {
             startActivityForResult(new Intent(this, FavoritesActivity.class), 14);
         } else if (i == R.id.refresh) {
             new DownloadJSON(this).execute();
+        } else if (i == R.id.about) {
+            startActivity(new Intent(this, CreditsActivity.class));
+        } else if (i == R.id.settings) {
+            startActivityForResult(new Intent(this, SettingsActivity.class), 15);
         }
         return true;
     }
@@ -125,10 +143,17 @@ public class StudioActivity extends AppCompatActivity {
                                                 .getAdapter()).getFragmentAtPosition(0))
                                                 .getRVAdapter()
                                                 instanceof WallpapersAdapter) {
-                                            ((WallpapersAdapter) ((CollectionFragment) (
-                                                    (PagerAdapter) pager.getAdapter())
-                                                    .getFragmentAtPosition(0)).getRVAdapter())
-                                                    .updateItems(modifiedItems);
+                                            if (modifiedItems.equals("::clean::")) {
+                                                ((CollectionFragment) (
+                                                        (PagerAdapter) pager.getAdapter())
+                                                        .getFragmentAtPosition(0)).getRVAdapter()
+                                                        .notifyDataSetChanged();
+                                            } else {
+                                                ((WallpapersAdapter) ((CollectionFragment) (
+                                                        (PagerAdapter) pager.getAdapter())
+                                                        .getFragmentAtPosition(0)).getRVAdapter())
+                                                        .updateItems(modifiedItems);
+                                            }
                                         }
                                 }
                             } catch (Exception e) {

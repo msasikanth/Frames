@@ -89,19 +89,20 @@
                 android:contentDescription="@string/heart_description"/>
 
         <LinearLayout
-                android:id="@+id/details"
+                android:id="@+id/collection_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/amount"
-                android:layout_toStartOf="@+id/amount">
+                android:visibility="gone"
+                android:layout_toStartOf="@+id/amount"
+                android:layout_toLeftOf="@+id/amount">
 
             <TextView
-                    android:id="@+id/name"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/collection_name"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:gravity="center_vertical"
@@ -109,7 +110,48 @@
                     android:ellipsize="end"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@android:color/white"
-                    tools:text="Title"/>
+                    tools:text="Title long title long tile toia aikasc asc acik asdca coas coas"/>
+
+        </LinearLayout>
+
+        <TextView
+                android:id="@+id/amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@id/collection_details"
+                android:maxLines="1"
+                android:maxLength="3"
+                android:ellipsize="none"
+                android:visibility="gone"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@android:color/white"
+                tools:text="99+"/>
+
+        <LinearLayout
+                android:id="@+id/wallpaper_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/heart"
+                android:layout_toLeftOf="@+id/heart">
+
+            <TextView
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    tools:text="Title long title long tile toia aikasc asc acik asdca coas coas"/>
 
             <TextView
                     android:id="@+id/author"
@@ -125,21 +167,6 @@
                     tools:text="Author"/>
 
         </LinearLayout>
-
-        <TextView
-                android:id="@+id/amount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignBottom="@id/details"
-                android:maxLines="1"
-                android:maxLength="3"
-                android:ellipsize="none"
-                android:visibility="gone"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="@android:color/white"
-                tools:text="99+"/>
 
     </RelativeLayout>
 </RelativeLayout>

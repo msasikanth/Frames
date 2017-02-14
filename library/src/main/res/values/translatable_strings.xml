@@ -29,13 +29,14 @@
     <string name="storage_pref_title">Storage</string>
     <string name="low_data_usage_pref_title">Enable low data usage</string>
     <string name="low_data_usage_pref_summary">Wallpapers will load with lower resolution to reduce data usage</string>
-    <string name="clear_cache_dialog_content">Are you sure you want to delete app data, cache and settings? Applied icons won\'t be affected.</string>
+    <string name="clear_cache_dialog_content">Are you sure you want to delete app data, cache and settings?</string>
     <string name="cache_pref_title">Clear app cache and data</string>
     <string name="cache_pref_summary">This will delete app cache and preferences.\nCurrent cache size: %1$s</string>
     <string name="wsl_pref_title">Wallpapers download location</string>
     <string name="wsl_pref_summary">Change location to save or download wallpapers.\nCurrent location: %1$s</string>
     <string name="database_pref_summary">Clear the list of your favorite wallpapers</string>
     <string name="database_pref_title">Clear favorites database</string>
+    <string name="database_clear_confirm">Are you sure you want to clear the favorites database?</string>
     <string name="app_info_pref_title">Application Information</string>
     <string name="changelog_pref_title">Changelog</string>
     <string name="licenses_pref_title">Licenses</string>
@@ -93,4 +94,27 @@
     <string name="title_activity_collection">Collection</string>
     <string name="title_activity_search">Search</string>
     <string name="refresh">Refresh</string>
+
+    <!-- Light theme -->
+    <string name="light_theme">Light</string>
+    <!-- Dark theme -->
+    <string name="dark_theme">Dark</string>
+    <!-- Auto theme -->
+    <string name="auto_theme">Auto</string>
+
+    <string name="dashboard_author_copyright">I am a 20-year-old Android development enthusiast and the developer of the dashboard.\n\nShared from Colombia to the world, under CreativeCommons Attribution-ShareAlike License.\nCopyright © 2017.</string>
+    <string name="visit_website">Website</string>
+
+    <string name="implemented_libraries">Implemented libraries</string>
+    <string name="contributors">Development Contributors</string>
+
+    <string name="ui_design">UI Design Collaborators</string>
+    <string name="donate">Support development</string>
+    <string name="donate_summary">If you think Jahir Fiquitiva deserves to earn some money for developing this awesome dashboard.</string>
+    <string name="report_bugs">Report bugs</string>
+    <string name="report_bugs_summary">Report bugs or request new features.</string>
+    <string name="join_community">Join the Google Plus community</string>
+    <string name="join_community_summary">If you need help or have questions, the IconShowcase
+        community on Google Plus is a good place to go.
+    </string>
 </resources>

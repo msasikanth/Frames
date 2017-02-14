@@ -28,6 +28,8 @@ public class Preferences {
             PREFERENCES_NAME = "dashboard_preferences",
             WORKING_DASHBOARD = "working_dashboard",
             ASKED_PERMISSIONS = "asked_permissions",
+            CURRENT_THEME = "current_theme",
+            TINT_NAVBAR = "tint_navbar",
             VERSION_CODE = "version_code",
             ROTATE_MINUTE = "rotate_time_minute",
             ROTATE_TIME = "muzei_rotate_time",
@@ -60,6 +62,22 @@ public class Preferences {
     @SuppressWarnings("SameParameterValue")
     public void setHasAskedPermissions(boolean asked) {
         getPrefs().edit().putBoolean(ASKED_PERMISSIONS, asked).apply();
+    }
+
+    public void setCurrentTheme(int currentTheme) {
+        getPrefs().edit().putInt(CURRENT_THEME, currentTheme).apply();
+    }
+
+    public int getCurrentTheme() {
+        return getPrefs().getInt(CURRENT_THEME, 1);
+    }
+
+    public void setTintNavbar(boolean tint) {
+        getPrefs().edit().putBoolean(TINT_NAVBAR, tint).apply();
+    }
+
+    public boolean canTintNavbar() {
+        return getPrefs().getBoolean(TINT_NAVBAR, true);
     }
 
     public int getRotateTime() {

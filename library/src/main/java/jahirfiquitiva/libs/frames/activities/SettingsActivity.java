@@ -17,32 +17,29 @@
 package jahirfiquitiva.libs.frames.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
-
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.activities.base.ThemedActivity;
-import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
-import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
+import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
+import jahirfiquitiva.libs.frames.fragments.SettingsFragment;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
-import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
-import jahirfiquitiva.libs.frames.utils.Preferences;
+import jahirfiquitiva.libs.frames.utils.PermissionsUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 
-public class FavoritesActivity extends ThemedActivity {
+public class SettingsActivity extends ThemedActivity {
 
-    private CollectionFragment favsFragment;
+    private SettingsFragment settings;
+    private boolean hasCleanedFavs = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        FavoritesUtils.init(this);
 
         setContentView(R.layout.activity_simple);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -56,17 +53,15 @@ public class FavoritesActivity extends ThemedActivity {
                         R.color.light_theme_primary)))));
         ToolbarColorizer.tintStatusBar(this);
 
-        favsFragment = CollectionFragment.newInstance(FavoritesUtils.getFavorites(this), true,
-                false);
+        settings = new SettingsFragment();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, favsFragment, "favs")
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, settings, "settings")
                 .commit();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FavoritesUtils.destroy(this);
     }
 
     @Override
@@ -84,21 +79,34 @@ public class FavoritesActivity extends ThemedActivity {
         finishAndSendData();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] results) {
+        super.onRequestPermissionsResult(requestCode, permissions, results);
+        if (requestCode == PermissionsUtils.PERMISSION_REQUEST_CODE) {
+            if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
+                if (settings != null)
+                    settings.showFolderChooserDialog();
+            } else if (PermissionsUtils.getListener() != null) {
+                PermissionsUtils.getListener().onPermissionGranted();
+            } else {
+                FramesDialogs.showPermissionNotGrantedDialog(this);
+            }
+        } else {
+            FramesDialogs.showPermissionNotGrantedDialog(this);
+        }
+    }
+
+    public void setHasCleanedFavs(boolean hasCleanedThem) {
+        this.hasCleanedFavs = hasCleanedThem;
+    }
+
+    @SuppressWarnings("ConstantConditions")
     private void finishAndSendData() {
         Intent intent = new Intent();
-        StringBuilder s = new StringBuilder("");
-        if (favsFragment != null) {
-            ArrayList<String> list = ((WallpapersAdapter) favsFragment.getRVAdapter())
-                    .getModifiedWallpapers();
-            for (int i = 0; i < list.size(); i++) {
-                s.append(list.get(i));
-                if (list.size() > 1 && i < (list.size() - 1)) {
-                    s.append(",");
-                }
-            }
-        }
-        intent.putExtra("modified", s.toString());
-        setResult(14, intent);
+        if (hasCleanedFavs)
+            intent.putExtra("modified", "::clean::");
+        setResult(15, intent);
         finish();
     }
 

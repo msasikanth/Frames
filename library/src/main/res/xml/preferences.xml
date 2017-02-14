@@ -19,7 +19,7 @@
                   android:key="preferences">
 
     <PreferenceCategory
-            android:key="uiPreferences"
+            android:key="ui_preferences"
             android:title="@string/ui_pref_title">
 
         <Preference
@@ -55,48 +55,22 @@
                 -->
 
         <Preference
-                android:key="clearData"
+                android:key="clear_data"
                 android:persistent="true"
                 android:summary="@string/cache_pref_summary"
                 android:title="@string/cache_pref_title"/>
 
         <Preference
-                android:key="clearDatabase"
+                android:key="clear_database"
                 android:persistent="true"
                 android:summary="@string/database_pref_summary"
                 android:title="@string/database_pref_title"/>
 
         <Preference
-                android:key="wallsSaveLocation"
+                android:key="wallpapers_save_location"
                 android:persistent="true"
                 android:summary="@string/wsl_pref_summary"
                 android:title="@string/wsl_pref_title"/>
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-            android:key="app_info"
-            android:title="@string/app_info_pref_title">
-
-        <Preference
-                android:key="donate"
-                android:persistent="true"
-                android:icon="@drawable/ic_donate"
-                android:title="@string/donate_pref_title"/>
-
-        <Preference
-                android:key="licenses"
-                android:persistent="true"
-                android:icon="@drawable/ic_licenses"
-                android:summary="@string/licenses_pref_summary"
-                android:title="@string/licenses_pref_title"/>
-
-        <Preference
-                android:key="rate"
-                android:persistent="true"
-                android:icon="@drawable/ic_rate"
-                android:summary="@string/rate_pref_summary"
-                android:title="@string/rate_pref_title"/>
 
     </PreferenceCategory>
 

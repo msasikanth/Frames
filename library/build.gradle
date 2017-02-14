@@ -92,6 +92,8 @@ dependencies {
     compile 'com.afollestad:inquiry:5.0.0'
     // Donations Lib
     compile 'org.sufficientlysecure:donations:2.5'
+    // Licenses Dialog
+    compile 'de.psdev.licensesdialog:licensesdialog:1.8.1'
 }
 
 // build a jar with source files

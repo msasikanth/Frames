@@ -19,9 +19,7 @@ package jahirfiquitiva.libs.frames.utils;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -38,6 +36,7 @@ public class ThemeUtils {
     private final static int AUTO = 2;
 
     private static boolean darkTheme;
+    private static boolean coloredNavbar;
 
     public static int darkOrLight(@ColorRes int dark, @ColorRes int light) {
         return darkTheme ? dark : light;
@@ -52,10 +51,13 @@ public class ThemeUtils {
         return darkTheme;
     }
 
+    public static boolean hasColoredNavbar() {
+        return coloredNavbar;
+    }
+
     public static void onActivityCreateSetTheme(Activity activity) {
-        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
-        int mTheme = sp.getInt("theme", (activity.getResources().getInteger(R.integer.app_theme)
-                - 1));
+        Preferences mPrefs = new Preferences(activity);
+        int mTheme = mPrefs.getCurrentTheme() - 1;
         switch (mTheme) {
             default:
             case LIGHT:
@@ -69,7 +71,7 @@ public class ThemeUtils {
             case AUTO:
                 Calendar c = Calendar.getInstance();
                 int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
-                if (timeOfDay >= 7 && timeOfDay < 20) {
+                if (timeOfDay >= 7 && timeOfDay < 19) {
                     activity.setTheme(R.style.AppTheme_Light);
                     darkTheme = false;
                 } else {
@@ -78,14 +80,16 @@ public class ThemeUtils {
                 }
                 break;
         }
-        onActivityCreateSetNavBar(activity);
+        onActivityCreateSetNavBar(activity, mPrefs.canTintNavbar());
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private static void onActivityCreateSetNavBar(Activity activity) {
-        activity.getWindow().setNavigationBarColor(darkTheme ?
+    private static void onActivityCreateSetNavBar(Activity activity, boolean colorEnabled) {
+        coloredNavbar = colorEnabled;
+        activity.getWindow().setNavigationBarColor(colorEnabled ? darkTheme ?
                 ContextCompat.getColor(activity, R.color.dark_theme_navigation_bar) :
-                ContextCompat.getColor(activity, R.color.light_theme_navigation_bar));
+                ContextCompat.getColor(activity, R.color.light_theme_navigation_bar) :
+                ContextCompat.getColor(activity, android.R.color.black));
     }
 
     public static void restartActivity(Activity activity) {

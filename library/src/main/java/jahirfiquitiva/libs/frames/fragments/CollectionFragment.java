@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,6 +59,8 @@ public class CollectionFragment extends Fragment {
     private String collectionName;
     private ArrayList<Wallpaper> wallpapers;
     private ArrayList<Collection> collections;
+    private RecyclerView.ItemDecoration decoration;
+    private int lastColumns = -1;
 
     public static CollectionFragment newInstance(boolean isCollections, String collectionName) {
         CollectionFragment fragment = new CollectionFragment();
@@ -212,19 +215,28 @@ public class CollectionFragment extends Fragment {
         });
     }
 
-    private void setupRecyclerView() {
+    public void setupRecyclerView() {
         Preferences mPrefs = new Preferences(getActivity());
+        if (lastColumns == mPrefs.getWallsColumnsNumber()) return;
         int columnsNumber = mPrefs.getWallsColumnsNumber();
+        lastColumns = columnsNumber;
         if ((isCollections) || (isSearch && collections != null)) columnsNumber /= 2;
         if (getActivity().getResources().getConfiguration().orientation == 2) {
-            columnsNumber *= 1.5f;
+            columnsNumber *= isCollections ? 2 : 1.5f;
         }
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnsNumber));
-        mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(columnsNumber,
+        if (mRecyclerView == null) return;
+        if (decoration != null)
+            mRecyclerView.removeItemDecoration(decoration);
+        decoration = new GridSpacingItemDecoration(columnsNumber,
                 ((isCollections) || (isSearch && collections != null)) ? 0 : getActivity()
-                        .getResources().getDimensionPixelSize(R.dimen
-                                .cards_margin), true));
+                        .getResources().getDimensionPixelSize(R.dimen.cards_margin), true);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnsNumber));
+        mRecyclerView.addItemDecoration(decoration);
         mRecyclerView.setHasFixedSize(true);
+    }
+
+    public int getLastColumns() {
+        return lastColumns;
     }
 
     public void refreshContent() {

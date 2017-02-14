@@ -35,7 +35,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +76,7 @@ import jahirfiquitiva.libs.frames.utils.Utils;
 import jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout;
 
 @SuppressLint("Registered")
-public class BaseWallpaperViewerActivity extends AppCompatActivity {
+public class BaseWallpaperViewerActivity extends ThemedActivity {
 
     private static final int NAV_BAR_VISIBILITY_CHANGE_DELAY = 2000;
     private boolean isFullScreen = false;
@@ -85,7 +84,6 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
     private MaterialDialog dialogApply;
     private MaterialDialog downloadDialog;
     private Wallpaper item;
-    private Preferences mPrefs;
     private ViewGroup layout;
     private File downloadsFolder;
     private WallpaperDialogsCallback callback;
@@ -100,7 +98,6 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.onActivityCreateSetTheme(this);
         ToolbarColorizer.clearLightStatusBar(this);
         if (isFullScreen) {
             setupFullScreen();
@@ -114,7 +111,6 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
         FavoritesUtils.init(this);
-        mPrefs = new Preferences(this);
         Intent intent = getIntent();
         transitionName = intent.getStringExtra("transitionName");
         item = intent.getParcelableExtra("item");
@@ -212,10 +208,6 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
 
     protected Wallpaper getItem() {
         return item;
-    }
-
-    protected Preferences getPrefs() {
-        return mPrefs;
     }
 
     protected void closeViewer() {
@@ -383,6 +375,7 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Preferences mPrefs = new Preferences(context);
                 if (mPrefs.getDownloadsFolder() != null) {
                     downloadsFolder = new File(mPrefs.getDownloadsFolder());
                 } else {

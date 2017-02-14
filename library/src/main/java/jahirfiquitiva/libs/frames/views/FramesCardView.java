@@ -23,21 +23,21 @@ import android.util.AttributeSet;
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 
-public class IconShowcaseCardView extends CardView {
+public class FramesCardView extends CardView {
 
     private Context context;
 
-    public IconShowcaseCardView(Context context) {
+    public FramesCardView(Context context) {
         super(context);
         setupRightCardColor(context);
     }
 
-    public IconShowcaseCardView(Context context, AttributeSet attrs) {
+    public FramesCardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupRightCardColor(context);
     }
 
-    public IconShowcaseCardView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FramesCardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setupRightCardColor(context);
     }

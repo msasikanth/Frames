@@ -22,6 +22,7 @@ import android.util.AttributeSet;
 import android.widget.Checkable;
 
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
+import jahirfiquitiva.libs.frames.models.Wallpaper;
 
 /**
  * A {@link Checkable} {@link FloatingActionButton} which can be offset vertically.
@@ -34,6 +35,8 @@ public class CheckableFloatingActionButton extends FloatingActionButton implemen
     private int minOffset;
 
     private OnWallpaperFavedListener listener;
+
+    private Wallpaper item;
 
     public CheckableFloatingActionButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -54,24 +57,30 @@ public class CheckableFloatingActionButton extends FloatingActionButton implemen
         return isChecked;
     }
 
-    public void setChecked(boolean isChecked) {
+    public void setChecked(boolean isChecked, boolean withCallback) {
         if (this.isChecked != isChecked) {
             this.isChecked = isChecked;
-            if (isChecked())
-                listener.onFaved();
-            else
-                listener.onUnfaved();
+            if (withCallback && listener != null && item != null) {
+                if (isChecked())
+                    listener.onFaved(item);
+                else
+                    listener.onUnfaved(item);
+            }
             refreshDrawableState();
         }
     }
 
+    public void setChecked(boolean isChecked) {
+        setChecked(isChecked, false);
+    }
+
     public void toggle() {
         setChecked(!isChecked);
-        if (listener != null) {
+        if (listener != null && item != null) {
             if (isChecked())
-                listener.onFaved();
+                listener.onFaved(item);
             else
-                listener.onUnfaved();
+                listener.onUnfaved(item);
         }
     }
 
@@ -87,4 +96,9 @@ public class CheckableFloatingActionButton extends FloatingActionButton implemen
     public void setOnWallpaperFavedListener(OnWallpaperFavedListener listener) {
         this.listener = listener;
     }
+
+    public void setWallpaperItem(Wallpaper item) {
+        this.item = item;
+    }
+
 }

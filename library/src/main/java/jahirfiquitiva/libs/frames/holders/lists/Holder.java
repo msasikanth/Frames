@@ -32,7 +32,7 @@ public class Holder {
     public class CollectionsList extends ListHolderFrame<Collection> {
 
         public int getIndexForCollectionWithName(String name) {
-            if ((getList() == null) || getList().isEmpty()) return -1;
+            if ((getList() == null) || getList().isEmpty() || name == null) return -1;
             for (int i = 0; i < getList().size(); i++) {
                 if (getList().get(i).getName().toLowerCase().equals(name.toLowerCase())) {
                     return i;

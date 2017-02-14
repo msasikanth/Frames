@@ -35,5 +35,9 @@
     <color name="light_divider">#1f000000</color>
     <color name="dark_divider">#1fffffff</color>
     <string name="sherry_link">https://plus.google.com/+SherrySabatine</string>
-    <string name="clear_cache_dialog_title">@string/pref_title_cache</string>
+    <string name="clear_cache_dialog_title">@string/cache_pref_title</string>
+    <bool name="isTablet">false</bool>
+    <integer name="heart_anim_partial_duration">50</integer>
+    <integer name="wallpapers_grid_width">2</integer>
+    <integer name="toolbar_elevation">4</integer>
 </resources>

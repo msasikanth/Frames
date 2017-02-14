@@ -25,67 +25,54 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.adapters.PagerAdapter;
+import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
+import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
 import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
-import jahirfiquitiva.libs.frames.utils.ToolbarTinter;
+import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 
 public class StudioActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private ViewPager pager;
     private TabLayout tabs;
+    private ViewPager pager;
     private PagerAdapter pagerAdapter;
+    private boolean hasFeaturedWallpapers = false;
     private int lastSelected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        new DownloadJSON(this).execute();
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ThemeUtils.onActivityCreateSetTheme(this);
         super.onCreate(savedInstanceState);
 
-        new DownloadJSON(this).execute();
         FavoritesUtils.init(this);
 
         setContentView(R.layout.activity_studio);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        ToolbarColorizer.colorizeToolbar(toolbar, ColorUtils.getMaterialPrimaryTextColor(!
+                (ColorUtils.isLightColor(ThemeUtils.darkOrLight(this, R.color.dark_theme_primary,
+                        R.color.light_theme_primary)))));
+        ToolbarColorizer.tintStatusBar(this);
 
         tabs = (TabLayout) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.pager);
 
-        tabs.removeAllTabs();
-
-        tabs.addTab(tabs.newTab().setText(R.string.featured));
-        tabs.addTab(tabs.newTab().setText(R.string.collections));
-
-        tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(pager));
-        pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs) {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                lastSelected = position;
-                invalidateOptionsMenu();
-            }
-        });
-        pager.setOffscreenPageLimit(2);
-        setupPagerAdapter();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        /*
-        if (toolbar != null)
-            ToolbarColorizer.colorizeToolbar(toolbar, ColorUtils.getMaterialPrimaryTextColor
-                    (ColorUtils.isLightColor(ThemeUtils.darkOrLight(this, R.color
-                            .light_theme_primary, R.color.dark_theme_primary))));
-                            */
+        setupTabsAndPager();
     }
 
     @Override
@@ -97,13 +84,11 @@ public class StudioActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        ToolbarTinter.on(menu, toolbar)
-                .setIconsColor(ColorUtils.getMaterialSecondaryTextColor(!(ColorUtils.isLightColor
-                        (ThemeUtils.darkOrLight(this, R.color.dark_theme_primary, R.color
-                                .light_theme_primary)))))
-                .forceIcons()
-                .reapplyOnChange(true)
-                .apply(this);
+        if (getResources().getBoolean(R.bool.show_popup_icons))
+            ToolbarColorizer.makeMenuIconsVisible(menu);
+        ToolbarColorizer.tintMenu(menu, ColorUtils.getMaterialPrimaryTextColor(!(ColorUtils
+                .isLightColor(ThemeUtils.darkOrLight(this, R.color.dark_theme_primary, R.color
+                        .light_theme_primary)))));
         return true;
     }
 
@@ -111,8 +96,12 @@ public class StudioActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         int i = item.getItemId();
-        if (i == R.id.favs) {
-            startActivityForResult(new Intent(this, FavoritesActivity.class), 11);
+        if (i == R.id.search) {
+            startActivityForResult(new Intent(this, SearchActivity.class), 13);
+        } else if (i == R.id.favs) {
+            startActivityForResult(new Intent(this, FavoritesActivity.class), 14);
+        } else if (i == R.id.refresh) {
+            new DownloadJSON(this).execute();
         }
         return true;
     }
@@ -120,19 +109,27 @@ public class StudioActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int request, int result, Intent data) {
         super.onActivityResult(request, result, data);
-        if (request == 11) {
-            if (data != null) {
-                if (data.getBooleanExtra("hasModified", false)) {
+        if (data != null) {
+            String modifiedItems = data.getStringExtra("modified");
+            if (modifiedItems != null) {
+                if (modifiedItems.length() > 0) {
                     if (lastSelected == 0 && pager != null) {
                         if (pager.getAdapter() != null && pager.getAdapter().getCount() > 0) {
                             try {
                                 if (((PagerAdapter) pager.getAdapter()).getFragmentAtPosition(0)
                                         != null) {
-                                    if (((CollectionFragment) ((PagerAdapter) pager.getAdapter())
+                                    if (((CollectionFragment) ((PagerAdapter) pager
+                                            .getAdapter())
                                             .getFragmentAtPosition(0)).getRVAdapter() != null)
-                                        ((CollectionFragment) ((PagerAdapter) pager.getAdapter())
-                                                .getFragmentAtPosition(0)).getRVAdapter()
-                                                .notifyDataSetChanged();
+                                        if (((CollectionFragment) ((PagerAdapter) pager
+                                                .getAdapter()).getFragmentAtPosition(0))
+                                                .getRVAdapter()
+                                                instanceof WallpapersAdapter) {
+                                            ((WallpapersAdapter) ((CollectionFragment) (
+                                                    (PagerAdapter) pager.getAdapter())
+                                                    .getFragmentAtPosition(0)).getRVAdapter())
+                                                    .updateItems(modifiedItems);
+                                        }
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -154,8 +151,41 @@ public class StudioActivity extends AppCompatActivity {
         }
     }
 
-    public void setupPagerAdapter() {
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+    public void hideTabs() {
+        if (tabs != null)
+            tabs.setVisibility(View.GONE);
+        if (pager != null)
+            pager.setVisibility(View.GONE);
+    }
+
+    public void setupTabsAndPager() {
+        if (tabs == null) return;
+        tabs.removeAllTabs();
+        int index = FullListHolder.get().getCollections().getIndexForCollectionWithName("featured");
+        if (index >= 0 && FullListHolder.get().getCollections().getList().get(index)
+                .getWallpapers().size() > 0) {
+            hasFeaturedWallpapers = true;
+            tabs.addTab(tabs.newTab().setText(R.string.featured));
+            tabs.addTab(tabs.newTab().setText(R.string.collections));
+            tabs.setVisibility(View.VISIBLE);
+        }
+        if (pager == null) return;
+        pager.setVisibility(View.VISIBLE);
+        tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(pager));
+        pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs) {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                lastSelected = position;
+                invalidateOptionsMenu();
+            }
+        });
+        pager.setOffscreenPageLimit(hasFeaturedWallpapers ? 2 : 1);
+        setupPagerAdapter();
+    }
+
+    private void setupPagerAdapter() {
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), hasFeaturedWallpapers);
         if (pager != null) {
             pager.setAdapter(pagerAdapter);
             pager.setCurrentItem(lastSelected, true);

@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import jahirfiquitiva.libs.frames.R;
+
 
 @SuppressWarnings("SameParameterValue")
 public class ColorUtils {
@@ -98,7 +100,7 @@ public class ColorUtils {
     }
 
     public static boolean isLightColor(@ColorInt int color) {
-        return getColorDarkness(color) < 0.475;
+        return getColorDarkness(color) < 0.422;
     }
 
     private static double getColorDarkness(@ColorInt int color) {
@@ -148,11 +150,8 @@ public class ColorUtils {
     }
 
     public static int getAccentColor(Context context) {
-        return -1;
-        /*
         return ThemeUtils.darkOrLight(context, R.color.dark_theme_accent, R.color
                 .light_theme_accent);
-                */
     }
 
     public static int getMaterialPrimaryTextColor(boolean dark) {

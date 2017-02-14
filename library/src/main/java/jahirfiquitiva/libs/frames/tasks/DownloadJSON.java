@@ -40,14 +40,22 @@ public class DownloadJSON extends AsyncTask<Void, Void, Boolean> {
 
     private final ArrayList<Collection> collections = new ArrayList<>();
     private final WeakReference<Context> wrContext;
+    private boolean onlyCategories;
 
     public DownloadJSON(Context context) {
         wrContext = new WeakReference<>(context);
+        this.onlyCategories = false;
+    }
+
+    public DownloadJSON(Context context, boolean onlyCategories) {
+        this(context);
+        this.onlyCategories = onlyCategories;
     }
 
     @Override
     protected void onPreExecute() {
         if (wrContext.get() instanceof StudioActivity) {
+            ((StudioActivity) wrContext.get()).hideTabs();
             if (((StudioActivity) wrContext.get()).getPagerAdapter() != null) {
                 if (((StudioActivity) wrContext.get()).getPagerAdapter().getFragmentAtPosition((
                         (StudioActivity) wrContext.get()).getCurrentFragmentPosition()) != null) {
@@ -80,49 +88,54 @@ public class DownloadJSON extends AsyncTask<Void, Void, Boolean> {
                     collections.add(new Collection(name, preview, previewThumbnail));
                 }
 
-                JSONArray jsonWallpapers = json.getJSONArray("Wallpapers");
-                ArrayList<Wallpaper> wallpapers = new ArrayList<>();
-                for (int j = 0; j < jsonWallpapers.length(); j++) {
-                    JSONObject nWallpaper = jsonWallpapers.getJSONObject(j);
-                    String copyright = "";
-                    try {
-                        copyright = nWallpaper.getString("copyright");
-                    } catch (Exception ignored) {
-                        //
+                if (!onlyCategories) {
+                    JSONArray jsonWallpapers = json.getJSONArray("Wallpapers");
+                    ArrayList<Wallpaper> wallpapers = new ArrayList<>();
+                    for (int j = 0; j < jsonWallpapers.length(); j++) {
+                        JSONObject nWallpaper = jsonWallpapers.getJSONObject(j);
+                        String copyright = "";
+                        try {
+                            copyright = nWallpaper.getString("copyright");
+                        } catch (Exception ignored) {
+                            //
+                        }
+                        String dimensions = "";
+                        try {
+                            dimensions = nWallpaper.getString("dimensions");
+                        } catch (Exception ignored) {
+                            //
+                        }
+                        String thumbnail = null;
+                        try {
+                            thumbnail = nWallpaper.getString("thumbnail");
+                        } catch (Exception ignored) {
+                            //
+                        }
+                        boolean downloadable = true;
+                        try {
+                            downloadable = nWallpaper.getString("downloadable").equals("true");
+                        } catch (Exception ignored) {
+                            //
+                        }
+                        wallpapers.add(new Wallpaper(nWallpaper.getString("name"), nWallpaper
+                                .getString("author"), copyright, dimensions, nWallpaper.getString
+                                ("url"), thumbnail, nWallpaper.getString("collections"),
+                                downloadable));
                     }
-                    String dimensions = "";
-                    try {
-                        dimensions = nWallpaper.getString("dimensions");
-                    } catch (Exception ignored) {
-                        //
-                    }
-                    String thumbnail = null;
-                    try {
-                        thumbnail = nWallpaper.getString("thumbnail");
-                    } catch (Exception ignored) {
-                        //
-                    }
-                    boolean downloadable = true;
-                    try {
-                        downloadable = nWallpaper.getString("downloadable").equals("true");
-                    } catch (Exception ignored) {
-                        //
-                    }
-                    wallpapers.add(new Wallpaper(nWallpaper.getString("name"), nWallpaper
-                            .getString("author"), copyright, dimensions, nWallpaper.getString
-                            ("url"), thumbnail, nWallpaper.getString("collections"), downloadable));
-                }
 
-                for (Wallpaper wallpaper : wallpapers) {
-                    String[] collects = wallpaper.getCollections().split(",");
-                    for (String collect : collects) {
-                        for (Collection collection : collections) {
-                            if (collection.getName().toLowerCase().equals(collect.toLowerCase())) {
-                                collection.addWallpaper(wallpaper);
+                    for (Wallpaper wallpaper : wallpapers) {
+                        String[] collects = wallpaper.getCollections().split(",");
+                        for (String collect : collects) {
+                            for (Collection collection : collections) {
+                                if (collection.getName().toLowerCase().equals(collect.toLowerCase
+                                        ())) {
+                                    collection.addWallpaper(wallpaper);
+                                }
                             }
                         }
                     }
                 }
+
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -136,7 +149,7 @@ public class DownloadJSON extends AsyncTask<Void, Void, Boolean> {
         if (worked) {
             FullListHolder.get().getCollections().createList(collections);
             if (wrContext.get() instanceof StudioActivity) {
-                ((StudioActivity) wrContext.get()).setupPagerAdapter();
+                ((StudioActivity) wrContext.get()).setupTabsAndPager();
                 if (((StudioActivity) wrContext.get()).getPagerAdapter() != null) {
                     if (((StudioActivity) wrContext.get()).getPagerAdapter()
                             .getFragmentAtPosition(((StudioActivity) wrContext.get())

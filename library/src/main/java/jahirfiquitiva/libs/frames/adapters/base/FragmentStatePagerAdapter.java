@@ -100,6 +100,10 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
         mCurTransaction.remove(fragment);
     }
 
+    public ArrayList<Fragment> getFragments() {
+        return mFragments;
+    }
+
     public Fragment getFragmentAtPosition(int position) {
         return mFragments.get(position);
     }

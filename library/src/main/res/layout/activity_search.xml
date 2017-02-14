@@ -16,10 +16,10 @@
   -->
 
 <jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout
-        android:id="@+id/main"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -35,15 +35,38 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:title="@string/app_name"
                 android:theme="?toolbarMainTheme"
                 android:popupTheme="?toolbarMainPopupTheme"
-                app:layout_scrollFlags="enterAlways"/>
+                app:layout_scrollFlags="scroll|snap|enterAlways">
+
+            <EditText
+                    android:id="@+id/searchField"
+                    android:background="@android:color/transparent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:imeOptions="actionSearch"/>
+
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:visibility="gone"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="?tabsIndicatorColor"
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="?tabsSelectedTextColor"
+                app:tabTextColor="?tabsNormalTextColor"
+                tools:ignore="NewApi,RtlSymmetry,UnusedAttribute"/>
 
     </jahirfiquitiva.libs.frames.views.FixedElevationAppBarLayout>
 
-    <RelativeLayout
-            android:id="@+id/content"
+    <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>

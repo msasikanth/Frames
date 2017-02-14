@@ -42,6 +42,14 @@ public class IconUtils {
                 .drawable_tint_light));
     }
 
+    public static Drawable getTintedDrawable(@NonNull Context context, String name, @ColorInt int
+            color) {
+        boolean isLightColor = ColorUtils.isLightColor(color);
+        return getTintedIcon(context, getIconResId(context.getResources(), context.getPackageName
+                (), name), ContextCompat.getColor(context, isLightColor ? R.color
+                .drawable_tint_light : R.color.drawable_tint_light));
+    }
+
     public static Drawable getTintedIcon(@NonNull Context context, @DrawableRes int drawable,
                                          @ColorInt int color) {
         try {

@@ -19,34 +19,53 @@ package jahirfiquitiva.libs.frames.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import java.util.ArrayList;
+
 import jahirfiquitiva.libs.frames.adapters.base.FragmentStatePagerAdapter;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
+import jahirfiquitiva.libs.frames.models.Collection;
+import jahirfiquitiva.libs.frames.models.Wallpaper;
 
-
-/**
- * @author Jahir Fiquitiva
- */
 public class PagerAdapter extends FragmentStatePagerAdapter {
 
-    public PagerAdapter(FragmentManager fm) {
+    private boolean hasFeaturedWallpapers = false;
+    private boolean isSearch = false;
+
+    public PagerAdapter(FragmentManager fm, boolean hasFeaturedWallpapers) {
         super(fm);
+        this.hasFeaturedWallpapers = hasFeaturedWallpapers;
+    }
+
+    public PagerAdapter(FragmentManager fm, boolean hasFeaturedWallpapers, boolean isSearch) {
+        super(fm);
+        this.hasFeaturedWallpapers = hasFeaturedWallpapers;
+        this.isSearch = isSearch;
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return CollectionFragment.newInstance(false, "featured");
-            case 1:
-                return CollectionFragment.newInstance(true, null);
-            default:
-                return null;
+        if (isSearch) {
+            switch (position) {
+                case 1:
+                    return CollectionFragment.newInstance(new ArrayList<Collection>(), true);
+                default:
+                    return CollectionFragment.newInstance(new ArrayList<Wallpaper>(), false,
+                            true);
+            }
+        } else {
+            if (!hasFeaturedWallpapers) return CollectionFragment.newInstance(true, null);
+            switch (position) {
+                case 0:
+                    return CollectionFragment.newInstance(false, "featured");
+                default:
+                    return CollectionFragment.newInstance(true, null);
+            }
         }
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return isSearch ? 2 : hasFeaturedWallpapers ? 2 : 1;
     }
 
     @Override

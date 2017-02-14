@@ -16,10 +16,12 @@
 
 package jahirfiquitiva.libs.frames.callbacks;
 
-import jahirfiquitiva.libs.frames.models.Wallpaper;
+public abstract class WallpaperDialogsCallback {
+    public void onSaveAction() {
 
-public interface OnWallpaperFavedListener {
-    void onFaved(Wallpaper item);
+    }
 
-    void onUnfaved(Wallpaper item);
+    public abstract void onDialogShown();
+
+    public abstract void onDialogDismissed();
 }

@@ -20,19 +20,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.view.MenuItem;
+
+import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
+import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
-import jahirfiquitiva.libs.frames.utils.ToolbarTinter;
+import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 
 public class FavoritesActivity extends AppCompatActivity {
 
     private CollectionFragment favsFragment;
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,29 +44,22 @@ public class FavoritesActivity extends AppCompatActivity {
         FavoritesUtils.init(this);
 
         setContentView(R.layout.activity_favorites);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        favsFragment = CollectionFragment.newInstance(true);
+        ToolbarColorizer.colorizeToolbar(toolbar, ColorUtils.getMaterialPrimaryTextColor(!
+                (ColorUtils.isLightColor(ThemeUtils.darkOrLight(this, R.color.dark_theme_primary,
+                        R.color.light_theme_primary)))));
+        ToolbarColorizer.tintStatusBar(this);
+
+        favsFragment = CollectionFragment.newInstance(FavoritesUtils.getFavorites(this), true,
+                false);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.content, favsFragment, "favs")
                 .commit();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        ToolbarTinter.on(menu, toolbar)
-                .setIconsColor(ColorUtils.getMaterialPrimaryTextColor(!(ColorUtils.isLightColor
-                        (ThemeUtils.darkOrLight(this, R.color.dark_theme_primary, R.color
-                                .light_theme_primary)))))
-                .forceIcons()
-                .reapplyOnChange(true)
-                .apply(this);
-        return true;
     }
 
     @Override
@@ -74,14 +69,35 @@ public class FavoritesActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finishAndSendData();
+                break;
+        }
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         finishAndSendData();
     }
 
     private void finishAndSendData() {
         Intent intent = new Intent();
-        intent.putExtra("hasModified", favsFragment != null && favsFragment.hasModifiedFavs());
-        setResult(11, intent);
+        StringBuilder s = new StringBuilder("");
+        if (favsFragment != null) {
+            ArrayList<String> list = ((WallpapersAdapter) favsFragment.getRVAdapter())
+                    .getModifiedWallpapers();
+            for (int i = 0; i < list.size(); i++) {
+                s.append(list.get(i));
+                if (list.size() > 1 && i < (list.size() - 1)) {
+                    s.append(",");
+                }
+            }
+        }
+        intent.putExtra("modified", s.toString());
+        setResult(14, intent);
         finish();
     }
 

@@ -1,0 +1,95 @@
+<!--
+  ~ Copyright (c) 2017. Jahir Fiquitiva
+  ~
+  ~ Licensed under the CreativeCommons Attribution-ShareAlike
+  ~ 4.0 International License. You may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~    http://creativecommons.org/licenses/by-sa/4.0/legalcode
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/mainCoordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+    <jahirfiquitiva.libs.frames.views.FixedElevationAppBarLayout
+            android:id="@+id/appBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsingToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:fitsSystemWindows="true"
+                app:contentScrim="?attr/colorPrimary"
+                app:expandedTitleMarginBottom="32dp"
+                app:expandedTitleMarginEnd="64dp"
+                app:expandedTitleMarginStart="24dp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:titleEnabled="true">
+
+            <jahirfiquitiva.libs.frames.views.RectangularImageView
+                    android:id="@+id/toolbarHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop"
+                    app:layout_collapseMode="parallax"
+                    app:heightDivider="2"
+                    tools:ignore="ContentDescription"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    app:layout_collapseMode="parallax">
+
+                <ImageView
+                        android:id="@+id/toolbarGradient"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/toolbar_gradient"
+                        android:fitsSystemWindows="true"
+                        app:layout_collapseMode="parallax"
+                        tools:ignore="ContentDescription"/>
+
+            </LinearLayout>
+
+            <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:transitionName="actionBar"
+                    app:contentInsetStart="@dimen/second_keyline"
+                    app:layout_collapseMode="pin"
+                    android:theme="?toolbarMainTheme"
+                    android:popupTheme="?toolbarMainPopupTheme"
+                    tools:ignore="UnusedAttribute"/>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </jahirfiquitiva.libs.frames.views.FixedElevationAppBarLayout>
+
+    <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+</jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout>

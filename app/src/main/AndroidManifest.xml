@@ -28,22 +28,23 @@
 
         <activity
                 android:name=".MainActivity"
-                android:noHistory="true"
-                android:theme="@style/ColdStart">
-
+                android:theme="@style/ColdStart"
+                android:excludeFromRecents="true"
+                android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SET_WALLPAPER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
 
-            <!--
             <meta-data
                     android:name="android.app.shortcuts"
                     android:resource="@xml/shortcuts"/>
-            -->
-
         </activity>
 
         <meta-data

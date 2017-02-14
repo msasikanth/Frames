@@ -24,42 +24,57 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
+import jahirfiquitiva.libs.frames.callbacks.WallpaperDialogsCallback;
 import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
-import jahirfiquitiva.libs.frames.tasks.ApplyWallpaper;
 import jahirfiquitiva.libs.frames.tasks.WallpaperToCrop;
+import jahirfiquitiva.libs.frames.utils.ApplyWallpaperUtils;
+import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.PermissionsUtils;
 import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
+import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 import jahirfiquitiva.libs.frames.utils.Utils;
+import jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout;
 
 @SuppressLint("Registered")
 public class BaseWallpaperViewerActivity extends AppCompatActivity {
@@ -81,16 +96,21 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
     private boolean shouldShowNavBar = false;
     private boolean hasModifiedFavs = false;
 
+    private int progressState = View.VISIBLE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.onActivityCreateSetTheme(this);
+        ToolbarColorizer.clearLightStatusBar(this);
         if (isFullScreen) {
             setupFullScreen();
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color
+                        .transparent));
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             }
-            makeStatusBarIconsWhite();
         }
         super.onCreate(savedInstanceState);
         FavoritesUtils.init(this);
@@ -103,10 +123,6 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isFullScreen)
-            makeStatusBarIconsWhite();
-        ProgressBar spinner = (ProgressBar) findViewById(R.id.progress);
-        if (spinner != null) spinner.setVisibility(View.GONE);
     }
 
     @Override
@@ -185,6 +201,9 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
 
     protected void setLayout(ViewGroup layout) {
         this.layout = layout;
+        if (this.layout instanceof CustomCoordinatorLayout) {
+            ((CustomCoordinatorLayout) this.layout).setScrollAllowed(false);
+        }
     }
 
     protected String getTransitionName() {
@@ -201,8 +220,9 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
 
     protected void closeViewer() {
         Intent intent = new Intent();
-        intent.putExtra("hasModified", hasModifiedFavs());
-        setResult(11, intent);
+        if (hasModifiedFavs)
+            intent.putExtra("modified", getItem().getName());
+        setResult(12, intent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             supportFinishAfterTransition();
         } else {
@@ -211,7 +231,6 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
     }
 
     protected void setupFullScreen() {
-        makeStatusBarIconsWhite();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         View decorView = getWindow().getDecorView();
@@ -222,14 +241,6 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(decorView.getSystemUiVisibility()
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
-    }
-
-    private void makeStatusBarIconsWhite() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int flags = getWindow().getDecorView().getSystemUiVisibility();
-            flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            getWindow().getDecorView().setSystemUiVisibility(flags);
         }
     }
 
@@ -280,14 +291,14 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
         } else hideNavBar();
     }
 
-    private void doFav() {
+    private void doFav(Wallpaper item) {
         hasModifiedFavs = true;
-        FavoritesUtils.favorite(this, getItem());
+        FavoritesUtils.favorite(this, item);
     }
 
-    private void doUnfav() {
+    private void doUnfav(Wallpaper item) {
         hasModifiedFavs = true;
-        FavoritesUtils.unfavorite(this, getItem().getName());
+        FavoritesUtils.unfavorite(this, item.getName());
     }
 
     protected void runWallpaperSave(Context context) {
@@ -456,7 +467,8 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull
                             DialogAction dialogAction) {
-                        onApplyWallpaperClick(context);
+                        ApplyWallpaperUtils.onApplyWallpaperClick(context, dialogApply, callback,
+                                item);
                     }
                 }, new MaterialDialog.SingleButtonCallback() {
                     @Override
@@ -509,180 +521,6 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    private void onApplyWallpaperClick(final Context context) {
-        if (dialogApply != null) {
-            dialogApply.dismiss();
-        }
-
-        if (callback != null) {
-            callback.onDialogShown();
-        }
-
-        final ApplyWallpaper[] applyTask = new ApplyWallpaper[1];
-
-        final boolean[] enteredApplyTask = {false};
-
-        dialogApply = new MaterialDialog.Builder(context)
-                .content(R.string.downloading_wallpaper)
-                .progress(true, 0)
-                .cancelable(false)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull
-                            DialogAction which) {
-                        if (applyTask[0] != null) {
-                            applyTask[0].cancel(true);
-                        }
-                        dialogApply.dismiss();
-
-                        if (callback != null) {
-                            callback.onDialogDismissed();
-                        }
-                    }
-                })
-                .show();
-
-        Glide.with(context)
-                .load(item.getURL())
-                .asBitmap()
-                .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(
-                            final Bitmap resource,
-                            GlideAnimation<? super Bitmap> glideAnimation) {
-                        if (resource != null && dialogApply.isShowing()) {
-                            enteredApplyTask[0] = true;
-
-                            if (dialogApply != null) {
-                                dialogApply.dismiss();
-                            }
-
-                            applyTask[0] = showWallpaperApplyOptionsDialogAndGetTask(context,
-                                    resource);
-
-                            if (applyTask[0] != null)
-                                applyTask[0].execute();
-                        }
-                    }
-                });
-
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUIThread(context, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!enteredApplyTask[0]) {
-                            String newContent = context.getString(R.string
-                                    .downloading_wallpaper)
-                                    + "\n"
-                                    + context.getString(R.string
-                                    .download_takes_longer);
-                            dialogApply.setContent(newContent);
-                            dialogApply.setActionButton(DialogAction.POSITIVE,
-                                    android.R.string.cancel);
-                        }
-                    }
-                });
-            }
-        }, 10000);
-    }
-
-    private ApplyWallpaper showWallpaperApplyOptionsDialogAndGetTask(final Context context,
-                                                                     final Bitmap resource) {
-        final ApplyWallpaper[] applyTask = {null};
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            dialogApply = new MaterialDialog.Builder(context)
-                    .title(R.string.set_wall_to)
-                    .listSelector(android.R.color.transparent)
-                    .items(R.array.wall_options)
-                    .itemsCallback(new MaterialDialog.ListCallback() {
-                        @Override
-                        public void onSelection(MaterialDialog dialog, View itemView, int position,
-                                                CharSequence text) {
-                            dialog.dismiss();
-
-                            if (dialogApply != null) {
-                                dialogApply.dismiss();
-                            }
-
-                            String extra = "";
-
-                            switch (position) {
-                                case 0:
-                                    extra = context.getResources().getString(R.string.home_screen);
-                                    break;
-                                case 1:
-                                    extra = context.getResources().getString(R.string.lock_screen);
-                                    break;
-                                case 2:
-                                    extra = context.getResources().getString(R.string
-                                            .home_lock_screens);
-                                    break;
-                            }
-
-                            dialogApply = new MaterialDialog.Builder(context)
-                                    .content(context.getResources().getString(R.string
-                                            .setting_wall_title, extra.toLowerCase()))
-                                    .progress(true, 0)
-                                    .cancelable(false)
-                                    .show();
-
-                            buildApplyTask(context, resource, position == 0, position
-                                    == 1, position == 2).execute();
-                        }
-                    })
-                    .show();
-        } else {
-            dialogApply = new MaterialDialog.Builder(context)
-                    .content(R.string.setting_wall_title)
-                    .progress(true, 0)
-                    .cancelable(false)
-                    .show();
-
-            return buildApplyTask(context, resource, false, false, true);
-        }
-        return applyTask[0];
-    }
-
-    private ApplyWallpaper buildApplyTask(final Context context, Bitmap resource, boolean
-            setToHomeScreen, boolean setToLockScreen, boolean setToBoth) {
-
-        return new ApplyWallpaper((Activity) context, resource, new ApplyWallpaper.ApplyCallback() {
-            @Override
-            public void afterApplied() {
-                runOnUIThread(context, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dialogApply != null) {
-                            dialogApply.dismiss();
-                        }
-
-                        dialogApply = new MaterialDialog.Builder(context)
-                                .content(R.string.set_as_wall_done)
-                                .positiveText(android.R.string.ok)
-                                .show();
-
-                        dialogApply
-                                .setOnDismissListener
-                                        (new DialogInterface.OnDismissListener() {
-                                            @Override
-                                            public void onDismiss(DialogInterface dialogInterface) {
-                                                if (callback != null) {
-                                                    callback.onDialogDismissed();
-                                                }
-                                            }
-                                        });
-                    }
-                });
-            }
-        }, setToHomeScreen, setToLockScreen, setToBoth);
     }
 
     protected void showNotConnectedSnackBar() {
@@ -790,31 +628,91 @@ public class BaseWallpaperViewerActivity extends AppCompatActivity {
         }, 10000);
     }
 
-    public abstract class WallpaperDialogsCallback {
-        public void onSaveAction() {
-
+    protected void setupWallpaper(ImageView mPhoto) {
+        Bitmap bmp = null;
+        String filename = getIntent().getStringExtra("image");
+        try {
+            if (filename != null) {
+                FileInputStream is = openFileInput(filename);
+                bmp = BitmapFactory.decodeStream(is);
+                is.close();
+            } else {
+                bmp = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        public abstract void onDialogShown();
+        int colorFromCachedPic;
 
-        public abstract void onDialogDismissed();
+        if (bmp != null) {
+            colorFromCachedPic = ColorUtils.getPaletteSwatch(bmp).getTitleTextColor();
+        } else {
+            colorFromCachedPic = ColorUtils.getMaterialPrimaryTextColor(ThemeUtils.isDarkTheme());
+        }
+
+        final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress);
+        spinner.getIndeterminateDrawable()
+                .setColorFilter(colorFromCachedPic, PorterDuff.Mode.SRC_IN);
+
+        spinner.setVisibility(progressState);
+
+        Drawable d;
+        if (bmp != null) {
+            d = new GlideBitmapDrawable(getResources(), bmp);
+        } else {
+            d = new ColorDrawable(ContextCompat.getColor(this, android.R.color.transparent));
+        }
+
+        Glide.with(this)
+                .load(getItem().getURL())
+                .placeholder(d)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .fitCenter()
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable>
+                            target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model,
+                                                   Target<GlideDrawable> target, boolean
+                                                           isFromMemoryCache, boolean
+                                                           isFirstResource) {
+                        progressState = View.GONE;
+                        spinner.setVisibility(progressState);
+                        return false;
+                    }
+                })
+                .into(mPhoto);
     }
 
-    protected boolean hasModifiedFavs() {
-        return hasModifiedFavs;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("progressState", progressState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        progressState = savedInstanceState.getInt("progressState", View.VISIBLE);
     }
 
     protected OnWallpaperFavedListener getOnFavedListener() {
         return new OnWallpaperFavedListener() {
             @Override
-            public void onFaved() {
-                doFav();
+            public void onFaved(Wallpaper item) {
+                doFav(item);
             }
 
             @Override
-            public void onUnfaved() {
-                doUnfav();
+            public void onUnfaved(Wallpaper item) {
+                doUnfav(item);
             }
         };
     }
+
 }

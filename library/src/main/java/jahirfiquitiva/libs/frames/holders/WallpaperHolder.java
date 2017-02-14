@@ -45,6 +45,7 @@ import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
+import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.Utils;
 import jahirfiquitiva.libs.frames.views.CheckableImageView;
 
@@ -61,13 +62,12 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     private Wallpaper item;
     private Collection collection;
     private WallpaperGestureDetector wgd;
-    private OnWallpaperFavedListener onFavedListener;
     private BitmapImageViewTarget target;
     private int lastPosition = 0;
     private boolean isCollection;
 
     private static final int SHOW_ANIMATION_DURATION = 400;
-    private static final int SHOWN_DURATION = 200;
+    private static final int SHOWN_DURATION = 100;
     private static final int HIDE_ANIMATION_DURATION = 300;
     private static final float MAX_SIZE = 0.65f;
 
@@ -77,7 +77,6 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
                            final OnWallpaperFavedListener onFavedListener, final boolean
                                    isCollection) {
         super(itemView);
-        this.onFavedListener = onFavedListener;
         this.isCollection = isCollection;
 
         progressBar = (ProgressBar) itemView.findViewById(R.id.progress);
@@ -87,21 +86,17 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
         author = (TextView) itemView.findViewById(R.id.author);
         amount = (TextView) itemView.findViewById(R.id.amount);
         bigHeart = (ImageView) itemView.findViewById(R.id.bigHeart);
-        bigHeart.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R.drawable
-                .ic_heart_100));
         heart = (CheckableImageView) itemView.findViewById(R.id.heart);
 
         wgd = new WallpaperGestureDetector(this, isCollection ? collection : item, onPressListener,
                 isCollection ? null : onDoubleTapListener);
-        final GestureDetector detector = new GestureDetector(itemView.getContext(), wgd);
+        GestureDetector detector = new GestureDetector(itemView.getContext(), wgd);
         detector.setOnDoubleTapListener(wgd);
-        itemView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                detector.onTouchEvent(motionEvent);
-                return true;
-            }
-        });
+        if (isCollection) {
+            itemView.setOnTouchListener(getTouchListener(detector));
+        } else {
+            wall.setOnTouchListener(getTouchListener(detector));
+        }
 
         heart.setOnWallpaperFavedListener(onFavedListener);
         heart.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +142,7 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
         author.setText(item.getAuthor());
         amount.setVisibility(View.GONE);
 
+        heart.setWallpaperItem(item);
         heart.setChecked(FavoritesUtils.isFavorited(itemView.getContext(), nItem.getName()));
 
         loadPicture(item.getURL(), item.getThumbnailURL());
@@ -230,21 +226,33 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     public void doFav() {
         if (isCollection) return;
         if (bigHeart != null) {
+            final Preferences mPrefs = new Preferences(itemView.getContext());
             if (bigHeart.getAnimation() != null) {
                 bigHeart.clearAnimation();
+            }
+            if (heart.isChecked() && (!(mPrefs.isInstagramLikeBehavior()))) {
+                bigHeart.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R
+                        .drawable.ic_simple_broken_heart));
+            } else {
+                bigHeart.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R
+                        .drawable.ic_simple_heart));
             }
             bigHeart.setScaleX(0.1f);
             bigHeart.setScaleY(0.1f);
             bigHeart.setAlpha(0f);
             bigHeart.setVisibility(View.VISIBLE);
-            bigHeart.animate().alpha(0.75f).scaleX(MAX_SIZE).scaleY(MAX_SIZE).setStartDelay(50)
+            bigHeart.animate().alpha(0.8f).scaleX(MAX_SIZE).scaleY(MAX_SIZE).setStartDelay(50)
                     .setDuration(SHOW_ANIMATION_DURATION)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             super.onAnimationEnd(animation);
-                            if (!heart.isChecked())
-                                checkHeart();
+                            if (mPrefs.isInstagramLikeBehavior()) {
+                                if (!heart.isChecked())
+                                    checkHeart();
+                            } else {
+                                heart.toggle();
+                            }
                             bigHeart.animate().alpha(0).scaleX(0).scaleY(0).setStartDelay
                                     (SHOWN_DURATION)
                                     .setDuration(HIDE_ANIMATION_DURATION)
@@ -261,11 +269,21 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     }
 
     private void checkHeart() {
-        heart.setChecked(true);
+        heart.setChecked(true, true);
     }
 
     public ImageView getWall() {
         return wall;
+    }
+
+    private View.OnTouchListener getTouchListener(final GestureDetector detector) {
+        return new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                detector.onTouchEvent(motionEvent);
+                return true;
+            }
+        };
     }
 
 }

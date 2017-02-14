@@ -16,9 +16,39 @@
   -->
 
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- Preferences -->
+    <string name="ui_pref_title">UI</string>
+    <string name="colored_navbar_pref_summary">Color navigation bar with app\'s primary color</string>
+    <string name="themes_pref_summary">Choose the main theme for the app</string>
+    <string name="themes_pref_title">App theme</string>
+    <string name="colored_navbar_pref_title">Color navigation bar</string>
+    <string name="columns_pref_summary">Choose the amount of columns you want to see for wallpapers</string>
+    <string name="columns_pref_title">Wallpapers columns</string>
+    <string name="instagram_double_tap_pref_summary">Double tapping won\'t remove wallpaper from favorites</string>
+    <string name="instagram_double_tap_pref_title">Instagram-like double tap behavior</string>
+    <string name="storage_pref_title">Storage</string>
+    <string name="low_data_usage_pref_title">Enable low data usage</string>
+    <string name="low_data_usage_pref_summary">Wallpapers will load with lower resolution to reduce data usage</string>
+    <string name="clear_cache_dialog_content">Are you sure you want to delete app data, cache and settings? Applied icons won\'t be affected.</string>
+    <string name="cache_pref_title">Clear app cache and data</string>
+    <string name="cache_pref_summary">This will delete app cache and preferences.\nCurrent cache size: %1$s</string>
+    <string name="wsl_pref_title">Wallpapers download location</string>
+    <string name="wsl_pref_summary">Change location to save or download wallpapers.\nCurrent location: %1$s</string>
+    <string name="database_pref_summary">Clear the list of your favorite wallpapers</string>
+    <string name="database_pref_title">Clear favorites database</string>
+    <string name="app_info_pref_title">Application Information</string>
+    <string name="changelog_pref_title">Changelog</string>
+    <string name="licenses_pref_title">Licenses</string>
+    <string name="rate_pref_title">Rate</string>
+    <string name="donate_pref_title">Donate</string>
+    <string name="rate_pref_summary">If you like the app, please leave a positive rate and review.</string>
+    <string name="licenses_pref_summary">Licenses of implemented libraries</string>
+
     <string name="wallpaper_set">Wallpaper set!</string>
     <string name="unknown">Unknown</string>
     <string name="title_activity_studio">Studio</string>
+    <string name="wallpapers">Wallpapers</string>
+    <string name="search_x">Search %1$s…</string>
     <string name="set_wall_to">Set wallpaper to…</string>
     <string name="home_screen">Home screen</string>
     <string name="lock_screen">Lock screen</string>
@@ -55,12 +85,12 @@
     <string name="sherry_title">Thanks to Sherry Sabatine</string>
     <string name="sherry_dialog">Thanks to her, IconShowcase is free and OpenSource.</string>
     <string name="follow_her">Follow her</string>
-    <string name="clear_cache_dialog_content">Are you sure you want to delete app data, cache and settings? Applied icons won\'t be affected.</string>
-    <string name="pref_title_cache">Clear app cache and data</string>
-    <string name="pref_summary_cache">This will delete app cache and preferences.\nCurrent cache size: %1$s</string>
     <string name="choose">Choose</string>
     <string name="new_folder">New Folder</string>
     <string name="new_folder_hint">Folder name</string>
     <string name="new_folder_title">Create a new folder</string>
     <string name="new_folder_content">Type the new folder\'s name, please.</string>
+    <string name="title_activity_collection">Collection</string>
+    <string name="title_activity_search">Search</string>
+    <string name="refresh">Refresh</string>
 </resources>

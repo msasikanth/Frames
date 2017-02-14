@@ -155,7 +155,7 @@
                 android:transitionName="actionBar"
                 android:theme="@style/Toolbar.AppCompat.Responsive.Light"
                 app:contentInsetStart="@dimen/second_keyline"
-                app:popupTheme="@style/Toolbar.Popup.AppCompat"
+                app:popupTheme="@style/Toolbar.Popup.AppCompat.Light"
                 tools:ignore="UnusedAttribute"/>
 
     </FrameLayout>

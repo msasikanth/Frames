@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017. Jahir Fiquitiva
+  ~
+  ~ Licensed under the CreativeCommons Attribution-ShareAlike
+  ~ 4.0 International License. You may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~    http://creativecommons.org/licenses/by-sa/4.0/legalcode
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <path
+        android:fillColor="#F5F5F5"
+        android:pathData="M 24 2 C 36.1502644963 2 46 11.8497355037 46 24 C 46 36.1502644963 36.1502644963 46 24 46 C 11.8497355037 46 2 36.1502644963 2 24 C 2 11.8497355037 11.8497355037 2 24 2 Z" />
+    <path
+        android:fillColor="#29B6F6"
+        android:pathData="M24,34.1l-1.5-1.4c-5.4-4.9-9-8.1-9-12.1c0-3.2,2.5-5.8,5.8-5.8c1.8,0,3.6,0.9,4.7,2.2c1.1-1.3,2.9-2.2,4.7-2.2
+c3.2,0,5.8,2.5,5.8,5.8c0,4-3.6,7.2-9,12.1L24,34.1z" />
+</vector>

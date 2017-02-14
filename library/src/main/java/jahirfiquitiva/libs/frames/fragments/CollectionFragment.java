@@ -31,10 +31,14 @@ import android.widget.ProgressBar;
 
 import com.pluscubed.recyclerfastscroll.RecyclerFastScroller;
 
+import java.util.ArrayList;
+
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.adapters.CollectionsAdapter;
 import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
 import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
+import jahirfiquitiva.libs.frames.models.Collection;
+import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.utils.IconUtils;
 import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
@@ -50,23 +54,45 @@ public class CollectionFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private boolean isCollections;
     private boolean isFavorites;
+    private boolean isSearch;
     private String collectionName;
-    private boolean hasModifiedFavs = false;
+    private ArrayList<Wallpaper> wallpapers;
+    private ArrayList<Collection> collections;
 
     public static CollectionFragment newInstance(boolean isCollections, String collectionName) {
         CollectionFragment fragment = new CollectionFragment();
         Bundle args = new Bundle();
-        args.putBoolean("collection", isCollections);
         args.putString("collectionName", collectionName);
+        args.putParcelableArrayList("wallpapers", null);
+        args.putParcelableArrayList("collections", null);
+        args.putBoolean("isCollections", isCollections);
+        args.putBoolean("isFavorites", false);
+        args.putBoolean("isSearch", false);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static CollectionFragment newInstance(boolean isFavorites) {
+    public static CollectionFragment newInstance(ArrayList<Wallpaper> wallpapers, boolean
+            isFavorites, boolean isSearch) {
         CollectionFragment fragment = new CollectionFragment();
         Bundle args = new Bundle();
-        args.putBoolean("collection", false);
-        args.putBoolean("favorites", isFavorites);
+        args.putParcelableArrayList("wallpapers", wallpapers);
+        args.putParcelableArrayList("collections", null);
+        args.putBoolean("isCollections", false);
+        args.putBoolean("isFavorites", isFavorites);
+        args.putBoolean("isSearch", isSearch);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static CollectionFragment newInstance(ArrayList<Collection> collections, boolean
+            isSearch) {
+        CollectionFragment fragment = new CollectionFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("collections", collections);
+        args.putBoolean("isCollections", true);
+        args.putBoolean("isFavorites", false);
+        args.putBoolean("isSearch", isSearch);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,9 +102,12 @@ public class CollectionFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.isCollections = getArguments().getBoolean("collection");
             this.collectionName = getArguments().getString("collectionName");
-            this.isFavorites = getArguments().getBoolean("favorites");
+            this.wallpapers = getArguments().getParcelableArrayList("wallpapers");
+            this.collections = getArguments().getParcelableArrayList("collections");
+            this.isCollections = getArguments().getBoolean("isCollections", false);
+            this.isFavorites = getArguments().getBoolean("isFavorites", false);
+            this.isSearch = getArguments().getBoolean("isSearch", false);
         }
     }
 
@@ -95,6 +124,8 @@ public class CollectionFragment extends Fragment {
         fastScroller = (RecyclerFastScroller) layout.findViewById(R.id.rvFastScroller);
         mSwipeRefreshLayout = (SwipeRefreshLayout) layout.findViewById(R.id.swipeRefreshLayout);
 
+        // TODO: Change ic_ drawables with beautiful illustrations
+
         ImageView noConnection = (ImageView) layout.findViewById(R.id.no_connected_view);
         noConnection.setImageDrawable(IconUtils.getTintedDrawable(getActivity(),
                 "ic_no_connection"));
@@ -106,8 +137,14 @@ public class CollectionFragment extends Fragment {
         noFavorites.setScaleX(0.65f);
         noFavorites.setScaleY(0.65f);
 
+        ImageView noResults = (ImageView) layout.findViewById(R.id.no_results_view);
+        noResults.setImageDrawable(IconUtils.getTintedDrawable(getActivity(), "ic_search"));
+        noResults.setScaleX(0.65f);
+        noResults.setScaleY(0.65f);
+
         ProgressBar progress = (ProgressBar) layout.findViewById(R.id.progress);
-        mRecyclerView.setEmptyViews(isFavorites ? noFavorites : progress, noConnection);
+        mRecyclerView.setEmptyViews(isSearch ? noResults : isFavorites ? noFavorites : progress,
+                noConnection);
 
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(
                 ThemeUtils.darkOrLight(getActivity(), R.color.drawable_tint_light,
@@ -134,21 +171,30 @@ public class CollectionFragment extends Fragment {
 
         if (mRecyclerView.getState() != EmptyViewRecyclerView.STATE_NOT_CONNECTED) {
             mAdapter = null;
-            if (isCollections) {
-                if (!(FullListHolder.get().getCollections().getList().isEmpty())) {
-                    mAdapter = new CollectionsAdapter(getActivity(),
-                            FullListHolder.get().getCollections().getList());
+            if (isSearch) {
+                if (wallpapers != null) {
+                    mAdapter = new WallpapersAdapter(getActivity(), wallpapers, isFavorites);
+                } else if (collections != null) {
+                    mAdapter = new CollectionsAdapter(getActivity(), collections);
                 }
             } else {
-                if (!isFavorites) {
-                    int index = FullListHolder.get().getCollections().getIndexForCollectionWithName
-                            (collectionName.toLowerCase());
-                    if (index >= 0) {
-                        mAdapter = new WallpapersAdapter(getActivity(), FullListHolder.get()
-                                .getCollections().getList().get(index).getWallpapers());
+                if (isCollections) {
+                    if (!(FullListHolder.get().getCollections().getList().isEmpty())) {
+                        mAdapter = new CollectionsAdapter(getActivity(),
+                                FullListHolder.get().getCollections().getList());
                     }
+                } else if (isFavorites || wallpapers != null) {
+                    mAdapter = new WallpapersAdapter(getActivity(), wallpapers, isFavorites);
                 } else {
-                    mAdapter = new WallpapersAdapter(getActivity());
+                    if (collectionName != null) {
+                        int index = FullListHolder.get().getCollections()
+                                .getIndexForCollectionWithName(collectionName);
+                        if (index >= 0) {
+                            mAdapter = new WallpapersAdapter(getActivity(), FullListHolder
+                                    .get().getCollections().getList().get(index)
+                                    .getWallpapers(), isFavorites);
+                        }
+                    }
                 }
             }
             if (mAdapter != null) {
@@ -169,14 +215,15 @@ public class CollectionFragment extends Fragment {
     private void setupRecyclerView() {
         Preferences mPrefs = new Preferences(getActivity());
         int columnsNumber = mPrefs.getWallsColumnsNumber();
-        if (isCollections) columnsNumber /= 2;
+        if ((isCollections) || (isSearch && collections != null)) columnsNumber /= 2;
         if (getActivity().getResources().getConfiguration().orientation == 2) {
             columnsNumber *= 1.5f;
         }
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnsNumber));
         mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(columnsNumber,
-                isCollections ? 0 : getActivity().getResources().getDimensionPixelSize(R.dimen
-                        .cards_margin), true));
+                ((isCollections) || (isSearch && collections != null)) ? 0 : getActivity()
+                        .getResources().getDimensionPixelSize(R.dimen
+                                .cards_margin), true));
         mRecyclerView.setHasFixedSize(true);
     }
 
@@ -193,10 +240,5 @@ public class CollectionFragment extends Fragment {
 
     public RecyclerView.Adapter getRVAdapter() {
         return mAdapter;
-    }
-
-    public boolean hasModifiedFavs() {
-        return isFavorites && getRVAdapter() != null && ((WallpapersAdapter) getRVAdapter())
-                .hasModifiedFavs();
     }
 }

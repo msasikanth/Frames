@@ -18,13 +18,16 @@ package jahirfiquitiva.libs.frames.views;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import jahirfiquitiva.libs.frames.R;
+
 public class RectangularImageView extends ImageView {
 
-    private static final int PARTS = 3;
+    private int heightDivider;
 
     public RectangularImageView(Context context) {
         super(context);
@@ -32,22 +35,36 @@ public class RectangularImageView extends ImageView {
 
     public RectangularImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setHeightDivider(context, attrs);
     }
 
     public RectangularImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setHeightDivider(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public RectangularImageView(Context context, AttributeSet attrs, int defStyleAttr, int
             defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        setHeightDivider(context, attrs);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         //noinspection SuspiciousNameCombination
-        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth() / PARTS);
+        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth() / heightDivider);
     }
+
+    private void setHeightDivider(Context context, AttributeSet attrs) {
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.RectangularImageView,
+                0, 0);
+        try {
+            heightDivider = ta.getInteger(R.styleable.RectangularImageView_heightDivider, 3);
+        } finally {
+            ta.recycle();
+        }
+    }
+
 }

@@ -146,9 +146,9 @@
             android:layout_height="?actionBarSize"
             android:background="@android:color/transparent"
             android:transitionName="actionBar"
-            android:theme="@style/Toolbar.AppCompat.Responsive.Light"
+            android:theme="?toolbarMainTheme"
             app:contentInsetStart="@dimen/second_keyline"
-            app:popupTheme="@style/Toolbar.Popup.AppCompat"
+            app:popupTheme="?toolbarMainPopupTheme"
             tools:ignore="UnusedAttribute"/>
 
 

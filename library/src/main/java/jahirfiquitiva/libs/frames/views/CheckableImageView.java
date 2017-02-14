@@ -22,6 +22,7 @@ import android.widget.Checkable;
 import android.widget.ImageView;
 
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
+import jahirfiquitiva.libs.frames.models.Wallpaper;
 
 /**
  * A {@link Checkable} {@link ImageView} which can be offset vertically.
@@ -34,6 +35,8 @@ public class CheckableImageView extends ImageView implements Checkable {
     private int minOffset;
 
     private OnWallpaperFavedListener listener;
+
+    private Wallpaper item;
 
     public CheckableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -54,24 +57,30 @@ public class CheckableImageView extends ImageView implements Checkable {
         return isChecked;
     }
 
-    public void setChecked(boolean isChecked) {
+    public void setChecked(boolean isChecked, boolean withCallback) {
         if (this.isChecked != isChecked) {
             this.isChecked = isChecked;
-            if (isChecked())
-                listener.onFaved();
-            else
-                listener.onUnfaved();
+            if (withCallback && listener != null && item != null) {
+                if (isChecked())
+                    listener.onFaved(item);
+                else
+                    listener.onUnfaved(item);
+            }
             refreshDrawableState();
         }
     }
 
+    public void setChecked(boolean isChecked) {
+        setChecked(isChecked, false);
+    }
+
     public void toggle() {
         setChecked(!isChecked);
-        if (listener != null) {
+        if (listener != null && item != null) {
             if (isChecked())
-                listener.onFaved();
+                listener.onFaved(item);
             else
-                listener.onUnfaved();
+                listener.onUnfaved(item);
         }
     }
 
@@ -87,4 +96,9 @@ public class CheckableImageView extends ImageView implements Checkable {
     public void setOnWallpaperFavedListener(OnWallpaperFavedListener listener) {
         this.listener = listener;
     }
+
+    public void setWallpaperItem(Wallpaper item) {
+        this.item = item;
+    }
+
 }

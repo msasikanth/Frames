@@ -20,10 +20,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -32,29 +28,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-
-import java.io.FileInputStream;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.activities.base.BaseWallpaperViewerActivity;
+import jahirfiquitiva.libs.frames.callbacks.WallpaperDialogsCallback;
 import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.IconUtils;
 import jahirfiquitiva.libs.frames.utils.PermissionsUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
-import jahirfiquitiva.libs.frames.utils.ToolbarTinter;
+import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 import jahirfiquitiva.libs.frames.views.CheckableImageView;
+import jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout;
 import jahirfiquitiva.libs.frames.views.TouchImageView;
 
 public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
@@ -102,9 +89,8 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        ToolbarTinter.on(toolbar).setIconsColor(ContextCompat.getColor(this, android.R.color
-                .white)).forceIcons().reapplyOnChange(true)
-                .apply(this);
+        ToolbarColorizer.colorizeToolbar(toolbar, ContextCompat.getColor(this, android.R
+                .color.white));
 
         toHide1 = (LinearLayout) findViewById(R.id.iconsA);
         toHide2 = (LinearLayout) findViewById(R.id.iconsB);
@@ -112,6 +98,7 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
         setViewsToHide(toHide1, toHide2);
 
         final CheckableImageView favIV = (CheckableImageView) findViewById(R.id.fav);
+        favIV.setWallpaperItem(getItem());
         Drawable prev = favIV.getDrawable();
         if (prev != null)
             prev.mutate();
@@ -119,7 +106,7 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
                 .darkOrLight(this, R.color.dark_theme_card_background, R.color
                         .light_theme_card_background)) ? R.drawable.light_heart_animated_selector
                 : R.drawable.heart_animated_selector));
-
+        favIV.setChecked(FavoritesUtils.isFavorited(this, getItem().getName()));
         favIV.setOnWallpaperFavedListener(getOnFavedListener());
         favIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,7 +152,7 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
         }
 
         ImageView applyIV = (ImageView) findViewById(R.id.apply);
-        applyIV.setImageDrawable(IconUtils.getTintedDrawable(context, "ic_apply_wallpaper"));
+        applyIV.setImageDrawable(IconUtils.getTintedDrawable(context, "ic_apply"));
         applyIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -192,7 +179,7 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
         TouchImageView mPhoto = (TouchImageView) findViewById(R.id.big_wallpaper);
         ViewCompat.setTransitionName(mPhoto, getTransitionName());
 
-        setLayout((RelativeLayout) findViewById(R.id.viewerLayout));
+        setLayout((CustomCoordinatorLayout) findViewById(R.id.viewerLayout));
 
         TextView wallNameText = (TextView) findViewById(R.id.wallName);
         wallNameText.setText(getItem().getName());
@@ -200,62 +187,7 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
                 (ThemeUtils.darkOrLight(this, R.color.dark_theme_card_background, R.color
                         .light_theme_card_background)))));
 
-        Bitmap bmp = null;
-        String filename = getIntent().getStringExtra("image");
-        try {
-            if (filename != null) {
-                FileInputStream is = context.openFileInput(filename);
-                bmp = BitmapFactory.decodeStream(is);
-                is.close();
-            } else {
-                bmp = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        int colorFromCachedPic;
-
-        if (bmp != null) {
-            colorFromCachedPic = ColorUtils.getPaletteSwatch(bmp).getTitleTextColor();
-        } else {
-            colorFromCachedPic = ColorUtils.getMaterialPrimaryTextColor(ThemeUtils.isDarkTheme());
-        }
-
-        final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress);
-        spinner.getIndeterminateDrawable()
-                .setColorFilter(colorFromCachedPic, PorterDuff.Mode.SRC_IN);
-
-        Drawable d;
-        if (bmp != null) {
-            d = new GlideBitmapDrawable(getResources(), bmp);
-        } else {
-            d = new ColorDrawable(ContextCompat.getColor(context, android.R.color.transparent));
-        }
-
-        Glide.with(context)
-                .load(getItem().getURL())
-                .placeholder(d)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .fitCenter()
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model,
-                                               Target<GlideDrawable> target, boolean
-                                                       isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model,
-                                                   Target<GlideDrawable> target, boolean
-                                                           isFromMemoryCache, boolean
-                                                           isFirstResource) {
-                        spinner.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(mPhoto);
+        setupWallpaper(mPhoto);
     }
 
     @Override

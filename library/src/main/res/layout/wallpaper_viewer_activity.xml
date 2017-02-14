@@ -14,12 +14,12 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
+<jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/viewerLayout"
         android:fitsSystemWindows="true"
+        android:id="@+id/viewerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -29,9 +29,11 @@
             android:layout_height="match_parent">
 
         <jahirfiquitiva.libs.frames.views.TouchImageView
+                android:fitsSystemWindows="true"
                 android:id="@+id/big_wallpaper"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                app:srcCompat="@drawable/ic_light_heart_100"
                 android:scaleType="centerCrop"/>
 
         <ProgressBar
@@ -58,101 +60,112 @@
         </LinearLayout>
 
         <android.support.v7.widget.Toolbar
+                android:fitsSystemWindows="true"
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
+                android:layout_marginTop="24dp"
                 android:background="@android:color/transparent"
                 android:theme="@style/Toolbar.AppCompat.Responsive.Light"
                 app:contentInsetStart="@dimen/second_keyline"
-                app:popupTheme="@style/Toolbar.Popup.AppCompat"/>
+                app:popupTheme="@style/Toolbar.Popup.AppCompat.Light"/>
 
     </FrameLayout>
 
-    <LinearLayout
-            android:id="@+id/iconsA"
-            android:layout_width="wrap_content"
-            android:layout_height="?actionBarSize"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/iconsB"
-            android:layout_gravity="center_vertical"
-            android:background="?attr/cardColorBackground"
-            android:minHeight="?actionBarSize"
-            android:orientation="horizontal"
-            tools:ignore="UnusedAttribute">
+    <RelativeLayout
+            android:fitsSystemWindows="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:gravity="center_vertical"
+                android:fitsSystemWindows="true"
+                android:id="@+id/iconsA"
+                android:layout_width="wrap_content"
+                android:layout_height="?actionBarSize"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/iconsB"
+                android:layout_gravity="bottom|end"
+                android:background="?attr/cardColorBackground"
+                android:minHeight="?actionBarSize"
                 android:orientation="horizontal"
-                tools:ignore="UselessParent">
+                tools:ignore="UnusedAttribute">
 
-            <jahirfiquitiva.libs.frames.views.CheckableImageView
-                    android:id="@+id/fav"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginLeft="@dimen/dialog_margin"
-                    android:layout_marginStart="@dimen/dialog_margin"
-                    android:background="?selectableItemBackgroundBorderless"
-                    tools:ignore="ContentDescription"/>
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
 
-            <ImageView
-                    android:id="@+id/download"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginLeft="@dimen/dialog_margin"
-                    android:layout_marginStart="@dimen/dialog_margin"
-                    android:background="?selectableItemBackgroundBorderless"
-                    tools:ignore="ContentDescription"/>
+                <ImageView
+                        android:id="@+id/download"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginLeft="@dimen/dialog_margin"
+                        android:layout_marginStart="@dimen/dialog_margin"
+                        android:background="?selectableItemBackgroundBorderless"
+                        tools:ignore="ContentDescription"/>
 
-            <ImageView
-                    android:id="@+id/apply"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginLeft="@dimen/dialog_margin"
-                    android:layout_marginRight="@dimen/dialog_margin"
-                    android:background="?selectableItemBackgroundBorderless"
-                    tools:ignore="ContentDescription"/>
+                <ImageView
+                        android:id="@+id/apply"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginLeft="@dimen/dialog_margin"
+                        android:layout_marginStart="@dimen/dialog_margin"
+                        android:background="?selectableItemBackgroundBorderless"
+                        tools:ignore="ContentDescription"/>
 
-            <ImageView
-                    android:id="@+id/info"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:background="?selectableItemBackgroundBorderless"
-                    tools:ignore="ContentDescription"/>
+                <ImageView
+                        android:id="@+id/info"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginLeft="@dimen/dialog_margin"
+                        android:layout_marginRight="@dimen/dialog_margin"
+                        app:srcCompat="@drawable/ic_info"
+                        android:background="?selectableItemBackgroundBorderless"
+                        tools:ignore="ContentDescription"/>
+
+                <jahirfiquitiva.libs.frames.views.CheckableImageView
+                        android:id="@+id/fav"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        tools:ignore="ContentDescription"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <LinearLayout
+                android:id="@+id/iconsB"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom"
+                android:layout_toStartOf="@id/iconsA"
+                android:layout_toLeftOf="@id/iconsA"
+                android:background="?attr/cardColorBackground"
+                android:gravity="center_vertical"
+                android:minHeight="?actionBarSize"
+                android:orientation="horizontal"
+                tools:ignore="UnusedAttribute">
 
-    <LinearLayout
-            android:id="@+id/iconsB"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="center_vertical"
-            android:layout_toLeftOf="@id/iconsA"
-            android:layout_toStartOf="@id/iconsA"
-            android:background="?attr/cardColorBackground"
-            android:gravity="center_vertical"
-            android:minHeight="?actionBarSize"
-            android:orientation="horizontal"
-            tools:ignore="UnusedAttribute">
+            <TextView
+                    android:id="@+id/wallName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    tools:text="This is a super long text just to test how the app puts the ellipsis."/>
 
-        <TextView
-                android:id="@+id/wallName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                tools:text="This is a super long text just to test how the app puts the ellipsis."/>
+        </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
-</RelativeLayout>
+</jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout>

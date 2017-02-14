@@ -32,7 +32,8 @@ public class Preferences {
             ROTATE_MINUTE = "rotate_time_minute",
             ROTATE_TIME = "muzei_rotate_time",
             WALLS_DOWNLOAD_FOLDER = "walls_download_folder",
-            WALLS_COLUMNS_NUMBER = "walls_columns_number";
+            WALLS_COLUMNS_NUMBER = "walls_columns_number",
+            INSTAGRAM_LIKE_BEHAVIOR = "instagram_like_behavior";
 
     private final Context context;
 
@@ -105,6 +106,14 @@ public class Preferences {
 
     public void setVersionCode(int versionCode) {
         getPrefs().edit().putInt(VERSION_CODE, versionCode).apply();
+    }
+
+    public void setInstagramLikeBehavior(boolean behavior) {
+        getPrefs().edit().putBoolean(INSTAGRAM_LIKE_BEHAVIOR, behavior).apply();
+    }
+
+    public boolean isInstagramLikeBehavior() {
+        return getPrefs().getBoolean(INSTAGRAM_LIKE_BEHAVIOR, false);
     }
 
 }

@@ -20,10 +20,6 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,26 +33,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-
-import java.io.FileInputStream;
 import java.lang.reflect.Field;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.activities.base.BaseWallpaperViewerActivity;
+import jahirfiquitiva.libs.frames.callbacks.WallpaperDialogsCallback;
 import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
+import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
+import jahirfiquitiva.libs.frames.utils.IconUtils;
 import jahirfiquitiva.libs.frames.utils.PermissionsUtils;
-import jahirfiquitiva.libs.frames.utils.ThemeUtils;
-import jahirfiquitiva.libs.frames.utils.ToolbarTinter;
+import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 import jahirfiquitiva.libs.frames.utils.Utils;
 import jahirfiquitiva.libs.frames.views.CheckableFloatingActionButton;
 import jahirfiquitiva.libs.frames.views.TouchImageView;
@@ -85,14 +74,23 @@ public class FabbedViewerActivity extends BaseWallpaperViewerActivity {
         infoFab = (FloatingActionButton) findViewById(R.id.infoFab);
         favFab = (CheckableFloatingActionButton) findViewById(R.id.favFab);
 
+        fab.setImageDrawable(IconUtils.getTintedDrawable(this, "ic_plus", ColorUtils
+                .getAccentColor(this)));
+        applyFab.setImageDrawable(IconUtils.getTintedDrawable(this, "ic_apply", ColorUtils
+                .getAccentColor(this)));
+        saveFab.setImageDrawable(IconUtils.getTintedDrawable(this, "ic_save", ColorUtils
+                .getAccentColor(this)));
+        infoFab.setImageDrawable(IconUtils.getTintedDrawable(this, "ic_info", ColorUtils
+                .getAccentColor(this)));
 
+        favFab.setWallpaperItem(getItem());
         Drawable prev = favFab.getDrawable();
         if (prev != null)
             prev.mutate();
-        favFab.setImageDrawable(ContextCompat.getDrawable(this, ColorUtils.isLightColor(ThemeUtils
-                .darkOrLight(this, R.color.dark_theme_accent, R.color
-                        .light_theme_accent)) ? R.drawable.light_heart_animated_selector
+        favFab.setImageDrawable(ContextCompat.getDrawable(this, ColorUtils.isLightColor
+                (ColorUtils.getAccentColor(this)) ? R.drawable.light_heart_animated_selector
                 : R.drawable.heart_animated_selector));
+        favFab.setChecked(FavoritesUtils.isFavorited(this, getItem().getName()));
 
         hideFab(applyFab);
         hideFab(saveFab);
@@ -113,9 +111,8 @@ public class FabbedViewerActivity extends BaseWallpaperViewerActivity {
         }
 
         if (Build.VERSION.SDK_INT < 19) {
-            ToolbarTinter.on(toolbar).setIconsColor(ContextCompat.getColor(this, android.R.color
-                    .white)).forceIcons().reapplyOnChange(true)
-                    .apply(this);
+            ToolbarColorizer.colorizeToolbar(toolbar, ContextCompat.getColor(this, android.R
+                    .color.white));
         }
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -237,61 +234,7 @@ public class FabbedViewerActivity extends BaseWallpaperViewerActivity {
             }
         });
 
-        Bitmap bmp = null;
-        String filename = getIntent().getStringExtra("image");
-        try {
-            if (filename != null) {
-                FileInputStream is = openFileInput(filename);
-                bmp = BitmapFactory.decodeStream(is);
-                is.close();
-            } else {
-                bmp = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        int colorFromCachedPic;
-
-        if (bmp != null) {
-            colorFromCachedPic = ColorUtils.getPaletteSwatch(bmp).getBodyTextColor();
-        } else {
-            colorFromCachedPic = ColorUtils.getMaterialPrimaryTextColor(ThemeUtils.isDarkTheme());
-        }
-
-        final ProgressBar spinner = (ProgressBar) findViewById(R.id.progress);
-        spinner.getIndeterminateDrawable()
-                .setColorFilter(colorFromCachedPic, PorterDuff.Mode.SRC_IN);
-
-        Drawable d;
-        if (bmp != null) {
-            d = new GlideBitmapDrawable(getResources(), bmp);
-        } else {
-            d = new ColorDrawable(ContextCompat.getColor(this, android.R.color.transparent));
-        }
-
-        Glide.with(this)
-                .load(getItem().getURL())
-                .placeholder(d)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .fitCenter()
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable>
-                            target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model,
-                                                   Target<GlideDrawable> target, boolean
-                                                           isFromMemoryCache, boolean
-                                                           isFirstResource) {
-                        spinner.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(mPhoto);
+        setupWallpaper(mPhoto);
     }
 
     @Override

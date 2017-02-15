@@ -67,6 +67,29 @@ public class FabbedViewerActivity extends BaseWallpaperViewerActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.fabbed_viewer_activity);
+        setLayout((ViewGroup) findViewById(R.id.viewerLayout));
+
+        setCallback(new WallpaperDialogsCallback() {
+            @Override
+            public void onSaveAction() {
+                if (fabOpened) {
+                    closeMenu();
+                    fabOpened = false;
+                }
+                hideFab(fab);
+            }
+
+            @Override
+            public void onDialogShown() {
+                onSaveAction();
+            }
+
+            @Override
+            public void onDialogDismissed() {
+                reshowFab(fab);
+                setupFullScreen();
+            }
+        });
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         applyFab = (FloatingActionButton) findViewById(R.id.applyFab);
@@ -199,32 +222,8 @@ public class FabbedViewerActivity extends BaseWallpaperViewerActivity {
             }
         });
 
-        setCallback(new WallpaperDialogsCallback() {
-            @Override
-            public void onSaveAction() {
-                if (fabOpened) {
-                    closeMenu();
-                    fabOpened = false;
-                }
-                hideFab(fab);
-            }
-
-            @Override
-            public void onDialogShown() {
-                onSaveAction();
-            }
-
-            @Override
-            public void onDialogDismissed() {
-                reshowFab(fab);
-                setupFullScreen();
-            }
-        });
-
         TouchImageView mPhoto = (TouchImageView) findViewById(R.id.big_wallpaper);
         ViewCompat.setTransitionName(mPhoto, getTransitionName());
-
-        setLayout((CoordinatorLayout) findViewById(R.id.viewerLayout));
 
         mPhoto.setOnSingleTapListener(new TouchImageView.OnSingleTapListener() {
             @Override

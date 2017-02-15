@@ -31,6 +31,8 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.view.Window;
+import android.view.WindowManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -148,4 +150,16 @@ public class Utils {
         }
         return 0;
     }
+
+    public static void setWindowFlag(Activity activity, final int bits, boolean on) {
+        Window win = activity.getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        if (on) {
+            winParams.flags |= bits;
+        } else {
+            winParams.flags &= ~bits;
+        }
+        win.setAttributes(winParams);
+    }
+
 }

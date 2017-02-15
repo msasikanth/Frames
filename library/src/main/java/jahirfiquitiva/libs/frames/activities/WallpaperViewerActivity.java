@@ -20,12 +20,16 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,8 +44,8 @@ import jahirfiquitiva.libs.frames.utils.IconUtils;
 import jahirfiquitiva.libs.frames.utils.PermissionsUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
+import jahirfiquitiva.libs.frames.utils.Utils;
 import jahirfiquitiva.libs.frames.views.CheckableImageView;
-import jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout;
 import jahirfiquitiva.libs.frames.views.TouchImageView;
 
 public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
@@ -57,6 +61,40 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
 
         FavoritesUtils.init(this);
         context = this;
+
+        setContentView(R.layout.wallpaper_viewer_activity);
+        setLayout((ViewGroup) findViewById(R.id.viewerLayout));
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("");
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_with_shadow);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        ToolbarColorizer.colorizeToolbar(toolbar, ContextCompat.getColor(this, android.R
+                .color.white));
+
+        if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 21) {
+            Utils.setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, true);
+        }
+        if (Build.VERSION.SDK_INT >= 19) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+        if (Build.VERSION.SDK_INT >= 21) {
+            Utils.setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
+
+        toHide1 = (LinearLayout) findViewById(R.id.iconsA);
+        toHide2 = (LinearLayout) findViewById(R.id.iconsB);
+
+        setViewsToHide(toHide1, toHide2);
 
         setCallback(new WallpaperDialogsCallback() {
             @Override
@@ -75,27 +113,6 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
                 }
             }
         });
-
-        setContentView(R.layout.wallpaper_viewer_activity);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("");
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_with_shadow);
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-
-        ToolbarColorizer.colorizeToolbar(toolbar, ContextCompat.getColor(this, android.R
-                .color.white));
-
-        toHide1 = (LinearLayout) findViewById(R.id.iconsA);
-        toHide2 = (LinearLayout) findViewById(R.id.iconsB);
-
-        setViewsToHide(toHide1, toHide2);
 
         final CheckableImageView favIV = (CheckableImageView) findViewById(R.id.fav);
         favIV.setWallpaperItem(getItem());
@@ -178,8 +195,6 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
 
         TouchImageView mPhoto = (TouchImageView) findViewById(R.id.big_wallpaper);
         ViewCompat.setTransitionName(mPhoto, getTransitionName());
-
-        setLayout((CustomCoordinatorLayout) findViewById(R.id.viewerLayout));
 
         TextView wallNameText = (TextView) findViewById(R.id.wallName);
         wallNameText.setText(getItem().getName());

@@ -17,15 +17,6 @@
 
 <resources>
 
-    <!--
-    <style name="Toolbar.Popup.AppCompat.Light" parent="Theme.AppCompat.Light">
-        <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textColorPrimary">@color/primary_text</item>
-        <item name="android:textColorSecondary">@color/secondary_text</item>
-        <item name="colorControlHighlight">@color/primary_text</item>
-    </style>
-    -->
-
     <style name="Toolbar.Popup.AppCompat.Light" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="Toolbar.Popup.AppCompat.Dark" parent="ThemeOverlay.AppCompat.Dark"/>

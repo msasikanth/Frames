@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout
+<android.support.design.widget.CoordinatorLayout
         android:id="@+id/main"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -48,4 +48,4 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-</jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout>
+</android.support.design.widget.CoordinatorLayout>

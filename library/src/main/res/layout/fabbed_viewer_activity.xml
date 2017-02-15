@@ -21,8 +21,7 @@
         android:id="@+id/viewerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:padding="50dp">
+        android:fitsSystemWindows="true">
 
     <jahirfiquitiva.libs.frames.views.TouchImageView
             android:id="@+id/big_wallpaper"
@@ -64,11 +63,22 @@
         <ImageView
                 android:id="@+id/toolbarGradient"
                 android:layout_width="match_parent"
-                android:layout_height="112.0dip"
+                android:layout_height="84.0dip"
                 android:background="@drawable/toolbar_gradient"
                 android:fitsSystemWindows="true"
                 tools:ignore="ContentDescription"/>
     </LinearLayout>
+
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@android:color/transparent"
+            android:transitionName="actionBar"
+            android:theme="?toolbarMainTheme"
+            app:contentInsetStart="@dimen/second_keyline"
+            app:popupTheme="?toolbarMainPopupTheme"
+            tools:ignore="UnusedAttribute"/>
 
     <LinearLayout
             android:id="@+id/fabContainer"
@@ -138,18 +148,7 @@
                 app:layout_anchorGravity="end|bottom"
                 app:rippleColor="@color/semitransparent_white"
                 app:srcCompat="@drawable/ic_plus"/>
+
     </LinearLayout>
-
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:background="@android:color/transparent"
-            android:transitionName="actionBar"
-            android:theme="?toolbarMainTheme"
-            app:contentInsetStart="@dimen/second_keyline"
-            app:popupTheme="?toolbarMainPopupTheme"
-            tools:ignore="UnusedAttribute"/>
-
 
 </android.support.design.widget.CoordinatorLayout>

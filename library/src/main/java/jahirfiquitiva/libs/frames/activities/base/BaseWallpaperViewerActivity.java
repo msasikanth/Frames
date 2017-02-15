@@ -73,7 +73,6 @@ import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 import jahirfiquitiva.libs.frames.utils.Utils;
-import jahirfiquitiva.libs.frames.views.CustomCoordinatorLayout;
 
 @SuppressLint("Registered")
 public class BaseWallpaperViewerActivity extends ThemedActivity {
@@ -101,13 +100,6 @@ public class BaseWallpaperViewerActivity extends ThemedActivity {
         ToolbarColorizer.clearLightStatusBar(this);
         if (isFullScreen) {
             setupFullScreen();
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color
-                        .transparent));
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            }
         }
         super.onCreate(savedInstanceState);
         FavoritesUtils.init(this);
@@ -197,9 +189,6 @@ public class BaseWallpaperViewerActivity extends ThemedActivity {
 
     protected void setLayout(ViewGroup layout) {
         this.layout = layout;
-        if (this.layout instanceof CustomCoordinatorLayout) {
-            ((CustomCoordinatorLayout) this.layout).setScrollAllowed(false);
-        }
     }
 
     protected String getTransitionName() {

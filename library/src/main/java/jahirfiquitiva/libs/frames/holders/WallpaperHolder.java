@@ -39,9 +39,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import jahirfiquitiva.libs.frames.R;
+import jahirfiquitiva.libs.frames.callbacks.OnWallpaperClickListener;
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
-import jahirfiquitiva.libs.frames.callbacks.OnWallpaperPressListener;
-import jahirfiquitiva.libs.frames.callbacks.WallpaperGestureDetector;
+import jahirfiquitiva.libs.frames.callbacks.WallpaperDoubleTapDetector;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
@@ -57,15 +57,14 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     private RelativeLayout detailsBg;
     private LinearLayout wallDetails;
     private LinearLayout collDetails;
-    private TextView title;
-    private TextView colTitle;
+    private TextView name;
+    private TextView colName;
     private TextView author;
     private TextView amount;
     private ImageView bigHeart;
     private CheckableImageView heart;
     private Wallpaper item;
     private Collection collection;
-    private WallpaperGestureDetector wgd;
     private BitmapImageViewTarget target;
     private int lastPosition = 0;
     private boolean isCollection;
@@ -75,8 +74,8 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     private static final int HIDE_ANIMATION_DURATION = 300;
     private static final float MAX_SIZE = 0.65f;
 
-    public WallpaperHolder(final View itemView, OnWallpaperPressListener onPressListener,
-                           WallpaperGestureDetector.OnWallpaperDoubleTapListener
+    public WallpaperHolder(final View itemView, final OnWallpaperClickListener onClickListener,
+                           WallpaperDoubleTapDetector.OnWallpaperDoubleTapListener
                                    onDoubleTapListener,
                            final OnWallpaperFavedListener onFavedListener, final boolean
                                    isCollection) {
@@ -88,21 +87,38 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
         detailsBg = (RelativeLayout) itemView.findViewById(R.id.detailsBg);
         wallDetails = (LinearLayout) itemView.findViewById(R.id.wallpaper_details);
         collDetails = (LinearLayout) itemView.findViewById(R.id.collection_details);
-        title = (TextView) itemView.findViewById(R.id.name);
-        colTitle = (TextView) itemView.findViewById(R.id.collection_name);
+        name = (TextView) itemView.findViewById(R.id.name);
+        colName = (TextView) itemView.findViewById(R.id.collection_name);
         author = (TextView) itemView.findViewById(R.id.author);
         amount = (TextView) itemView.findViewById(R.id.amount);
         bigHeart = (ImageView) itemView.findViewById(R.id.bigHeart);
         heart = (CheckableImageView) itemView.findViewById(R.id.heart);
 
-        wgd = new WallpaperGestureDetector(this, isCollection ? collection : item, onPressListener,
-                isCollection ? null : onDoubleTapListener);
-        GestureDetector detector = new GestureDetector(itemView.getContext(), wgd);
-        detector.setOnDoubleTapListener(wgd);
         if (isCollection) {
-            itemView.setOnTouchListener(getTouchListener(detector));
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (onClickListener != null && collection != null)
+                        onClickListener.onClick(collection, wall, null, colName, null);
+                }
+            });
         } else {
-            wall.setOnTouchListener(getTouchListener(detector));
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (onClickListener != null && item != null)
+                        onClickListener.onClick(item, wall, heart, name, author);
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (onClickListener != null && item != null)
+                        onClickListener.onLongClick(item);
+                    return false;
+                }
+            });
+            itemView.setOnTouchListener(getTouchListener(onDoubleTapListener));
         }
 
         heart.setOnWallpaperFavedListener(onFavedListener);
@@ -113,7 +129,12 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        ViewCompat.setTransitionName(wall, "transition" + getAdapterPosition());
+        ViewCompat.setTransitionName(wall, (isCollection ? "collectionTransition_" :
+                "wallTransition_") + getAdapterPosition());
+        ViewCompat.setTransitionName(isCollection ? colName : name, (isCollection ?
+                "collectionNameTransition_" : "nameTransition_") + getAdapterPosition());
+        ViewCompat.setTransitionName(author, "authorTransition_" + getAdapterPosition());
+        ViewCompat.setTransitionName(heart, "heartTransition_" + getAdapterPosition());
 
         createTarget();
     }
@@ -142,12 +163,11 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
 
     public void setItem(Wallpaper nItem) {
         this.item = nItem;
-        wgd.setItem(item);
         collDetails.setVisibility(View.GONE);
-        colTitle.setVisibility(View.GONE);
+        colName.setVisibility(View.GONE);
         amount.setVisibility(View.GONE);
 
-        title.setText(item.getName());
+        name.setText(item.getName());
         author.setText(item.getAuthor());
         wall.setVisibility(View.VISIBLE);
         wallDetails.setVisibility(View.VISIBLE);
@@ -160,21 +180,20 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
 
     public void setItem(Collection nCollection) {
         this.collection = nCollection;
-        wgd.setItem(collection);
         wallDetails.setVisibility(View.GONE);
-        title.setVisibility(View.GONE);
+        name.setVisibility(View.GONE);
         author.setVisibility(View.GONE);
         heart.setVisibility(View.GONE);
         bigHeart.setVisibility(View.GONE);
 
         wall.setVisibility(View.VISIBLE);
         collDetails.setVisibility(View.VISIBLE);
-        colTitle.setVisibility(View.VISIBLE);
+        colName.setVisibility(View.VISIBLE);
 
         int pad = Utils.dpToPx(itemView.getContext(), 12);
         detailsBg.setPadding(pad, pad, pad, pad);
 
-        colTitle.setText(collection.getName());
+        colName.setText(collection.getName());
 
         String exactAmount = collection.getWallpapers().size() > 99 ? "99+" : String.valueOf
                 (collection.getWallpapers().size());
@@ -213,16 +232,23 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     private void setColors(int color) {
         if (detailsBg != null && color != 0) {
             detailsBg.setBackgroundColor(color);
-            if (title != null) {
-                title.setTextColor(ColorUtils.getMaterialPrimaryTextColor(!ColorUtils
-                        .isLightColor(color)));
+            if (isCollection) {
+                if (colName != null) {
+                    colName.setTextColor(ColorUtils.getMaterialPrimaryTextColor(!ColorUtils
+                            .isLightColor(color)));
+                }
+            } else {
+                if (name != null) {
+                    name.setTextColor(ColorUtils.getMaterialPrimaryTextColor(!ColorUtils
+                            .isLightColor(color)));
+                }
             }
             if ((author != null) && (!isCollection)) {
-                author.setTextColor(ColorUtils.getMaterialPrimaryTextColor(!ColorUtils
+                author.setTextColor(ColorUtils.getMaterialSecondaryTextColor(!ColorUtils
                         .isLightColor(color)));
             }
             if ((amount != null) && (isCollection)) {
-                amount.setTextColor(ColorUtils.getMaterialPrimaryTextColor(!ColorUtils
+                amount.setTextColor(ColorUtils.getMaterialSecondaryTextColor(!ColorUtils
                         .isLightColor(color)));
             }
             if ((heart != null) && (!isCollection)) {
@@ -291,12 +317,29 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
         return wall;
     }
 
-    private View.OnTouchListener getTouchListener(final GestureDetector detector) {
+    public ImageView getHeart() {
+        return heart;
+    }
+
+    public TextView getName() {
+        return isCollection ? colName : name;
+    }
+
+    public TextView getAuthor() {
+        return author;
+    }
+
+    private View.OnTouchListener getTouchListener(WallpaperDoubleTapDetector
+                                                          .OnWallpaperDoubleTapListener
+                                                          onDoubleTapListener) {
+        WallpaperDoubleTapDetector wgd = new WallpaperDoubleTapDetector(this, onDoubleTapListener);
+        final GestureDetector detector = new GestureDetector(itemView.getContext(), wgd);
+        detector.setOnDoubleTapListener(wgd);
         return new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 detector.onTouchEvent(motionEvent);
-                return true;
+                return false;
             }
         };
     }

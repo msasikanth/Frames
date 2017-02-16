@@ -35,7 +35,6 @@ import jahirfiquitiva.libs.frames.utils.Utils;
 
 public final class FramesDialogs {
 
-    /*
     public static void showLicenseSuccessDialog(Context context, MaterialDialog
             .SingleButtonCallback onPositive, MaterialDialog.OnDismissListener onDismiss,
                                                 MaterialDialog.OnCancelListener onCancel) {
@@ -74,7 +73,6 @@ public final class FramesDialogs {
                 .onNegative(onNegative)
                 .autoDismiss(false)
                 .build();
-
         shallNotPassDialog.setOnCancelListener(onCancel);
         shallNotPassDialog.setOnDismissListener(onDismiss);
         shallNotPassDialog.show();
@@ -85,41 +83,53 @@ public final class FramesDialogs {
                                               MaterialDialog.SingleButtonCallback onNegative,
                                               MaterialDialog.OnDismissListener onDismiss,
                                               MaterialDialog.OnCancelListener onCancel) {
-
-        MaterialDialog licenseErrorDialog = new MaterialDialog.Builder(context)
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(context)
                 .title(R.string.error)
                 .content(R.string.license_error)
-                .positiveText(R.string.download)
                 .negativeText(R.string.exit)
-                .onPositive(onPositive)
                 .onNegative(onNegative)
-                .autoDismiss(false)
-                .build();
+                .autoDismiss(false);
+        if (onPositive != null) {
+            builder.positiveText(R.string.download);
+            builder.onPositive(onPositive);
+        }
+        MaterialDialog licenseErrorDialog = builder.build();
         licenseErrorDialog.setOnCancelListener(onCancel);
         licenseErrorDialog.setOnDismissListener(onDismiss);
         licenseErrorDialog.show();
     }
-*/
-
-    /*
-    WallpaperViewerActivity Dialogs
-     */
 
     public static void showApplyWallpaperDialog(final Context context,
                                                 MaterialDialog.SingleButtonCallback onPositive,
                                                 MaterialDialog.SingleButtonCallback onNeutral,
                                                 MaterialDialog.SingleButtonCallback onNegative,
                                                 MaterialDialog.OnDismissListener onDismiss) {
-        MaterialDialog dialog = new MaterialDialog.Builder(context)
+        showApplyWallpaperDialog(context, onPositive, onNeutral, onNegative, onDismiss, true);
+    }
+
+    public static void showApplyWallpaperDialog(final Context context,
+                                                MaterialDialog.SingleButtonCallback onPositive,
+                                                MaterialDialog.SingleButtonCallback onNeutral,
+                                                MaterialDialog.SingleButtonCallback onNegative,
+                                                MaterialDialog.OnDismissListener onDismiss,
+                                                boolean showNeutralButton) {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(context)
                 .title(R.string.apply)
                 .content(R.string.confirm_apply)
-                .positiveText(R.string.apply)
-                .neutralText(R.string.crop)
-                .negativeText(android.R.string.cancel)
-                .onPositive(onPositive)
-                .onNeutral(onNeutral)
-                .onNegative(onNegative)
-                .build();
+                .negativeText(android.R.string.cancel);
+        if (onPositive != null) {
+            builder.positiveText(R.string.apply);
+            builder.onPositive(onPositive);
+        }
+        if (onNegative != null) {
+            builder.onNegative(onNegative);
+        }
+        if (showNeutralButton) {
+            builder.neutralText(R.string.crop);
+            if (onNeutral != null)
+                builder.onNeutral(onNeutral);
+        }
+        MaterialDialog dialog = builder.build();
         dialog.setOnDismissListener(onDismiss);
         dialog.show();
     }

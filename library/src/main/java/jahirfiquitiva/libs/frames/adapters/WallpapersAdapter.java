@@ -20,13 +20,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -34,13 +42,15 @@ import java.util.ArrayList;
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.activities.FabbedViewerActivity;
 import jahirfiquitiva.libs.frames.activities.WallpaperViewerActivity;
+import jahirfiquitiva.libs.frames.callbacks.OnWallpaperClickListener;
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
-import jahirfiquitiva.libs.frames.callbacks.OnWallpaperPressListener;
-import jahirfiquitiva.libs.frames.callbacks.WallpaperGestureDetector;
+import jahirfiquitiva.libs.frames.callbacks.WallpaperDoubleTapDetector;
+import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.holders.WallpaperHolder;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.utils.ApplyWallpaperUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
+import jahirfiquitiva.libs.frames.utils.GlideConfiguration;
 import jahirfiquitiva.libs.frames.utils.Utils;
 
 public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
@@ -60,17 +70,18 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     @Override
     public WallpaperHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new WallpaperHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
-                .item_wallpaper, parent, false), new OnWallpaperPressListener() {
+                .item_wallpaper, parent, false), new OnWallpaperClickListener() {
             @Override
-            public void onPressed(Object item, ImageView wall) {
-                doOnPressed(item, wall);
+            public void onClick(Object item, ImageView wall, ImageView heart, TextView name,
+                                TextView author) {
+                doOnPressed(item, wall, heart, name, author);
             }
 
             @Override
-            public void onLongPressed(Object item) {
+            public void onLongClick(Object item) {
                 doOnLongPressed((Wallpaper) item);
             }
-        }, new WallpaperGestureDetector
+        }, new WallpaperDoubleTapDetector
                 .OnWallpaperDoubleTapListener() {
             @Override
             public void onDoubleTap(WallpaperHolder holder) {
@@ -116,37 +127,53 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
         handler(context).post(r);
     }
 
-    private void doOnPressed(final Object item, final ImageView wall) {
+    @SuppressWarnings("unchecked")
+    private void doOnPressed(Object item, ImageView wall, ImageView heart, TextView name, TextView
+            author) {
         Intent wallpaperViewer = new Intent(activity, activity.getResources().getBoolean(R.bool
                 .fabbed_viewer) ? FabbedViewerActivity.class : WallpaperViewerActivity.class);
         wallpaperViewer.putExtra("item", (Wallpaper) item);
-        wallpaperViewer.putExtra("transitionName", ViewCompat.getTransitionName(wall));
-
+        wallpaperViewer.putExtra("wallTransition", ViewCompat.getTransitionName(wall));
+        wallpaperViewer.putExtra("nameTransition", ViewCompat.getTransitionName(name));
+        wallpaperViewer.putExtra("authorTransition", ViewCompat.getTransitionName(author));
+        wallpaperViewer.putExtra("heartTransition", ViewCompat.getTransitionName(heart));
         if (wall.getDrawable() != null) {
-            Bitmap bitmap = Utils.drawableToBitmap(wall.getDrawable());
-
-            try {
-                String filename = "temp.png";
-                FileOutputStream stream = activity.openFileOutput(filename, Context
-                        .MODE_PRIVATE);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
-                stream.close();
-                wallpaperViewer.putExtra("image", filename);
-            } catch (Exception e) {
-                e.printStackTrace();
+            Bitmap bitmap = Utils.drawableToBitmap(activity, wall.getDrawable());
+            if (bitmap != null) {
+                try {
+                    String filename = "temp.png";
+                    FileOutputStream stream = activity.openFileOutput(filename, Context
+                            .MODE_PRIVATE);
+                    bitmap.compress(Bitmap.CompressFormat.PNG,
+                            GlideConfiguration.getPictureMaxRes(activity), stream);
+                    stream.flush();
+                    stream.close();
+                    wallpaperViewer.putExtra("image", filename);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity, wall, ViewCompat
-                            .getTransitionName(wall));
-            activity.startActivityForResult(wallpaperViewer, 12, options.toBundle());
-        } else {
-            activity.startActivityForResult(wallpaperViewer, 12);
         }
+        Pair<View, String> wallPair = Pair.create((View) wall, ViewCompat.getTransitionName(wall));
+        Pair<View, String> heartPair = Pair.create((View) heart,
+                ViewCompat.getTransitionName(heart));
+        Pair<View, String> namePair = Pair.create((View) name, ViewCompat.getTransitionName(name));
+        Pair<View, String> authorPair = Pair.create((View) author,
+                ViewCompat.getTransitionName(author));
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation
+                (activity, wallPair, heartPair, namePair, authorPair);
+        activity.startActivityForResult(wallpaperViewer, 12, options.toBundle());
     }
 
-    private void doOnLongPressed(Wallpaper item) {
-        ApplyWallpaperUtils.onApplyWallpaperClick(activity, null, null, item);
+    private void doOnLongPressed(final Wallpaper item) {
+        Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(30);
+        FramesDialogs.showApplyWallpaperDialog(activity, new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                ApplyWallpaperUtils.onApplyWallpaperClick(activity, null, null, item);
+            }
+        }, null, null, null, false);
     }
 
     private void doFav(Wallpaper item) {

@@ -14,30 +14,15 @@
  * limitations under the License.
  */
 
-package jahirfiquitiva.walls.frames;
+package jahirfiquitiva.libs.frames.callbacks;
 
-import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import jahirfiquitiva.libs.frames.activities.base.LaunchActivity;
+public abstract class OnWallpaperClickListener {
+    public abstract void onClick(Object item, ImageView wall, ImageView heart, TextView name,
+                                   TextView author);
 
-public class MainActivity extends LaunchActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected String getKey() {
-        return "your_key_goes_here";
-    }
-
-    @Override
-    protected boolean allAma() {
-        return false;
-    }
-
-    @Override
-    protected boolean check() {
-        return !BuildConfig.DEBUG;
+    public void onLongClick(Object item) {
     }
 }

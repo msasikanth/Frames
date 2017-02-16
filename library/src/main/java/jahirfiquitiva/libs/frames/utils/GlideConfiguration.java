@@ -28,29 +28,11 @@ import com.bumptech.glide.module.GlideModule;
 
 public class GlideConfiguration implements GlideModule {
 
-    private static Bitmap.Config bitmapsConfig = Bitmap.Config.RGB_565;
-
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
-        boolean runsMinSDK = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context
-                .ACTIVITY_SERVICE);
-        boolean lowRAMDevice;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            lowRAMDevice = activityManager.isLowRamDevice();
-        } else {
-            ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
-            activityManager.getMemoryInfo(memInfo);
-            lowRAMDevice = memInfo.lowMemory;
-        }
-
-        bitmapsConfig = runsMinSDK ? lowRAMDevice ? Bitmap.Config.RGB_565 : Bitmap.Config
-                .ARGB_8888 : Bitmap.Config.RGB_565;
-        builder.setDecodeFormat(runsMinSDK ?
-                lowRAMDevice ? DecodeFormat.PREFER_RGB_565 : DecodeFormat.PREFER_ARGB_8888 :
-                DecodeFormat.PREFER_RGB_565);
+        builder.setDecodeFormat(runsMinSDK() ?
+                isLowRamDevive(context) ? DecodeFormat.PREFER_RGB_565 : DecodeFormat
+                        .PREFER_ARGB_8888 : DecodeFormat.PREFER_RGB_565);
     }
 
     @Override
@@ -58,8 +40,29 @@ public class GlideConfiguration implements GlideModule {
         // register ModelLoaders here.
     }
 
-    public static Bitmap.Config getBitmapsConfig() {
-        return bitmapsConfig;
+    static Bitmap.Config getBitmapsConfig(Context context) {
+        return runsMinSDK() ? isLowRamDevive(context) ? Bitmap.Config.RGB_565 : Bitmap.Config
+                .ARGB_8888 : Bitmap.Config.RGB_565;
+    }
+
+    public static int getPictureMaxRes(Context context) {
+        return runsMinSDK() ? isLowRamDevive(context) ? 75 : 90 : 60;
+    }
+
+    private static boolean runsMinSDK() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+    private static boolean isLowRamDevive(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context
+                .ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return activityManager.isLowRamDevice();
+        } else {
+            ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+            activityManager.getMemoryInfo(memInfo);
+            return memInfo.lowMemory;
+        }
     }
 
 }

@@ -43,12 +43,22 @@ public class LaunchActivity extends AppCompatActivity {
             studio = new Intent(this, StudioActivity.class);
         }
         studio.putExtra("key", getKey());
+        studio.putExtra("check", check());
+        studio.putExtra("allAma", allAma());
         startActivity(studio);
         finish();
     }
 
     protected String getKey() {
         return "";
+    }
+
+    protected boolean allAma() {
+        return false;
+    }
+
+    protected boolean check() {
+        return true;
     }
 
 }

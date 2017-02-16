@@ -104,7 +104,7 @@ public class BaseWallpaperViewerActivity extends ThemedActivity {
         super.onCreate(savedInstanceState);
         FavoritesUtils.init(this);
         Intent intent = getIntent();
-        transitionName = intent.getStringExtra("transitionName");
+        transitionName = intent.getStringExtra("wallTransition");
         item = intent.getParcelableExtra("item");
     }
 
@@ -613,16 +613,14 @@ public class BaseWallpaperViewerActivity extends ThemedActivity {
     protected void setupWallpaper(ImageView mPhoto) {
         Bitmap bmp = null;
         String filename = getIntent().getStringExtra("image");
-        try {
-            if (filename != null) {
+        if (filename != null) {
+            try {
                 FileInputStream is = openFileInput(filename);
                 bmp = BitmapFactory.decodeStream(is);
                 is.close();
-            } else {
-                bmp = null;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         int colorFromCachedPic;

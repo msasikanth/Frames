@@ -16,6 +16,7 @@
 
 package jahirfiquitiva.libs.frames.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,19 +26,24 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.io.FileInputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
@@ -54,6 +60,7 @@ import jahirfiquitiva.libs.frames.views.RectangularImageView;
 public class CollectionActivity extends ThemedActivity {
 
     private CollectionFragment listFragment;
+    private boolean hasPlayedTransition = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +71,6 @@ public class CollectionActivity extends ThemedActivity {
         Collection collection = getIntent().getParcelableExtra("collection");
 
         setContentView(R.layout.activity_collection);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 21) {
             Utils.setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, true);
@@ -83,6 +84,12 @@ public class CollectionActivity extends ThemedActivity {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         FixedElevationAppBarLayout appBar = (FixedElevationAppBarLayout) findViewById(R.id.appBar);
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id
                 .collapsingToolbar);
@@ -90,26 +97,30 @@ public class CollectionActivity extends ThemedActivity {
         if (collection != null)
             collapsingToolbar.setTitle(collection.getName());
 
+        TextView title = getToolbarTextView(toolbar);
+        if (title != null)
+            ViewCompat.setTransitionName(title, getIntent().getStringExtra("nameTransition"));
+
+        RectangularImageView toolbarHeader = (RectangularImageView) findViewById(R.id
+                .toolbarHeader);
+        ViewCompat.setTransitionName(toolbarHeader, getIntent().getStringExtra("wallTransition"));
+
+        ActivityCompat.postponeEnterTransition(this);
+
         ToolbarColorizer.setupCollapsingToolbarIconsAndTextsColors(this, appBar, toolbar);
         ToolbarColorizer.setupCollapsingToolbarTextColors(this, collapsingToolbar);
         ToolbarColorizer.tintStatusBar(this);
 
-        RectangularImageView toolbarHeader = (RectangularImageView) findViewById(R.id
-                .toolbarHeader);
-        ViewCompat.setTransitionName(toolbarHeader, getIntent().getStringExtra("transitionName"));
-
         Bitmap bmp = null;
         String filename = getIntent().getStringExtra("image");
-        try {
-            if (filename != null) {
+        if (filename != null) {
+            try {
                 FileInputStream is = openFileInput(filename);
                 bmp = BitmapFactory.decodeStream(is);
                 is.close();
-            } else {
-                bmp = null;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         Drawable d;
@@ -124,28 +135,59 @@ public class CollectionActivity extends ThemedActivity {
                 Glide.with(this)
                         .load(collection.getPreviewURL())
                         .placeholder(d)
+                        .error(d)
+                        .dontTransform()
+                        .dontAnimate()
                         .thumbnail(Glide.with(this)
                                 .load(collection.getPreviewThumbnailURL())
-                                .thumbnail(0.5f))
+                                .placeholder(d)
+                                .error(d)
+                                .dontTransform()
+                                .dontAnimate()
+                                .thumbnail(0.5f)
+                                .listener(getListener()))
+                        .listener(getListener())
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .into(toolbarHeader);
             } else {
                 Glide.with(this)
                         .load(collection.getPreviewURL())
                         .placeholder(d)
+                        .error(d)
+                        .dontTransform()
+                        .dontAnimate()
                         .thumbnail(0.5f)
+                        .listener(getListener())
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .into(toolbarHeader);
             }
-            Log.d(Utils.LOG_TAG, "Collection \"" + collection.getName() + "\" Wallpapers: " +
-                    collection.getWallpapers().size());
             listFragment = CollectionFragment.newInstance(collection.getWallpapers(), false, false);
             getSupportFragmentManager().beginTransaction().replace(R.id.content, listFragment,
                     collection.getName()).commit();
         } else {
+            final Activity a = this;
             Glide.with(this)
                     .load(d)
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .listener(new RequestListener<Drawable, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, Drawable model, Target
+                                <GlideDrawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, Drawable model,
+                                                       Target<GlideDrawable> target, boolean
+                                                               isFromMemoryCache, boolean
+                                                               isFirstResource) {
+                            if (!hasPlayedTransition) {
+                                ActivityCompat.startPostponedEnterTransition(a);
+                                hasPlayedTransition = true;
+                            }
+                            return false;
+                        }
+                    })
                     .into(toolbarHeader);
         }
     }
@@ -171,6 +213,42 @@ public class CollectionActivity extends ThemedActivity {
         finishAndSendData();
     }
 
+    private RequestListener<String, GlideDrawable> getListener() {
+        final Activity a = this;
+        return new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model,
+                                       Target<GlideDrawable> target, boolean
+                                               isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model,
+                                           Target<GlideDrawable> target, boolean
+                                                   isFromMemoryCache, boolean
+                                                   isFirstResource) {
+                if (!hasPlayedTransition) {
+                    ActivityCompat.startPostponedEnterTransition(a);
+                    hasPlayedTransition = true;
+                }
+                return false;
+            }
+        };
+    }
+
+    private TextView getToolbarTextView(Toolbar toolbar) {
+        try {
+            Class<?> toolbarClass = Toolbar.class;
+            Field titleField = toolbarClass.getDeclaredField("mTitleTextView");
+            titleField.setAccessible(true);
+            return (TextView) titleField.get(toolbar);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private void finishAndSendData() {
         Intent intent = new Intent();
         StringBuilder s = new StringBuilder("");
@@ -188,7 +266,11 @@ public class CollectionActivity extends ThemedActivity {
         }
         intent.putExtra("modified", s.toString());
         setResult(11, intent);
-        finish();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            supportFinishAfterTransition();
+        } else {
+            finish();
+        }
     }
 
 }

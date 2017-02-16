@@ -35,8 +35,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion TARGET_SDK
-        versionCode 1
-        versionName "0.0.1"
+        versionCode 100
+        versionName "1.0.0"
         vectorDrawables.useSupportLibrary = true
         consumerProguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
@@ -62,17 +62,18 @@ android {
     }
 }
 
-// apply from: 'fat-aar.gradle'
+apply from: 'fat-aar.gradle'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    embedded fileTree(dir: 'libs', include: ['*.jar'])
+    //Support Libraries
     compile "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBS"
     compile "com.android.support:support-v4:$ANDROID_SUPPORT_LIBS"
     compile "com.android.support:design:$ANDROID_SUPPORT_LIBS"
     compile "com.android.support:recyclerview-v7:$ANDROID_SUPPORT_LIBS"
     compile "com.android.support:cardview-v7:$ANDROID_SUPPORT_LIBS"
     compile "com.android.support:palette-v7:$ANDROID_SUPPORT_LIBS"
-    // Dialogs
+    //Material Dialogs
     compile 'com.afollestad.material-dialogs:core:0.9.3.0'
     //OkHttp
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
@@ -83,11 +84,9 @@ dependencies {
     //Circular Image View
     compile 'de.hdodenhof:circleimageview:2.1.0'
     //Muzei API
-    //noinspection GradleDynamicVersion
     compile 'com.google.android.apps.muzei:muzei-api:2.0'
     //License Checker Lib
     compile 'com.github.javiersantos:PiracyChecker:0.0.3'
-    // embedded project(':repmax')
     // Database
     compile 'com.afollestad:inquiry:5.0.0'
     // Donations Lib

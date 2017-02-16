@@ -29,8 +29,8 @@ import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.activities.StudioActivity;
+import jahirfiquitiva.libs.frames.callbacks.JSONDownloadCallback;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
-import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.utils.JSONParser;
@@ -40,16 +40,18 @@ public class DownloadJSON extends AsyncTask<Void, Void, Boolean> {
 
     private final ArrayList<Collection> collections = new ArrayList<>();
     private final WeakReference<Context> wrContext;
-    private boolean onlyCategories;
+    private boolean onlyCollections;
+    private JSONDownloadCallback callback;
 
-    public DownloadJSON(Context context) {
+    public DownloadJSON(Context context, JSONDownloadCallback callback) {
         wrContext = new WeakReference<>(context);
-        this.onlyCategories = false;
+        this.onlyCollections = false;
+        this.callback = callback;
     }
 
-    public DownloadJSON(Context context, boolean onlyCategories) {
-        this(context);
-        this.onlyCategories = onlyCategories;
+    public DownloadJSON(Context context, boolean onlyCollections, JSONDownloadCallback callback) {
+        this(context, callback);
+        this.onlyCollections = onlyCollections;
     }
 
     @Override
@@ -88,7 +90,7 @@ public class DownloadJSON extends AsyncTask<Void, Void, Boolean> {
                     collections.add(new Collection(name, preview, previewThumbnail));
                 }
 
-                if (!onlyCategories) {
+                if (!onlyCollections) {
                     JSONArray jsonWallpapers = json.getJSONArray("Wallpapers");
                     ArrayList<Wallpaper> wallpapers = new ArrayList<>();
                     for (int j = 0; j < jsonWallpapers.length(); j++) {
@@ -135,7 +137,6 @@ public class DownloadJSON extends AsyncTask<Void, Void, Boolean> {
                         }
                     }
                 }
-
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -147,25 +148,8 @@ public class DownloadJSON extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean worked) {
         if (worked) {
-            FullListHolder.get().getCollections().createList(collections);
-            if (wrContext.get() instanceof StudioActivity) {
-                ((StudioActivity) wrContext.get()).setupTabsAndPager();
-                if (((StudioActivity) wrContext.get()).getPagerAdapter() != null) {
-                    if (((StudioActivity) wrContext.get()).getPagerAdapter()
-                            .getFragmentAtPosition(((StudioActivity) wrContext.get())
-                                    .getCurrentFragmentPosition()) != null) {
-                        if (((StudioActivity) wrContext.get()).getPagerAdapter()
-                                .getFragmentAtPosition(((StudioActivity) wrContext.get())
-                                        .getCurrentFragmentPosition()) instanceof
-                                CollectionFragment) {
-                            ((CollectionFragment) ((StudioActivity) wrContext.get())
-                                    .getPagerAdapter().getFragmentAtPosition(((StudioActivity)
-                                            wrContext.get()).getCurrentFragmentPosition()))
-                                    .setupContent();
-                        }
-                    }
-                }
-            }
+            if (callback != null)
+                callback.onSuccess(collections);
         } else {
             Log.d(Utils.LOG_TAG, "Something went really wrong while loading wallpapers.");
         }

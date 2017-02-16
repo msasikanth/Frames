@@ -23,7 +23,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -40,6 +39,7 @@ import jahirfiquitiva.libs.frames.activities.base.ThemedActivity;
 import jahirfiquitiva.libs.frames.adapters.CollectionsAdapter;
 import jahirfiquitiva.libs.frames.adapters.PagerAdapter;
 import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
+import jahirfiquitiva.libs.frames.callbacks.JSONDownloadCallback;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
@@ -47,7 +47,6 @@ import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
-import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
 
@@ -68,7 +67,12 @@ public class SearchActivity extends ThemedActivity {
         if ((FullListHolder.get().getCollections() == null) || (FullListHolder.get()
                 .getCollections().getList() == null) || (FullListHolder.get().getCollections()
                 .getList().size() == 0)) {
-            new DownloadJSON(this).execute();
+            new DownloadJSON(this, new JSONDownloadCallback() {
+                @Override
+                public void onSuccess(ArrayList<Collection> collections) {
+                    FullListHolder.get().getCollections().createList(collections);
+                }
+            }).execute();
         }
 
         FavoritesUtils.init(this);

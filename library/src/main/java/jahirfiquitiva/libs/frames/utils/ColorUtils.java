@@ -155,33 +155,19 @@ public class ColorUtils {
     }
 
     public static int getMaterialPrimaryTextColor(boolean dark) {
-        if (dark) {
-            // 100%
-            return Color.parseColor("#ffffffff");
-        } else {
-            // 87%
-            return Color.parseColor("#de000000");
-        }
+        return dark ? Color.parseColor("#ffffffff") : Color.parseColor("#de000000");
     }
 
     public static int getMaterialSecondaryTextColor(boolean dark) {
-        if (dark) {
-            // 70%
-            return Color.parseColor("#b3ffffff");
-        } else {
-            // 54%
-            return Color.parseColor("#8a000000");
-        }
+        return dark ? Color.parseColor("#b3ffffff") : Color.parseColor("#8a000000");
     }
 
     public static int getMaterialTertiaryColor(boolean dark) {
-        if (dark) {
-            // 50%
-            return Color.parseColor("#80ffffff");
-        } else {
-            // 38%
-            return Color.parseColor("#61000000");
-        }
+        return dark ? Color.parseColor("#80ffffff") : Color.parseColor("#61000000");
+    }
+
+    public static int getMaterialDividerColor(boolean dark) {
+        return dark ? Color.parseColor("#1fffffff") : Color.parseColor("#1f000000");
     }
 
 }

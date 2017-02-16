@@ -30,7 +30,6 @@
         <activity
                 android:name=".MainActivity"
                 android:theme="@style/ColdStart"
-                android:excludeFromRecents="true"
                 android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -48,8 +47,45 @@
                     android:resource="@xml/shortcuts"/>
         </activity>
 
+        <!-- Picture Quality Configuration - DO NOT REMOVE -->
         <meta-data
                 android:name="jahirfiquitiva.libs.frames.utils.GlideConfiguration"
                 android:value="GlideModule"/>
+
+        <!-- Muzei Service -->
+        <service
+                android:name="jahirfiquitiva.libs.frames.services.MuzeiArtSourceService"
+                android:label="@string/art_source_name"
+                android:description="@string/art_source_description"
+                android:icon="@drawable/ic_muzei_logo"
+                tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="com.google.android.apps.muzei.api.MuzeiArtSource"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="color"
+                    android:value="@color/muzei_color"/>
+            <meta-data
+                    android:name="settingsActivity"
+                    android:value="jahirfiquitiva.libs.frames.activities.MuzeiSettingsActivity"/>
+        </service>
+
+        <!-- FirebaseService -->
+        <!-- TODO: Remove comment marks to enable
+        <service
+                android:name=".FirebaseService"
+                tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@drawable/ic_notifications"/>
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_color"
+                android:resource="@color/notification_color"/> -->
     </application>
 </manifest>

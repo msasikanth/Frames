@@ -16,6 +16,7 @@
 
 package jahirfiquitiva.libs.frames.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,17 +28,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import java.util.ArrayList;
+
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.activities.base.ThemedActivity;
 import jahirfiquitiva.libs.frames.adapters.PagerAdapter;
 import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
+import jahirfiquitiva.libs.frames.callbacks.JSONDownloadCallback;
+import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
+import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
+import jahirfiquitiva.libs.frames.utils.Utils;
 
 public class StudioActivity extends ThemedActivity {
 
@@ -49,12 +59,6 @@ public class StudioActivity extends ThemedActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        new DownloadJSON(this).execute();
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         super.onCreate(savedInstanceState);
 
         FavoritesUtils.init(this);
@@ -78,6 +82,7 @@ public class StudioActivity extends ThemedActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        checkConnectionAndLicense();
         if (getPagerAdapter() != null) {
             if (getPagerAdapter().getFragments() != null) {
                 for (Fragment fragment : getPagerAdapter().getFragments()) {
@@ -87,6 +92,47 @@ public class StudioActivity extends ThemedActivity {
                 }
             }
         }
+    }
+
+    private void checkConnectionAndLicense() {
+        if (Utils.isConnected(this)) {
+            checkLicense();
+        } else {
+            FramesDialogs.showLicenseErrorDialog(this, null,
+                    new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull
+                                DialogAction which) {
+                            finish();
+                        }
+                    }, new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            finish();
+                        }
+                    }, new MaterialDialog.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            finish();
+                        }
+                    });
+        }
+    }
+
+    private void checkLicense() {
+        Utils.runLicenseChecker(this, getIntent().getBooleanExtra("check", true),
+                getIntent().getStringExtra("key"), getIntent().getBooleanExtra("allAma", false),
+                new Utils.SuccessCallback() {
+                    @Override
+                    public void onSuccess() {
+                        new DownloadJSON(StudioActivity.this, getCallback()).execute();
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -115,11 +161,13 @@ public class StudioActivity extends ThemedActivity {
         } else if (i == R.id.favs) {
             startActivityForResult(new Intent(this, FavoritesActivity.class), 14);
         } else if (i == R.id.refresh) {
-            new DownloadJSON(this).execute();
+            new DownloadJSON(this, getCallback()).execute();
         } else if (i == R.id.about) {
             startActivity(new Intent(this, CreditsActivity.class));
         } else if (i == R.id.settings) {
             startActivityForResult(new Intent(this, SettingsActivity.class), 15);
+        } else if (i == R.id.donate) {
+            startActivity(new Intent(this, DonateActivity.class));
         }
         return true;
     }
@@ -174,6 +222,26 @@ public class StudioActivity extends ThemedActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    private JSONDownloadCallback getCallback() {
+        return new JSONDownloadCallback() {
+            @Override
+            public void onSuccess(ArrayList<Collection> collections) {
+                FullListHolder.get().getCollections().createList(collections);
+                setupTabsAndPager();
+                if (getPagerAdapter() != null) {
+                    if (getPagerAdapter().getFragmentAtPosition(getCurrentFragmentPosition()) !=
+                            null) {
+                        if (getPagerAdapter().getFragmentAtPosition(getCurrentFragmentPosition())
+                                instanceof CollectionFragment) {
+                            ((CollectionFragment) getPagerAdapter().getFragmentAtPosition
+                                    (getCurrentFragmentPosition())).setupContent();
+                        }
+                    }
+                }
+            }
+        };
     }
 
     public void hideTabs() {

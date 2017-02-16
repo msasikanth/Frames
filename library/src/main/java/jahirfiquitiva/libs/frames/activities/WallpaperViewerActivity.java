@@ -115,6 +115,7 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
         });
 
         final CheckableImageView favIV = (CheckableImageView) findViewById(R.id.fav);
+        ViewCompat.setTransitionName(favIV, getIntent().getStringExtra("heartTransition"));
         favIV.setWallpaperItem(getItem());
         Drawable prev = favIV.getDrawable();
         if (prev != null)
@@ -197,6 +198,7 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
         ViewCompat.setTransitionName(mPhoto, getTransitionName());
 
         TextView wallNameText = (TextView) findViewById(R.id.wallName);
+        ViewCompat.setTransitionName(wallNameText, getIntent().getStringExtra("nameTransition"));
         wallNameText.setText(getItem().getName());
         wallNameText.setTextColor(ColorUtils.getMaterialPrimaryTextColor(!(ColorUtils.isLightColor
                 (ThemeUtils.darkOrLight(this, R.color.dark_theme_card_background, R.color

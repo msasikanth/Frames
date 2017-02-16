@@ -19,7 +19,6 @@
     <color name="colorPrimaryDark">#039BE5</color>
     <color name="colorPrimary">#29B6F6</color>
     <color name="colorAccent">#69F0AE</color>
-    <color name="md_widget_color">@color/colorPrimary</color>
     <color name="primary_text">#de000000</color>
     <color name="secondary_text">#8a000000</color>
     <color name="tertiary_text">#61000000</color>

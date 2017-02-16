@@ -13,7 +13,7 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="jahirfiquitiva.libs.frames">
 
@@ -66,7 +66,6 @@
         <!-- Launch Activity -->
         <activity
                 android:name=".activities.base.LaunchActivity"
-                android:excludeFromRecents="true"
                 android:noHistory="true"/>
 
         <!-- Main Activity -->
@@ -78,8 +77,6 @@
         <!-- Collection Activity -->
         <activity
                 android:name=".activities.CollectionActivity"
-                android:label="@string/title_activity_collection"
-                android:launchMode="singleTop"
                 android:parentActivityName=".activities.StudioActivity"
                 android:theme="@style/AppTheme.Light">
             <meta-data
@@ -91,7 +88,6 @@
         <activity
                 android:name=".activities.FavoritesActivity"
                 android:label="@string/favorites"
-                android:launchMode="singleTop"
                 android:parentActivityName=".activities.StudioActivity"
                 android:theme="@style/AppTheme.Light">
             <meta-data
@@ -102,7 +98,6 @@
         <!-- Wallpapers Activities -->
         <activity
                 android:name=".activities.WallpaperViewerActivity"
-                android:launchMode="singleTop"
                 android:parentActivityName=".activities.StudioActivity"
                 android:theme="@style/AppTheme.Light">
             <meta-data
@@ -111,7 +106,6 @@
         </activity>
         <activity
                 android:name=".activities.FabbedViewerActivity"
-                android:launchMode="singleTop"
                 android:parentActivityName=".activities.StudioActivity"
                 android:theme="@style/AppTheme.Light">
             <meta-data
@@ -151,6 +145,24 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="jahirfiquitiva.libs.frames.activities.StudioActivity"/>
         </activity>
+
+        <!-- Donate Activity -->
+        <activity
+                android:name=".activities.DonateActivity"
+                android:label="@string/about"
+                android:parentActivityName=".activities.StudioActivity"
+                android:theme="@style/AppTheme.Light">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="jahirfiquitiva.libs.frames.activities.StudioActivity"/>
+        </activity>
+
+        <!-- Muzei Settings -->
+        <activity
+                android:name=".activities.MuzeiSettingsActivity"
+                android:exported="true"
+                android:label="@string/muzei_settings"
+                android:theme="@style/ColdStart"/>
     </application>
 
 </manifest>

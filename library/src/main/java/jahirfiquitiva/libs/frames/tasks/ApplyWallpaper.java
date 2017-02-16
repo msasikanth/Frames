@@ -34,9 +34,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-import jahirfiquitiva.libs.frames.R;
-import jahirfiquitiva.libs.frames.activities.StudioActivity;
-
 public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
 
     private String url;
@@ -90,26 +87,6 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
         this.setToLockScreen = setToLockScreen;
         this.setToBoth = setToBoth;
     }
-
-//    public ApplyWallpaper(Activity activity, MaterialDialog dialog, Bitmap resource,
-//                          View layout, LinearLayout toHide1, LinearLayout toHide2) {
-//        this.wrActivity = new WeakReference<>(activity);
-////        this.dialog = dialog;
-////        this.resource = resource;
-//        this.isPicker = false;
-//        this.layout = layout;
-//        this.toHide1 = toHide1;
-//        this.toHide2 = toHide2;
-//    }
-
-//    @Override
-//    protected void onPreExecute() {
-//        if (wrActivity != null) {
-//            activity = wrActivity.get();
-//        } else if (context != null) {
-//            activity = (Activity) context.get();
-//        }
-//    }
 
     @Override
     protected Boolean doInBackground(Void... params) {
@@ -183,18 +160,8 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean worked) {
         if (worked) {
-            if (wrActivity.get() instanceof StudioActivity) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-                dialog = new MaterialDialog.Builder(wrActivity.get())
-                        .content(R.string.wallpaper_set)
-                        .positiveText(android.R.string.ok)
-                        .show();
-                if (isPicker) {
-                    wrActivity.get().finish();
-                }
-            }
+            if (callback != null)
+                callback.afterApplied();
         }
     }
 
@@ -216,7 +183,7 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
                 int scaledHeight = deviceHeight;
                 int scaledWidth = (scaledHeight * bitmapWidth) / bitmapHeight;
                 try {
-                    if (scaledHeight > deviceHeight) { //TODO check; this is always false?
+                    if (scaledHeight > deviceHeight) {
                         scaledHeight = deviceHeight;
                     }
                     bitmap = Bitmap.createScaledBitmap(bitmap, scaledWidth,
@@ -227,13 +194,11 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
             }
             if (flag) {
                 if (bitmapHeight > deviceHeight) {
-                    int scaledWidth = (deviceHeight * bitmapWidth)
-                            / bitmapHeight;
+                    int scaledWidth = (deviceHeight * bitmapWidth) / bitmapHeight;
                     try {
                         if (scaledWidth > deviceWidth)
                             scaledWidth = deviceWidth;
-                        bitmap = Bitmap.createScaledBitmap(bitmap, scaledWidth,
-                                deviceHeight, true);
+                        bitmap = Bitmap.createScaledBitmap(bitmap, scaledWidth, deviceHeight, true);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

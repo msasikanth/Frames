@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package jahirfiquitiva.libs.frames.callbacks;
+package jahirfiquitiva.walls.frames;
 
-import android.widget.ImageView;
+// TODO: Remove /* */ Comment marks to enable
+public class FirebaseService { /* extends FirebaseMessagingService {
 
-public abstract class OnWallpaperPressListener {
-    public abstract void onPressed(Object item, ImageView wall);
-
-    public void onLongPressed(Object item) {
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        if (remoteMessage.getNotification() != null) {
+            NotificationUtils.sendFirebaseNotification(this,
+                    HomeActivity.class,
+                    remoteMessage.getData(),
+                    remoteMessage.getNotification().getTitle(),
+                    remoteMessage.getNotification().getBody());
+        }
     }
+
+*/
 }

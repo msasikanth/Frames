@@ -14,30 +14,12 @@
  * limitations under the License.
  */
 
-package jahirfiquitiva.walls.frames;
+package jahirfiquitiva.libs.frames.callbacks;
 
-import android.os.Bundle;
+import java.util.ArrayList;
 
-import jahirfiquitiva.libs.frames.activities.base.LaunchActivity;
+import jahirfiquitiva.libs.frames.models.Collection;
 
-public class MainActivity extends LaunchActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected String getKey() {
-        return "your_key_goes_here";
-    }
-
-    @Override
-    protected boolean allAma() {
-        return false;
-    }
-
-    @Override
-    protected boolean check() {
-        return !BuildConfig.DEBUG;
-    }
+public interface JSONDownloadCallback {
+    void onSuccess(ArrayList<Collection> collections);
 }

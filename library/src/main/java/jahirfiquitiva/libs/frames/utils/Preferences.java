@@ -31,11 +31,12 @@ public class Preferences {
             CURRENT_THEME = "current_theme",
             TINT_NAVBAR = "tint_navbar",
             VERSION_CODE = "version_code",
-            ROTATE_MINUTE = "rotate_time_minute",
-            ROTATE_TIME = "muzei_rotate_time",
             WALLS_DOWNLOAD_FOLDER = "walls_download_folder",
             WALLS_COLUMNS_NUMBER = "walls_columns_number",
-            INSTAGRAM_LIKE_BEHAVIOR = "instagram_like_behavior";
+            INSTAGRAM_LIKE_BEHAVIOR = "instagram_like_behavior",
+            MUZEI_REFRESH_INTERVAL = "muzei_refresh_interval",
+            MUZEI_REFRESH_ON_WIFI_ONLY = "muzei_refresh_on_wifi_only",
+            MUZEI_COLLECTIONS = "muzei_collections";
 
     private final Context context;
 
@@ -80,20 +81,28 @@ public class Preferences {
         return getPrefs().getBoolean(TINT_NAVBAR, true);
     }
 
-    public int getRotateTime() {
-        return getPrefs().getInt(ROTATE_TIME, 3 * 60 * 60 * 1000);
+    public void setMuzeiRefreshInterval(int interval) {
+        getPrefs().edit().putInt(MUZEI_REFRESH_INTERVAL, interval).apply();
     }
 
-    public void setRotateTime(int time) {
-        getPrefs().edit().putInt(ROTATE_TIME, time).apply();
+    public int getMuzeiRefreshInterval() {
+        return getPrefs().getInt(MUZEI_REFRESH_INTERVAL, 8);
     }
 
-    public boolean isRotateMinute() {
-        return getPrefs().getBoolean(ROTATE_MINUTE, false);
+    public void setMuzeiRefreshOnWiFiOnly(boolean onWifiOnly) {
+        getPrefs().edit().putBoolean(MUZEI_REFRESH_ON_WIFI_ONLY, onWifiOnly).apply();
     }
 
-    public void setRotateMinute(boolean bool) {
-        getPrefs().edit().putBoolean(ROTATE_MINUTE, bool).apply();
+    public boolean getMuzeiRefreshOnWiFiOnly() {
+        return getPrefs().getBoolean(MUZEI_REFRESH_ON_WIFI_ONLY, false);
+    }
+
+    public void setMuzeiCollections(String collections) {
+        getPrefs().edit().putString(MUZEI_COLLECTIONS, collections).apply();
+    }
+
+    public String getMuzeiCollections() {
+        return getPrefs().getString(MUZEI_COLLECTIONS, "");
     }
 
     public String getDownloadsFolder() {
@@ -102,7 +111,7 @@ public class Preferences {
                         ? context.getResources().getString(R.string.walls_save_location,
                         Environment.getExternalStorageDirectory().getAbsolutePath())
                         : Environment.getExternalStorageDirectory().getAbsolutePath()
-                        + "/IconShowcase/Wallpapers");
+                        + "/Frames/Wallpapers");
     }
 
     public void setDownloadsFolder(String folder) {

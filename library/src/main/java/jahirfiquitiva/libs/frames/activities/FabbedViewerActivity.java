@@ -17,14 +17,12 @@
 package jahirfiquitiva.libs.frames.activities;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.StyleRes;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -250,23 +248,24 @@ public class FabbedViewerActivity extends BaseWallpaperViewerActivity {
         setupFullScreen();
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void changeToolbarTextAppearance(Toolbar toolbar) {
         TextView title, subtitle;
         try {
             Field f = toolbar.getClass().getDeclaredField("mTitleTextView");
             f.setAccessible(true);
             title = (TextView) f.get(toolbar);
+            ViewCompat.setTransitionName(title, getIntent().getStringExtra("nameTransition"));
             setTextAppearance(title, R.style.ToolbarTitleWithShadow);
             try {
                 Field f2 = toolbar.getClass().getDeclaredField("mSubtitleTextView");
                 f2.setAccessible(true);
                 subtitle = (TextView) f2.get(toolbar);
+                ViewCompat.setTransitionName(subtitle, getIntent().getStringExtra
+                        ("authorTransition"));
                 setTextAppearance(subtitle, R.style.ToolbarSubtitleWithShadow);
-            } catch (NoSuchFieldException | IllegalAccessException ex) {
-                //Do nothing
+            } catch (Exception ignored) {
             }
-        } catch (NoSuchFieldException | IllegalAccessException ex) {
+        } catch (Exception ignored) {
             //Do nothing
         }
     }

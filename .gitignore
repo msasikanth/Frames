@@ -22,6 +22,8 @@ bin/
 local.properties
 .settings/
 .loadpath
+.graphics/
+graphics/
 
 # External tool builders
 .externalToolBuilders/

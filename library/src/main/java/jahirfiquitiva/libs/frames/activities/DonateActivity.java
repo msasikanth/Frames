@@ -59,9 +59,13 @@ public class DonateActivity extends ThemedActivity {
         boolean paypalDonations = getIntent().getBooleanExtra("paypal", false);
 
         String installer = getPackageManager().getInstallerPackageName(getPackageName());
-        if ((installer.matches("com.google.android.feedback") || installer.matches("com.android" +
-                ".vending"))) {
-            paypalDonations = false;
+        if (installer == null) {
+            googleDonations = false;
+        } else {
+            if ((installer.matches("com.google.android.feedback") || installer.matches("com" +
+                    ".android.vending"))) {
+                paypalDonations = false;
+            }
         }
 
         final String[] catalogItems = getResources().getStringArray(R.array.google_donations_items);

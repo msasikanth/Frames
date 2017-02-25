@@ -261,13 +261,17 @@ public class StudioActivity extends ThemedActivity {
         if (tabs == null) return;
         tabs.removeAllTabs();
         int index = FullListHolder.get().getCollections().getIndexForCollectionWithName("featured");
-        if ((index >= 0) && (FullListHolder.get().getCollections().getList().get(index)
-                .getWallpapers() != null) && (FullListHolder.get().getCollections().getList().get
-                (index).getWallpapers().size() > 0)) {
-            hasFeaturedWallpapers = true;
-            tabs.addTab(tabs.newTab().setText(R.string.featured));
-            tabs.addTab(tabs.newTab().setText(R.string.collections));
-            tabs.setVisibility(View.VISIBLE);
+        try {
+            if ((index >= 0) && (FullListHolder.get().getCollections().getList().get(index)
+                    .getWallpapers() != null) && (FullListHolder.get().getCollections().getList()
+                    .get
+                    (index).getWallpapers().size() > 0)) {
+                hasFeaturedWallpapers = true;
+                tabs.addTab(tabs.newTab().setText(R.string.featured));
+                tabs.addTab(tabs.newTab().setText(R.string.collections));
+                tabs.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception ignored) {
         }
         if (pager == null) return;
         pager.setVisibility(View.VISIBLE);

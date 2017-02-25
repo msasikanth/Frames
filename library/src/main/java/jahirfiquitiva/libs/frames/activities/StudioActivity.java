@@ -131,7 +131,11 @@ public class StudioActivity extends ThemedActivity {
                 new Utils.SuccessCallback() {
                     @Override
                     public void onSuccess() {
-                        new DownloadJSON(StudioActivity.this, getCallback()).execute();
+                        if ((FullListHolder.get().getCollections() == null) || (FullListHolder
+                                .get().getCollections().getList() == null) || (FullListHolder.get
+                                ().getCollections().getList().size() == 0)) {
+                            new DownloadJSON(StudioActivity.this, getCallback()).execute();
+                        }
                         try {
                             Thread.sleep(50);
                         } catch (InterruptedException e) {

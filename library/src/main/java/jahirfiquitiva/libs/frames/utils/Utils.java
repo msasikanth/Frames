@@ -186,6 +186,7 @@ public class Utils {
             checkLicense(context, lic, allAma, callback);
         } else {
             mPrefs.setDashboardWorking(true);
+            if (callback != null) callback.onSuccess();
         }
     }
 

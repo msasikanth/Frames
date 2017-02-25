@@ -33,19 +33,19 @@ public class ThemedActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mLastTheme = ThemeUtils.isDarkTheme();
-        mLastNavBar = ThemeUtils.hasColoredNavbar();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         if (mLastTheme != ThemeUtils.isDarkTheme() ||
                 mLastNavBar != ThemeUtils.hasColoredNavbar()) {
             ThemeUtils.restartActivity(this);
         }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mLastTheme = ThemeUtils.isDarkTheme();
+        mLastNavBar = ThemeUtils.hasColoredNavbar();
     }
 
 }

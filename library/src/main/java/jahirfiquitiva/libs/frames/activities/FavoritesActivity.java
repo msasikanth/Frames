@@ -16,23 +16,28 @@
 
 package jahirfiquitiva.libs.frames.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.activities.base.ThemedActivity;
 import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
+import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
-import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
+import jahirfiquitiva.libs.frames.utils.Utils;
 
 public class FavoritesActivity extends ThemedActivity {
 
@@ -64,6 +69,12 @@ public class FavoritesActivity extends ThemedActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        checkConnectionAndLicense();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         FavoritesUtils.destroy(this);
@@ -82,6 +93,42 @@ public class FavoritesActivity extends ThemedActivity {
     @Override
     public void onBackPressed() {
         finishAndSendData();
+    }
+
+    private void checkConnectionAndLicense() {
+        if (Utils.isConnected(this)) {
+            checkLicense();
+        } else {
+            FramesDialogs.showLicenseErrorDialog(this, null,
+                    new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull
+                                DialogAction which) {
+                            finish();
+                        }
+                    }, new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            finish();
+                        }
+                    }, new MaterialDialog.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            finish();
+                        }
+                    });
+        }
+    }
+
+    private void checkLicense() {
+        Utils.runLicenseChecker(this, getIntent().getBooleanExtra("check", true),
+                getIntent().getStringExtra("key"), getIntent().getBooleanExtra("allAma", false),
+                new Utils.SuccessCallback() {
+                    @Override
+                    public void onSuccess() {
+                        // Do nothing
+                    }
+                });
     }
 
     private void finishAndSendData() {

@@ -38,6 +38,7 @@ public class MainActivity extends LaunchActivity {
 
     @Override
     protected boolean check() {
+        // TODO: Replace with true or false
         return !BuildConfig.DEBUG;
     }
 }

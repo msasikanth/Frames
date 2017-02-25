@@ -94,6 +94,12 @@ public class StudioActivity extends ThemedActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FavoritesUtils.destroy(this);
+    }
+
     private void checkConnectionAndLicense() {
         if (Utils.isConnected(this)) {
             checkLicense();
@@ -136,12 +142,6 @@ public class StudioActivity extends ThemedActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        FavoritesUtils.destroy(this);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         if (getResources().getBoolean(R.bool.show_popup_icons))
@@ -167,7 +167,9 @@ public class StudioActivity extends ThemedActivity {
         } else if (i == R.id.settings) {
             startActivityForResult(new Intent(this, SettingsActivity.class), 15);
         } else if (i == R.id.donate) {
-            startActivity(new Intent(this, DonateActivity.class));
+            Intent donate = new Intent(this, DonateActivity.class);
+            donate.putExtra("key", getIntent().getStringExtra("key"));
+            startActivity(donate);
         }
         return true;
     }

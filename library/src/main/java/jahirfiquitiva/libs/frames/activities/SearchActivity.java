@@ -17,6 +17,7 @@
 package jahirfiquitiva.libs.frames.activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,6 +33,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.R;
@@ -40,6 +44,7 @@ import jahirfiquitiva.libs.frames.adapters.CollectionsAdapter;
 import jahirfiquitiva.libs.frames.adapters.PagerAdapter;
 import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
 import jahirfiquitiva.libs.frames.callbacks.JSONDownloadCallback;
+import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
@@ -49,6 +54,7 @@ import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
+import jahirfiquitiva.libs.frames.utils.Utils;
 
 public class SearchActivity extends ThemedActivity {
 
@@ -140,6 +146,12 @@ public class SearchActivity extends ThemedActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        checkConnectionAndLicense();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         FavoritesUtils.destroy(this);
@@ -227,6 +239,51 @@ public class SearchActivity extends ThemedActivity {
                 }
             }
         }
+    }
+
+    private void checkConnectionAndLicense() {
+        if (Utils.isConnected(this)) {
+            checkLicense();
+        } else {
+            FramesDialogs.showLicenseErrorDialog(this, null,
+                    new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull
+                                DialogAction which) {
+                            finish();
+                        }
+                    }, new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            finish();
+                        }
+                    }, new MaterialDialog.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            finish();
+                        }
+                    });
+        }
+    }
+
+    private void checkLicense() {
+        Utils.runLicenseChecker(this, getIntent().getBooleanExtra("check", true),
+                getIntent().getStringExtra("key"), getIntent().getBooleanExtra("allAma", false),
+                new Utils.SuccessCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if ((FullListHolder.get().getCollections() == null) || (FullListHolder.get()
+                                .getCollections().getList() == null) || (FullListHolder.get()
+                                .getCollections().getList().size() == 0)) {
+                            new DownloadJSON(SearchActivity.this, new JSONDownloadCallback() {
+                                @Override
+                                public void onSuccess(ArrayList<Collection> collections) {
+                                    FullListHolder.get().getCollections().createList(collections);
+                                }
+                            }).execute();
+                        }
+                    }
+                });
     }
 
     public void setupTabsAndPager() {

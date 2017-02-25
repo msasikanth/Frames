@@ -16,6 +16,7 @@
 
 package jahirfiquitiva.libs.frames.activities;
 
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import java.util.Locale;
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.activities.base.ThemedActivity;
 import jahirfiquitiva.libs.frames.callbacks.JSONDownloadCallback;
+import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
@@ -192,6 +194,12 @@ public class MuzeiSettingsActivity extends ThemedActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        checkConnectionAndLicense();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -204,6 +212,53 @@ public class MuzeiSettingsActivity extends ThemedActivity {
     @Override
     public void onBackPressed() {
         showConfirmDialog();
+    }
+
+    private void checkConnectionAndLicense() {
+        if (Utils.isConnected(this)) {
+            checkLicense();
+        } else {
+            FramesDialogs.showLicenseErrorDialog(this, null,
+                    new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull
+                                DialogAction which) {
+                            finish();
+                        }
+                    }, new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            finish();
+                        }
+                    }, new MaterialDialog.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            finish();
+                        }
+                    });
+        }
+    }
+
+    private void checkLicense() {
+        Utils.runLicenseChecker(this, getIntent().getBooleanExtra("check", true),
+                getIntent().getStringExtra("key"), getIntent().getBooleanExtra("allAma", false),
+                new Utils.SuccessCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if (isConnected() && ((FullListHolder.get().getCollections() == null) ||
+                                (FullListHolder.get().getCollections().getList() == null) ||
+                                (FullListHolder.get().getCollections().getList().size() <= 0))) {
+                            new DownloadJSON(MuzeiSettingsActivity.this, true, new
+                                    JSONDownloadCallback() {
+                                        @Override
+                                        public void onSuccess(ArrayList<Collection> collections) {
+                                            FullListHolder.get().getCollections().createList
+                                                    (collections);
+                                        }
+                                    }).execute();
+                        }
+                    }
+                });
     }
 
     private void showConfirmDialog() {

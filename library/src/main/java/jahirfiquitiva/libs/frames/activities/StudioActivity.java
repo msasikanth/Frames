@@ -24,6 +24,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -148,6 +149,23 @@ public class StudioActivity extends ThemedActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        String installer = getPackageManager().getInstallerPackageName(getPackageName());
+        if (installer != null) {
+            if ((installer.matches("com.google.android.feedback") || installer.matches("com" +
+                    ".android.vending"))) {
+                if (((getResources().getStringArray(R.array.google_donations_catalog).length <=
+                        0) ||
+                        (getResources().getStringArray(R.array.google_donations_items).length <=
+                                0))) {
+                    menu.removeItem(R.id.donate);
+                }
+            } else if ((getResources().getString(R.string.paypal_email).length() <= 0) ||
+                    (getResources().getString(R.string.paypal_currency_code).length() <= 0)) {
+                menu.removeItem(R.id.donate);
+            }
+        } else {
+            menu.removeItem(R.id.donate);
+        }
         if (getResources().getBoolean(R.bool.show_popup_icons))
             ToolbarColorizer.makeMenuIconsVisible(menu);
         ToolbarColorizer.tintMenu(menu, ColorUtils.getMaterialPrimaryTextColor(!(ColorUtils
@@ -161,9 +179,17 @@ public class StudioActivity extends ThemedActivity {
         super.onOptionsItemSelected(item);
         int i = item.getItemId();
         if (i == R.id.search) {
-            startActivityForResult(new Intent(this, SearchActivity.class), 13);
+            Intent search = new Intent(this, SearchActivity.class);
+            search.putExtra("key", getIntent().getStringExtra("key"));
+            search.putExtra("check", getIntent().getBooleanExtra("check", true));
+            search.putExtra("allAma", getIntent().getBooleanExtra("allAma", false));
+            startActivityForResult(search, 13);
         } else if (i == R.id.favs) {
-            startActivityForResult(new Intent(this, FavoritesActivity.class), 14);
+            Intent favs = new Intent(this, FavoritesActivity.class);
+            favs.putExtra("key", getIntent().getStringExtra("key"));
+            favs.putExtra("check", getIntent().getBooleanExtra("check", true));
+            favs.putExtra("allAma", getIntent().getBooleanExtra("allAma", false));
+            startActivityForResult(favs, 14);
         } else if (i == R.id.refresh) {
             new DownloadJSON(this, getCallback()).execute();
         } else if (i == R.id.about) {
@@ -260,18 +286,20 @@ public class StudioActivity extends ThemedActivity {
     public void setupTabsAndPager() {
         if (tabs == null) return;
         tabs.removeAllTabs();
-        int index = FullListHolder.get().getCollections().getIndexForCollectionWithName("featured");
-        try {
-            if ((index >= 0) && (FullListHolder.get().getCollections().getList().get(index)
-                    .getWallpapers() != null) && (FullListHolder.get().getCollections().getList()
-                    .get
-                    (index).getWallpapers().size() > 0)) {
+        if ((FullListHolder.get() != null) &&
+                (!(FullListHolder.get().getCollections().isEmpty()))) {
+            int index = FullListHolder.get().getCollections().getIndexForCollectionWithName
+                    ("featured");
+            Log.d(Utils.LOG_TAG, "Index: " + index);
+            if ((index >= 0) && (!(FullListHolder.get().getCollections().getList().isEmpty())) &&
+                    (FullListHolder.get().getCollections().getList().get(index).getWallpapers()
+                            != null) && (!(FullListHolder.get().getCollections().getList().get
+                    (index).getWallpapers().isEmpty()))) {
                 hasFeaturedWallpapers = true;
                 tabs.addTab(tabs.newTab().setText(R.string.featured));
                 tabs.addTab(tabs.newTab().setText(R.string.collections));
                 tabs.setVisibility(View.VISIBLE);
             }
-        } catch (Exception ignored) {
         }
         if (pager == null) return;
         pager.setVisibility(View.VISIBLE);

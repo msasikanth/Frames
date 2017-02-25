@@ -105,7 +105,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
     }
 
     public Fragment getFragmentAtPosition(int position) {
-        return mFragments.get(position);
+        return !mFragments.isEmpty() ? mFragments.get(position) : null;
     }
 
     @Override

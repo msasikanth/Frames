@@ -181,7 +181,7 @@ public class SearchActivity extends ThemedActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finishAndSendData();
+            onBackPressed();
         } else if (item.getItemId() == R.id.close) {
             search(null, true);
             searchField.setText("");
@@ -195,6 +195,7 @@ public class SearchActivity extends ThemedActivity {
     public void onBackPressed() {
         search(null, true);
         hideKeyboard();
+        forceHideKeyboard();
         finishAndSendData();
     }
 
@@ -421,8 +422,7 @@ public class SearchActivity extends ThemedActivity {
     private void forceShowKeyboard() {
         InputMethodManager manager = (InputMethodManager) getSystemService(Context
                 .INPUT_METHOD_SERVICE);
-        manager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager
-                .HIDE_IMPLICIT_ONLY);
+        manager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void showKeyboard() {
@@ -435,6 +435,17 @@ public class SearchActivity extends ThemedActivity {
         InputMethodManager manager = (InputMethodManager) getSystemService(Context
                 .INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
+    }
+
+    private void forceHideKeyboard() {
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context
+                .INPUT_METHOD_SERVICE);
+        try {
+            View focus = getWindow().getCurrentFocus();
+            if (focus != null)
+                manager.hideSoftInputFromWindow(focus.getWindowToken(), 0);
+        } catch (Exception ignored) {
+        }
     }
 
 }

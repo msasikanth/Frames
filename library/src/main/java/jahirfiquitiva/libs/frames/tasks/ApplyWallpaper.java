@@ -88,6 +88,13 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
         this.setToBoth = setToBoth;
     }
 
+    public ApplyWallpaper(Activity activity, MaterialDialog dialog, @NonNull Bitmap resource,
+                          ApplyCallback callback,
+                          boolean setToHomeScreen, boolean setToLockScreen, boolean setToBoth) {
+        this(activity, resource, callback, setToHomeScreen, setToLockScreen, setToBoth);
+        this.dialog = dialog;
+    }
+
     @Override
     protected Boolean doInBackground(Void... params) {
         if (dialog != null) {
@@ -146,9 +153,8 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
             } else {
                 wm.setBitmap(scaleToActualAspectRatio(resource));
             }
-            if (callback != null) {
-                callback.afterApplied();
-            }
+            if (dialog != null) dialog.dismiss();
+            if (callback != null) callback.afterApplied();
             return true;
         } catch (OutOfMemoryError | IOException ex) {
             ex.printStackTrace();

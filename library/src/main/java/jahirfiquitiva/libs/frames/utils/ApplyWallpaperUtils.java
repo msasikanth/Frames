@@ -191,7 +191,8 @@ public class ApplyWallpaperUtils {
                                                  final MaterialDialog dialog, boolean
                                                          setToHomeScreen, boolean
                                                          setToLockScreen, boolean setToBoth) {
-        return new ApplyWallpaper((Activity) context, resource, new ApplyWallpaper.ApplyCallback() {
+        return new ApplyWallpaper((Activity) context, dialog, resource, new ApplyWallpaper
+                .ApplyCallback() {
             @Override
             public void afterApplied() {
                 runOnUIThread(context, new Runnable() {

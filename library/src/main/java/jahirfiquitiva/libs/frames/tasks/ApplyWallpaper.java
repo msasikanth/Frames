@@ -153,8 +153,6 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
             } else {
                 wm.setBitmap(scaleToActualAspectRatio(resource));
             }
-            if (dialog != null) dialog.dismiss();
-            if (callback != null) callback.afterApplied();
             return true;
         } catch (OutOfMemoryError | IOException ex) {
             ex.printStackTrace();
@@ -165,6 +163,7 @@ public class ApplyWallpaper extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected void onPostExecute(Boolean worked) {
+        if (dialog != null) dialog.dismiss();
         if (worked) {
             if (callback != null)
                 callback.afterApplied();

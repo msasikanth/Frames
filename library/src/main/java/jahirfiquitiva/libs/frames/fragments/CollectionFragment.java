@@ -127,23 +127,9 @@ public class CollectionFragment extends Fragment {
         fastScroller = (RecyclerFastScroller) layout.findViewById(R.id.rvFastScroller);
         mSwipeRefreshLayout = (SwipeRefreshLayout) layout.findViewById(R.id.swipeRefreshLayout);
 
-        // TODO: Change ic_ drawables with beautiful illustrations
-
         ImageView noConnection = (ImageView) layout.findViewById(R.id.no_connected_view);
-        noConnection.setImageDrawable(IconUtils.getTintedDrawable(getActivity(),
-                "ic_no_connection"));
-        noConnection.setScaleX(0.65f);
-        noConnection.setScaleY(0.65f);
-
         ImageView noFavorites = (ImageView) layout.findViewById(R.id.no_favorites_view);
-        noFavorites.setImageDrawable(IconUtils.getTintedDrawable(getActivity(), "ic_no_favorites"));
-        noFavorites.setScaleX(0.65f);
-        noFavorites.setScaleY(0.65f);
-
         ImageView noResults = (ImageView) layout.findViewById(R.id.no_results_view);
-        noResults.setImageDrawable(IconUtils.getTintedDrawable(getActivity(), "ic_search"));
-        noResults.setScaleX(0.65f);
-        noResults.setScaleY(0.65f);
 
         ProgressBar progress = (ProgressBar) layout.findViewById(R.id.progress);
         mRecyclerView.setEmptyViews(isSearch ? noResults : isFavorites ? noFavorites : progress,

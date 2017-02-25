@@ -40,6 +40,9 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:visibility="gone"
+            android:scaleX="0.65"
+            android:scaleY="0.65"
+            android:src="@drawable/search_illustration"
             tools:ignore="ContentDescription"/>
 
     <ImageView
@@ -49,6 +52,9 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:visibility="gone"
+            android:scaleX="0.65"
+            android:scaleY="0.65"
+            android:src="@drawable/no_favorites_illustration"
             tools:ignore="ContentDescription"/>
 
     <ImageView
@@ -58,6 +64,9 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:visibility="gone"
+            android:scaleX="0.65"
+            android:scaleY="0.65"
+            android:src="@drawable/no_connection_illustration"
             tools:ignore="ContentDescription"/>
 
 </RelativeLayout>

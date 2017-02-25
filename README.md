@@ -1,7 +1,7 @@
 <h1 align="center">Frames</h1>
 
 <p align="center">
-	<img src="https://raw.githubusercontent.com/jahirfiquitiva/Frames/master/app/src/main/res/drawable-nodpi/app_logo.png" width="144">
+	<img src="https://github.com/jahirfiquitiva/Frames/raw/master/app/src/main/res/drawable-nodpi/app_logo.png" width="144">
 </p>
 
 <h4 align="center">Full-of-features, easy-to-customize, free and open source, Material Design dashboard for wallpaper apps.</h4>

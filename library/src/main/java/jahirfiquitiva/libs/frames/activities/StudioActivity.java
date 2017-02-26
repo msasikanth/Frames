@@ -290,7 +290,6 @@ public class StudioActivity extends ThemedActivity {
                 (!(FullListHolder.get().getCollections().isEmpty()))) {
             int index = FullListHolder.get().getCollections().getIndexForCollectionWithName
                     ("featured");
-            Log.d(Utils.LOG_TAG, "Index: " + index);
             if ((index >= 0) && (!(FullListHolder.get().getCollections().getList().isEmpty())) &&
                     (FullListHolder.get().getCollections().getList().get(index).getWallpapers()
                             != null) && (!(FullListHolder.get().getCollections().getList().get

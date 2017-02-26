@@ -19,7 +19,6 @@ package jahirfiquitiva.libs.frames.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -44,7 +43,6 @@ import jahirfiquitiva.libs.frames.activities.FabbedViewerActivity;
 import jahirfiquitiva.libs.frames.activities.WallpaperViewerActivity;
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperClickListener;
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
-import jahirfiquitiva.libs.frames.callbacks.WallpaperDoubleTapDetector;
 import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.holders.WallpaperHolder;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
@@ -81,12 +79,6 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
             public void onLongClick(Object item) {
                 doOnLongPressed((Wallpaper) item);
             }
-        }, new WallpaperDoubleTapDetector
-                .OnWallpaperDoubleTapListener() {
-            @Override
-            public void onDoubleTap(WallpaperHolder holder) {
-                showDoubleTapAnimation(holder);
-            }
         }, new OnWallpaperFavedListener() {
             @Override
             public void onFaved(Wallpaper item) {
@@ -100,15 +92,6 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
         }, false);
     }
 
-    private void showDoubleTapAnimation(final WallpaperHolder holder) {
-        runOnUIThread(activity, new Runnable() {
-            @Override
-            public void run() {
-                holder.doFav();
-            }
-        });
-    }
-
     @Override
     public void onBindViewHolder(final WallpaperHolder holder, int position) {
         holder.setItem(wallpapers.get(holder.getAdapterPosition()));
@@ -117,14 +100,6 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     @Override
     public int getItemCount() {
         return wallpapers != null ? wallpapers.size() : 0;
-    }
-
-    private Handler handler(Context context) {
-        return new Handler(context.getMainLooper());
-    }
-
-    private void runOnUIThread(Context context, Runnable r) {
-        handler(context).post(r);
     }
 
     @SuppressWarnings("unchecked")

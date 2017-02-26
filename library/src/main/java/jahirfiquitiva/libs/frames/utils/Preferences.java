@@ -70,7 +70,9 @@ public class Preferences {
     }
 
     public int getCurrentTheme() {
-        return getPrefs().getInt(CURRENT_THEME, 1);
+        return getPrefs().getInt(CURRENT_THEME, context != null
+                ? context.getResources().getInteger(R.integer.app_theme)
+                : 1);
     }
 
     public void setTintNavbar(boolean tint) {
@@ -86,7 +88,7 @@ public class Preferences {
     }
 
     public int getMuzeiRefreshInterval() {
-        return getPrefs().getInt(MUZEI_REFRESH_INTERVAL, 8);
+        return getPrefs().getInt(MUZEI_REFRESH_INTERVAL, 10);
     }
 
     public void setMuzeiRefreshOnWiFiOnly(boolean onWifiOnly) {

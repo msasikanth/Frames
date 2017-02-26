@@ -69,7 +69,7 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
                                 TextView author) {
                 doOnPressed(item, wall, name);
             }
-        }, null, null, true);
+        }, null, true);
     }
 
     @Override

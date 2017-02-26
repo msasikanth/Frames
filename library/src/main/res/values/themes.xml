@@ -28,6 +28,7 @@
         <item name="colorPrimary">@color/light_theme_primary</item>
         <item name="colorPrimaryDark">@color/light_theme_primary_dark</item>
         <item name="colorAccent">@color/light_theme_accent</item>
+        <item name="tabsBackgroundColor">@color/light_theme_primary</item>
         <item name="android:windowBackground">@color/light_theme_background</item>
         <item name="md_title_color">#de000000</item>
         <item name="md_content_color">#8a000000</item>
@@ -55,6 +56,7 @@
         <item name="colorPrimary">@color/dark_theme_primary</item>
         <item name="colorPrimaryDark">@color/dark_theme_primary_dark</item>
         <item name="colorAccent">@color/dark_theme_accent</item>
+        <item name="tabsBackgroundColor">@color/dark_theme_primary</item>
         <item name="android:windowBackground">@color/dark_theme_background</item>
         <item name="md_title_color">#ffffffff</item>
         <item name="md_content_color">#b3ffffff</item>
@@ -90,6 +92,8 @@
         <attr name="toolbarMainTheme" format="reference"/>
         <!-- Toolbar PopUp Theme -->
         <attr name="toolbarMainPopupTheme" format="reference"/>
+        <!-- Tabs Background Color. -->
+        <attr name="tabsBackgroundColor" format="color"/>
         <!-- Tabs Indicator Color. -->
         <attr name="tabsIndicatorColor" format="color"/>
         <!-- Tabs Normal Text Color. -->

@@ -24,8 +24,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,7 +39,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperClickListener;
 import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
-import jahirfiquitiva.libs.frames.callbacks.WallpaperDoubleTapDetector;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
@@ -49,6 +46,7 @@ import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.Utils;
 import jahirfiquitiva.libs.frames.views.CheckableImageView;
+import jahirfiquitiva.libs.frames.views.ComplexClickListener;
 
 public class WallpaperHolder extends RecyclerView.ViewHolder {
 
@@ -75,8 +73,6 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     private static final float MAX_SIZE = 0.65f;
 
     public WallpaperHolder(final View itemView, final OnWallpaperClickListener onClickListener,
-                           WallpaperDoubleTapDetector.OnWallpaperDoubleTapListener
-                                   onDoubleTapListener,
                            final OnWallpaperFavedListener onFavedListener, final boolean
                                    isCollection) {
         super(itemView);
@@ -103,11 +99,16 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
                 }
             });
         } else {
-            itemView.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new ComplexClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onSimpleClick() {
                     if (onClickListener != null && item != null)
                         onClickListener.onClick(item, wall, heart, name, author);
+                }
+
+                @Override
+                public void onDoubleTap() {
+                    doFav();
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -118,7 +119,6 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
                     return false;
                 }
             });
-            itemView.setOnTouchListener(getTouchListener(onDoubleTapListener));
         }
 
         heart.setOnWallpaperFavedListener(onFavedListener);
@@ -163,6 +163,7 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
 
     public void setItem(Wallpaper nItem) {
         this.item = nItem;
+
         collDetails.setVisibility(View.GONE);
         colName.setVisibility(View.GONE);
         amount.setVisibility(View.GONE);
@@ -327,21 +328,6 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
 
     public TextView getAuthor() {
         return author;
-    }
-
-    private View.OnTouchListener getTouchListener(WallpaperDoubleTapDetector
-                                                          .OnWallpaperDoubleTapListener
-                                                          onDoubleTapListener) {
-        WallpaperDoubleTapDetector wgd = new WallpaperDoubleTapDetector(this, onDoubleTapListener);
-        final GestureDetector detector = new GestureDetector(itemView.getContext(), wgd);
-        detector.setOnDoubleTapListener(wgd);
-        return new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                detector.onTouchEvent(motionEvent);
-                return false;
-            }
-        };
     }
 
 }

@@ -47,14 +47,13 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:imeOptions="actionSearch"/>
-
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
+                android:background="?tabsBackgroundColor"
                 android:visibility="gone"
                 app:tabGravity="fill"
                 app:tabIndicatorColor="?tabsIndicatorColor"

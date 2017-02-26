@@ -44,11 +44,8 @@ public class FramesCardView extends CardView {
 
     @Override
     public void setCardBackgroundColor(int ignoredColor) {
-        /*
-        super.setCardBackgroundColor(ThemeUtils.darkLightOrTransparent(context, R.color
-                .card_dark_background, R.color.card_light_background, R.color
-                .card_clear_background));
-                */
+        super.setCardBackgroundColor(ThemeUtils.darkOrLight(context, R.color
+                .dark_theme_card_background, R.color.light_theme_card_background));
     }
 
     private void setupRightCardColor(Context context) {

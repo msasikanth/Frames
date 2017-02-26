@@ -19,23 +19,21 @@
 
 # Previews
 
-*Coming soon...*
-
-<!--
 <p align="center">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/1.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/2.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/3.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/4.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/5.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/6.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/7.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/8.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/9.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/10.png" width="400">
-<img src="https://raw.githubusercontent.com/jahirfiquitiva/IconShowcase/master/art/11.png" width="400">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/1.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/2.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/3.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/4.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/5.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/6.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/7.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/8.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/9.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/10.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/11.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/12.png" width="360">
+<img src="https://github.com/jahirfiquitiva/Website-Resources/raw/master/Frames/13.png" width="360">
 </p>
--->
 
 # How to Implement?
 

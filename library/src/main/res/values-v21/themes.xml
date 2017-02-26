@@ -16,12 +16,13 @@
   -->
 
 <resources>
+
     <style name="ColdStart" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/splash_background</item>
+        <item name="colorPrimaryDark">@color/splash_background_dark</item>
+        <item name="colorAccent">@color/splash_background_dark</item>
         <item name="android:windowBackground">@drawable/splash_screen</item>
-        <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:navigationBarColor">@color/splash_background_dark</item>
+        <item name="android:statusBarColor">@color/splash_background_dark</item>
     </style>
 </resources>

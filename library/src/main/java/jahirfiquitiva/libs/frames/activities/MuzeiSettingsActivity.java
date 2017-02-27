@@ -43,7 +43,6 @@ import jahirfiquitiva.libs.frames.callbacks.JSONDownloadCallback;
 import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
-import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.IconUtils;
 import jahirfiquitiva.libs.frames.utils.Preferences;
@@ -70,12 +69,7 @@ public class MuzeiSettingsActivity extends ThemedActivity {
         if (isConnected() && ((FullListHolder.get().getCollections() == null) || (FullListHolder
                 .get().getCollections().getList() == null) || (FullListHolder
                 .get().getCollections().getList().size() <= 0))) {
-            new DownloadJSON(this, true, new JSONDownloadCallback() {
-                @Override
-                public void onSuccess(ArrayList<Collection> collections) {
-                    FullListHolder.get().getCollections().createList(collections);
-                }
-            }).execute();
+            executeJsonTask(true);
         }
 
         setContentView(R.layout.muzei_settings);
@@ -214,6 +208,16 @@ public class MuzeiSettingsActivity extends ThemedActivity {
         showConfirmDialog();
     }
 
+    @Override
+    protected JSONDownloadCallback getCallback() {
+        return new JSONDownloadCallback() {
+            @Override
+            public void onSuccess(ArrayList<Collection> collections) {
+                FullListHolder.get().getCollections().createList(collections);
+            }
+        };
+    }
+
     private void checkConnectionAndLicense() {
         if (Utils.isConnected(this)) {
             checkLicense();
@@ -248,14 +252,7 @@ public class MuzeiSettingsActivity extends ThemedActivity {
                         if (isConnected() && ((FullListHolder.get().getCollections() == null) ||
                                 (FullListHolder.get().getCollections().getList() == null) ||
                                 (FullListHolder.get().getCollections().getList().size() <= 0))) {
-                            new DownloadJSON(MuzeiSettingsActivity.this, true, new
-                                    JSONDownloadCallback() {
-                                        @Override
-                                        public void onSuccess(ArrayList<Collection> collections) {
-                                            FullListHolder.get().getCollections().createList
-                                                    (collections);
-                                        }
-                                    }).execute();
+                            executeJsonTask(true);
                         }
                     }
                 });

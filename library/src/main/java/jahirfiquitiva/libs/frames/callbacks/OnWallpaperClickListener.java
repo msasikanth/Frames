@@ -16,12 +16,13 @@
 
 package jahirfiquitiva.libs.frames.callbacks;
 
+import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public abstract class OnWallpaperClickListener {
-    public abstract void onClick(Object item, ImageView wall, ImageView heart, TextView name,
-                                   TextView author);
+    public abstract void onClick(Object item, Bitmap bitmap, ImageView wall, ImageView heart, TextView name,
+                                 TextView author);
 
     public void onLongClick(Object item) {
     }

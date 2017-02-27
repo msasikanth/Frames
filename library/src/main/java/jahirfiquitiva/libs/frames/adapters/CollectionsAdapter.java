@@ -41,7 +41,6 @@ import jahirfiquitiva.libs.frames.callbacks.OnWallpaperClickListener;
 import jahirfiquitiva.libs.frames.holders.WallpaperHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.utils.GlideConfiguration;
-import jahirfiquitiva.libs.frames.utils.Utils;
 
 public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
@@ -65,9 +64,9 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
         return new WallpaperHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
                 .item_wallpaper, parent, false), new OnWallpaperClickListener() {
             @Override
-            public void onClick(Object item, ImageView wall, ImageView heart, TextView name,
-                                TextView author) {
-                doOnPressed(item, wall, name);
+            public void onClick(Object item, Bitmap picture, ImageView wall, ImageView heart,
+                                TextView name, TextView author) {
+                doOnPressed(item, picture, wall, name);
             }
         }, null, true);
     }
@@ -100,27 +99,24 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored", "unchecked"})
-    private void doOnPressed(final Object item, final ImageView wall, TextView name) {
+    private void doOnPressed(final Object item, Bitmap bitmap, final ImageView wall, TextView
+            name) {
         Intent collectionDetails = new Intent(activity, CollectionActivity.class);
         collectionDetails.putExtra("collection", (Collection) item);
         collectionDetails.putExtra("wallTransition", ViewCompat.getTransitionName(wall));
         collectionDetails.putExtra("nameTransition", ViewCompat.getTransitionName(name));
-        if (wall.getDrawable() != null) {
-            Bitmap bitmap = Utils.drawableToBitmap(activity, wall.getDrawable());
-            if (bitmap != null) {
-                try {
-                    String filename = "temp.png";
-                    FileOutputStream stream = activity.openFileOutput(filename, Context
-                            .MODE_PRIVATE);
-                    bitmap.compress(Bitmap.CompressFormat.PNG,
-                            (int) ((GlideConfiguration.getPictureMaxRes(activity) / 1.5f) + 5),
-                            stream);
-                    stream.flush();
-                    stream.close();
-                    collectionDetails.putExtra("image", filename);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        if (bitmap != null) {
+            try {
+                String filename = "thumb.png";
+                FileOutputStream stream = activity.openFileOutput(filename, Context
+                        .MODE_PRIVATE);
+                bitmap.compress(Bitmap.CompressFormat.PNG,
+                        GlideConfiguration.getPictureMaxRes(activity), stream);
+                stream.flush();
+                stream.close();
+                collectionDetails.putExtra("image", filename);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         Pair<View, String> wallPair = Pair.create((View) wall, ViewCompat.getTransitionName(wall));

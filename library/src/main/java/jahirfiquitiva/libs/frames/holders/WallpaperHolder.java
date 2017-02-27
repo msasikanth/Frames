@@ -64,6 +64,7 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     private Wallpaper item;
     private Collection collection;
     private BitmapImageViewTarget target;
+    private Bitmap picture;
     private int lastPosition = 0;
     private boolean isCollection;
 
@@ -95,7 +96,8 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
                 @Override
                 public void onClick(View view) {
                     if (onClickListener != null && collection != null)
-                        onClickListener.onClick(collection, wall, null, colName, null);
+                        onClickListener.onClick(collection, picture, wall, null, colName,
+                                null);
                 }
             });
         } else {
@@ -103,7 +105,7 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
                 @Override
                 public void onSimpleClick() {
                     if (onClickListener != null && item != null)
-                        onClickListener.onClick(item, wall, heart, name, author);
+                        onClickListener.onClick(item, picture, wall, heart, name, author);
                 }
 
                 @Override
@@ -143,18 +145,19 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
         target = new BitmapImageViewTarget(wall) {
             @Override
             protected void setResource(Bitmap bitmap) {
-                Palette.Swatch wallSwatch = ColorUtils.getPaletteSwatch(bitmap);
+                picture = bitmap;
+                Palette.Swatch wallSwatch = ColorUtils.getPaletteSwatch(picture);
                 progressBar.setVisibility(View.GONE);
                 if (getAdapterPosition() > lastPosition) {
                     wall.setAlpha(0f);
                     detailsBg.setAlpha(0f);
-                    wall.setImageBitmap(bitmap);
+                    wall.setImageBitmap(picture);
                     if (wallSwatch != null) setColors(wallSwatch.getRgb());
                     wall.animate().setDuration(250).alpha(1f).start();
                     detailsBg.animate().setDuration(250).alpha(1f).start();
                     lastPosition = getAdapterPosition();
                 } else {
-                    wall.setImageBitmap(bitmap);
+                    wall.setImageBitmap(picture);
                     if (wallSwatch != null) setColors(wallSwatch.getRgb());
                 }
             }
@@ -265,7 +268,7 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
             heart.setVisibility(View.VISIBLE);
     }
 
-    public void doFav() {
+    private void doFav() {
         if (isCollection) return;
         if (bigHeart != null) {
             final Preferences mPrefs = new Preferences(itemView.getContext());
@@ -312,10 +315,6 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
 
     private void checkHeart() {
         heart.setChecked(true, true);
-    }
-
-    public ImageView getWall() {
-        return wall;
     }
 
     public ImageView getHeart() {

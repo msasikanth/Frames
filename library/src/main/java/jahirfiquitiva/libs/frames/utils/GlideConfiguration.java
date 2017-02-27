@@ -46,7 +46,7 @@ public class GlideConfiguration implements GlideModule {
     }
 
     public static int getPictureMaxRes(Context context) {
-        return runsMinSDK() ? isLowRamDevive(context) ? 75 : 90 : 60;
+        return runsMinSDK() ? isLowRamDevive(context) ? 35 : 65 : 50;
     }
 
     private static boolean runsMinSDK() {

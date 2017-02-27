@@ -49,7 +49,6 @@ import jahirfiquitiva.libs.frames.models.Wallpaper;
 import jahirfiquitiva.libs.frames.utils.ApplyWallpaperUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.GlideConfiguration;
-import jahirfiquitiva.libs.frames.utils.Utils;
 
 public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
@@ -70,9 +69,9 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
         return new WallpaperHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
                 .item_wallpaper, parent, false), new OnWallpaperClickListener() {
             @Override
-            public void onClick(Object item, ImageView wall, ImageView heart, TextView name,
-                                TextView author) {
-                doOnPressed(item, wall, heart, name, author);
+            public void onClick(Object item, Bitmap picture, ImageView wall, ImageView heart,
+                                TextView name, TextView author) {
+                doOnPressed(item, picture, wall, heart, name, author);
             }
 
             @Override
@@ -103,8 +102,9 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     }
 
     @SuppressWarnings("unchecked")
-    private void doOnPressed(Object item, ImageView wall, ImageView heart, TextView name, TextView
-            author) {
+    private void doOnPressed(Object item, Bitmap bitmap, ImageView wall, ImageView heart,
+                             TextView name, TextView
+                                     author) {
         Intent wallpaperViewer = new Intent(activity, activity.getResources().getBoolean(R.bool
                 .fabbed_viewer) ? FabbedViewerActivity.class : WallpaperViewerActivity.class);
         wallpaperViewer.putExtra("item", (Wallpaper) item);
@@ -112,21 +112,18 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
         wallpaperViewer.putExtra("nameTransition", ViewCompat.getTransitionName(name));
         wallpaperViewer.putExtra("authorTransition", ViewCompat.getTransitionName(author));
         wallpaperViewer.putExtra("heartTransition", ViewCompat.getTransitionName(heart));
-        if (wall.getDrawable() != null) {
-            Bitmap bitmap = Utils.drawableToBitmap(activity, wall.getDrawable());
-            if (bitmap != null) {
-                try {
-                    String filename = "temp.png";
-                    FileOutputStream stream = activity.openFileOutput(filename, Context
-                            .MODE_PRIVATE);
-                    bitmap.compress(Bitmap.CompressFormat.PNG,
-                            GlideConfiguration.getPictureMaxRes(activity), stream);
-                    stream.flush();
-                    stream.close();
-                    wallpaperViewer.putExtra("image", filename);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        if (bitmap != null) {
+            try {
+                String filename = "thumb.png";
+                FileOutputStream stream = activity.openFileOutput(filename, Context
+                        .MODE_PRIVATE);
+                bitmap.compress(Bitmap.CompressFormat.PNG,
+                        GlideConfiguration.getPictureMaxRes(activity), stream);
+                stream.flush();
+                stream.close();
+                wallpaperViewer.putExtra("image", filename);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         Pair<View, String> wallPair = Pair.create((View) wall, ViewCompat.getTransitionName(wall));

@@ -43,21 +43,15 @@ public class DownloadJSON extends AsyncTask<Void, Void, Boolean> {
     private boolean onlyCollections;
     private JSONDownloadCallback callback;
 
-    public DownloadJSON(Context context, JSONDownloadCallback callback) {
-        wrContext = new WeakReference<>(context);
-        this.onlyCollections = false;
-        this.callback = callback;
-    }
-
     public DownloadJSON(Context context, boolean onlyCollections, JSONDownloadCallback callback) {
-        this(context, callback);
+        this.wrContext = new WeakReference<>(context);
         this.onlyCollections = onlyCollections;
+        this.callback = callback;
     }
 
     @Override
     protected void onPreExecute() {
         if (wrContext.get() instanceof StudioActivity) {
-            ((StudioActivity) wrContext.get()).hideTabs();
             if (((StudioActivity) wrContext.get()).getPagerAdapter() != null) {
                 if (((StudioActivity) wrContext.get()).getPagerAdapter().getFragmentAtPosition((
                         (StudioActivity) wrContext.get()).getCurrentFragmentPosition()) != null) {

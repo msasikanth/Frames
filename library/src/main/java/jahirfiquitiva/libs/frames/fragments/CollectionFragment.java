@@ -21,7 +21,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,7 +39,6 @@ import jahirfiquitiva.libs.frames.adapters.WallpapersAdapter;
 import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
-import jahirfiquitiva.libs.frames.utils.IconUtils;
 import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.Utils;
@@ -189,6 +187,7 @@ public class CollectionFragment extends Fragment {
             if (mAdapter != null) {
                 mRecyclerView.setAdapter(mAdapter);
                 fastScroller.attachRecyclerView(mRecyclerView);
+                mRecyclerView.setVisibility(View.VISIBLE);
                 fastScroller.setVisibility(View.VISIBLE);
             }
         }
@@ -221,11 +220,11 @@ public class CollectionFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
     }
 
-    public int getLastColumns() {
-        return lastColumns;
-    }
-
     public void refreshContent() {
+        if (mRecyclerView != null)
+            mRecyclerView.setVisibility(View.GONE);
+        if (fastScroller != null)
+            fastScroller.setVisibility(View.GONE);
         mSwipeRefreshLayout.setEnabled(true);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override

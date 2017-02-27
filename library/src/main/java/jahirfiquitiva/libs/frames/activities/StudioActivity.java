@@ -24,7 +24,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,7 +42,6 @@ import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
-import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
@@ -135,7 +133,7 @@ public class StudioActivity extends ThemedActivity {
                         if ((FullListHolder.get().getCollections() == null) || (FullListHolder
                                 .get().getCollections().getList() == null) || (FullListHolder.get
                                 ().getCollections().getList().size() == 0)) {
-                            new DownloadJSON(StudioActivity.this, getCallback()).execute();
+                            executeJsonTask();
                         }
                         try {
                             Thread.sleep(50);
@@ -191,7 +189,7 @@ public class StudioActivity extends ThemedActivity {
             favs.putExtra("allAma", getIntent().getBooleanExtra("allAma", false));
             startActivityForResult(favs, 14);
         } else if (i == R.id.refresh) {
-            new DownloadJSON(this, getCallback()).execute();
+            executeJsonTask();
         } else if (i == R.id.about) {
             startActivity(new Intent(this, CreditsActivity.class));
         } else if (i == R.id.settings) {
@@ -256,7 +254,8 @@ public class StudioActivity extends ThemedActivity {
         }
     }
 
-    private JSONDownloadCallback getCallback() {
+    @Override
+    protected JSONDownloadCallback getCallback() {
         return new JSONDownloadCallback() {
             @Override
             public void onSuccess(ArrayList<Collection> collections) {
@@ -274,13 +273,6 @@ public class StudioActivity extends ThemedActivity {
                 }
             }
         };
-    }
-
-    public void hideTabs() {
-        if (tabs != null)
-            tabs.setVisibility(View.GONE);
-        if (pager != null)
-            pager.setVisibility(View.GONE);
     }
 
     public void setupTabsAndPager() {
@@ -301,7 +293,6 @@ public class StudioActivity extends ThemedActivity {
             }
         }
         if (pager == null) return;
-        pager.setVisibility(View.VISIBLE);
         tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(pager));
         pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs) {
             @Override

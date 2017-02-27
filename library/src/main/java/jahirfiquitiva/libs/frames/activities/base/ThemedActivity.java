@@ -16,12 +16,17 @@
 
 package jahirfiquitiva.libs.frames.activities.base;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import jahirfiquitiva.libs.frames.callbacks.JSONDownloadCallback;
+import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 
 public class ThemedActivity extends AppCompatActivity {
+
+    private DownloadJSON jsonTask;
 
     private boolean mLastTheme;
     private boolean mLastNavBar;
@@ -46,6 +51,26 @@ public class ThemedActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
         mLastTheme = ThemeUtils.isDarkTheme();
         mLastNavBar = ThemeUtils.hasColoredNavbar();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (jsonTask != null) jsonTask.cancel(true);
+    }
+
+    protected JSONDownloadCallback getCallback() {
+        return null;
+    }
+
+    public void executeJsonTask(boolean onlyCollections) {
+        if ((jsonTask != null) && (jsonTask.getStatus().equals(AsyncTask.Status.RUNNING))) return;
+        jsonTask = new DownloadJSON(this, onlyCollections, getCallback());
+        jsonTask.execute();
+    }
+
+    public void executeJsonTask() {
+        executeJsonTask(false);
     }
 
 }

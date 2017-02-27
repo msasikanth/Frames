@@ -103,7 +103,7 @@ public class MuzeiArtSourceService extends RemoteMuzeiArtSource {
 
     private void executeMuzeiUpdate() throws RetryException {
         try {
-            new DownloadJSON(getApplicationContext(), new JSONDownloadCallback() {
+            new DownloadJSON(getApplicationContext(), false, new JSONDownloadCallback() {
                 @Override
                 public void onSuccess(ArrayList<Collection> collections) {
                     try {

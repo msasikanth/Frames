@@ -61,14 +61,16 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
     @Override
     public WallpaperHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        return new WallpaperHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
-                .item_wallpaper, parent, false), new OnWallpaperClickListener() {
-            @Override
-            public void onClick(Object item, Bitmap picture, ImageView wall, ImageView heart,
-                                TextView name, TextView author) {
-                doOnPressed(item, picture, wall, name);
-            }
-        }, null, true);
+        return new WallpaperHolder(
+                LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_wallpaper, parent, false),
+                new OnWallpaperClickListener() {
+                    @Override
+                    public void onClick(Object item, Bitmap picture, ImageView wall,
+                                        ImageView heart, TextView name, TextView author) {
+                        doOnPressed(item, picture, wall, name);
+                    }
+                }, null, true);
     }
 
     @Override
@@ -99,8 +101,7 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored", "unchecked"})
-    private void doOnPressed(final Object item, Bitmap bitmap, final ImageView wall, TextView
-            name) {
+    private void doOnPressed(Object item, Bitmap bitmap, ImageView wall, TextView name) {
         Intent collectionDetails = new Intent(activity, CollectionActivity.class);
         collectionDetails.putExtra("collection", (Collection) item);
         collectionDetails.putExtra("wallTransition", ViewCompat.getTransitionName(wall));

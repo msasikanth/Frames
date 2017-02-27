@@ -103,8 +103,7 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
 
     @SuppressWarnings("unchecked")
     private void doOnPressed(Object item, Bitmap bitmap, ImageView wall, ImageView heart,
-                             TextView name, TextView
-                                     author) {
+                             TextView name, TextView author) {
         Intent wallpaperViewer = new Intent(activity, activity.getResources().getBoolean(R.bool
                 .fabbed_viewer) ? FabbedViewerActivity.class : WallpaperViewerActivity.class);
         wallpaperViewer.putExtra("item", (Wallpaper) item);

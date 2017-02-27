@@ -205,8 +205,7 @@ public class Utils {
                                      final SuccessCallback callback) {
         final Preferences mPrefs = new Preferences(context);
         final RepelloMaxima[] spell = new RepelloMaxima[1];
-        spell[0] = new RepelloMaxima.Speller(context)
-                .withLicKey(lic)
+        final RepelloMaxima.Speller speller = new RepelloMaxima.Speller(context)
                 .allAmazon(allAma)
                 .thenDo(new RepelloCallback() {
                     @Override
@@ -270,8 +269,10 @@ public class Utils {
                             }
                         });
                     }
-                })
-                .construct();
+                });
+        if (lic != null)
+            speller.withLicKey(lic);
+        spell[0] = speller.construct();
         spell[0].cast();
     }
 

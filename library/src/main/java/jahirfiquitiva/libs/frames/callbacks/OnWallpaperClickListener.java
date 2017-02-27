@@ -21,8 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public abstract class OnWallpaperClickListener {
-    public abstract void onClick(Object item, Bitmap bitmap, ImageView wall, ImageView heart, TextView name,
-                                 TextView author);
+    public abstract void onClick(Object item, Bitmap bitmap, ImageView wall, ImageView heart,
+                                 TextView name, TextView author);
 
     public void onLongClick(Object item) {
     }

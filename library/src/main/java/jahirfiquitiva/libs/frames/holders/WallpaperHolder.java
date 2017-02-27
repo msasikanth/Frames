@@ -96,8 +96,7 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
                 @Override
                 public void onClick(View view) {
                     if (onClickListener != null && collection != null)
-                        onClickListener.onClick(collection, picture, wall, null, colName,
-                                null);
+                        onClickListener.onClick(collection, picture, wall, null, colName, null);
                 }
             });
         } else {

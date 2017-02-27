@@ -49,7 +49,6 @@ import jahirfiquitiva.libs.frames.fragments.CollectionFragment;
 import jahirfiquitiva.libs.frames.holders.lists.FullListHolder;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
-import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
 import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;

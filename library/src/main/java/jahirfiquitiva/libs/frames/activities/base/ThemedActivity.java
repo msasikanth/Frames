@@ -16,17 +16,20 @@
 
 package jahirfiquitiva.libs.frames.activities.base;
 
-import android.os.AsyncTask;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 import jahirfiquitiva.libs.frames.callbacks.JSONDownloadCallback;
-import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
+import jahirfiquitiva.libs.frames.models.Collection;
+import jahirfiquitiva.libs.frames.tasks.DownloadJSONTask;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 
 public class ThemedActivity extends AppCompatActivity {
-
-    private DownloadJSON jsonTask;
 
     private boolean mLastTheme;
     private boolean mLastNavBar;
@@ -56,21 +59,48 @@ public class ThemedActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (jsonTask != null) jsonTask.cancel(true);
+        try {
+            getSupportLoaderManager().getLoader(0).cancelLoad();
+            getSupportLoaderManager().destroyLoader(0);
+        } catch (Exception ignored) {
+        }
     }
 
     protected JSONDownloadCallback getCallback() {
         return null;
     }
 
-    public void executeJsonTask(boolean onlyCollections) {
-        if ((jsonTask != null) && (jsonTask.getStatus().equals(AsyncTask.Status.RUNNING))) return;
-        jsonTask = new DownloadJSON(this, onlyCollections, getCallback());
-        jsonTask.execute();
+    public void executeJsonTask(final boolean onlyCollections) {
+        final Context c = this;
+        try {
+            getSupportLoaderManager().getLoader(0).cancelLoad();
+            getSupportLoaderManager().destroyLoader(0);
+        } catch (Exception ignored) {
+        }
+        getSupportLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<ArrayList
+                <Collection>>() {
+            @Override
+            public Loader<ArrayList<Collection>> onCreateLoader(int id, Bundle args) {
+                return new DownloadJSONTask(c, onlyCollections);
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onLoadFinished(Loader<ArrayList<Collection>> loader,
+                                       ArrayList<Collection> data) {
+                if ((data != null) && (getCallback() != null)) {
+                    getCallback().onSuccess(data);
+                }
+            }
+
+            @Override
+            public void onLoaderReset(Loader<ArrayList<Collection>> loader) {
+                // Do nothing
+            }
+        });
     }
 
     public void executeJsonTask() {
         executeJsonTask(false);
     }
-
 }

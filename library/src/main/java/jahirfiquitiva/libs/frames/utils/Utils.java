@@ -45,7 +45,6 @@ import java.math.RoundingMode;
 
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
-import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
 import jahirfiquitiva.libs.repellomaxima.mess.RepelloCallback;
 import jahirfiquitiva.libs.repellomaxima.mess.RepelloMaxima;
 

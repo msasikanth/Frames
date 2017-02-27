@@ -22,17 +22,21 @@ import com.google.android.apps.muzei.api.UserCommand;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import jahirfiquitiva.libs.frames.R;
-import jahirfiquitiva.libs.frames.callbacks.JSONDownloadCallback;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
-import jahirfiquitiva.libs.frames.tasks.DownloadJSON;
+import jahirfiquitiva.libs.frames.utils.JSONParser;
 import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.Utils;
 
@@ -103,43 +107,123 @@ public class MuzeiArtSourceService extends RemoteMuzeiArtSource {
 
     private void executeMuzeiUpdate() throws RetryException {
         try {
-            new DownloadJSON(getApplicationContext(), false, new JSONDownloadCallback() {
-                @Override
-                public void onSuccess(ArrayList<Collection> collections) {
-                    try {
-                        ArrayList<Wallpaper> wallpapers = new ArrayList<>();
-                        if (mPrefs.getMuzeiCollections().length() <= 0) {
-                            for (Collection collection : collections) {
-                                for (Wallpaper wallpaper : collection.getWallpapers()) {
-                                    if (!(wallpapers.contains(wallpaper)))
-                                        wallpapers.add(wallpaper);
+            AsyncTask<Void, Void, ArrayList<Collection>> downloadJSON =
+                    new AsyncTask<Void, Void, ArrayList<Collection>>() {
+                        @Override
+                        protected ArrayList<Collection> doInBackground(Void... voids) {
+                            ArrayList<Collection> collections = new ArrayList<>();
+                            JSONObject json = JSONParser.getJSONFromURL(getApplicationContext(),
+                                    getApplicationContext().getResources().getString(R.string
+                                            .wallpapers_json_link));
+
+                            if (json != null) {
+                                try {
+                                    JSONArray jsonCollections = json.getJSONArray("Collections");
+                                    collections.add(new Collection("Featured", null, null));
+                                    for (int i = 0; i < jsonCollections.length(); i++) {
+                                        JSONObject nCollection = jsonCollections.getJSONObject(i);
+                                        String name = nCollection.getString("name");
+                                        String preview = nCollection.getString("preview_url");
+                                        String previewThumbnail = nCollection.getString
+                                                ("preview_thumbnail_url");
+                                        collections.add(new Collection(name, preview,
+                                                previewThumbnail));
+                                    }
+
+                                    JSONArray jsonWallpapers = json.getJSONArray("Wallpapers");
+                                    ArrayList<Wallpaper> wallpapers = new ArrayList<>();
+                                    for (int j = 0; j < jsonWallpapers.length(); j++) {
+                                        JSONObject nWallpaper = jsonWallpapers.getJSONObject(j);
+                                        String copyright = "";
+                                        try {
+                                            copyright = nWallpaper.getString("copyright");
+                                        } catch (Exception ignored) {
+                                            //
+                                        }
+                                        String dimensions = "";
+                                        try {
+                                            dimensions = nWallpaper.getString("dimensions");
+                                        } catch (Exception ignored) {
+                                            //
+                                        }
+                                        String thumbnail = null;
+                                        try {
+                                            thumbnail = nWallpaper.getString("thumbnail");
+                                        } catch (Exception ignored) {
+                                            //
+                                        }
+                                        boolean downloadable = true;
+                                        try {
+                                            downloadable = nWallpaper.getString("downloadable")
+                                                    .equals("true");
+                                        } catch (Exception ignored) {
+                                            //
+                                        }
+                                        wallpapers.add(new Wallpaper(nWallpaper.getString("name")
+                                                , nWallpaper.getString("author"), copyright,
+                                                dimensions, nWallpaper.getString("url"),
+                                                thumbnail, nWallpaper.getString("collections"),
+                                                downloadable));
+                                    }
+
+                                    for (Wallpaper wallpaper : wallpapers) {
+                                        String[] collects = wallpaper.getCollections().split(",");
+                                        for (String collect : collects) {
+                                            for (Collection collection : collections) {
+                                                if (collection.getName().toLowerCase().equals
+                                                        (collect.toLowerCase())) {
+                                                    collection.addWallpaper(wallpaper);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    return collections;
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
                             }
-                        } else {
-                            String[] collects = mPrefs.getMuzeiCollections().split(",");
-                            for (String collect : collects) {
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(ArrayList<Collection> collections) {
+                            if (collections == null) return;
+                            super.onPostExecute(collections);
+                            ArrayList<Wallpaper> wallpapers = new ArrayList<>();
+                            if (mPrefs.getMuzeiCollections().length() <= 0) {
                                 for (Collection collection : collections) {
-                                    if (collection.getName().toLowerCase().equals(collect
-                                            .toLowerCase())) {
-                                        for (Wallpaper wallpaper : collection.getWallpapers()) {
-                                            if (!(wallpapers.contains(wallpaper)))
-                                                wallpapers.add(wallpaper);
+                                    for (Wallpaper wallpaper : collection.getWallpapers()) {
+                                        if (!(wallpapers.contains(wallpaper)))
+                                            wallpapers.add(wallpaper);
+                                    }
+                                }
+                            } else {
+                                String[] collects = mPrefs.getMuzeiCollections().split(",");
+                                for (String collect : collects) {
+                                    for (Collection collection : collections) {
+                                        if (collection.getName().toLowerCase().equals(collect
+                                                .toLowerCase())) {
+                                            for (Wallpaper wallpaper : collection.getWallpapers()) {
+                                                if (!(wallpapers.contains(wallpaper)))
+                                                    wallpapers.add(wallpaper);
+                                            }
                                         }
                                     }
                                 }
                             }
+                            if (wallpapers.size() <= 0) return;
+                            int i = new Random().nextInt(wallpapers.size());
+                            Wallpaper randomWallpaper = wallpapers.get(i);
+                            setImageForMuzei(randomWallpaper.getName(), randomWallpaper.getAuthor(),
+                                    randomWallpaper.getURL());
+                            Log.d(Utils.LOG_TAG, "Setting picture: " + randomWallpaper.getName());
                         }
-                        if (wallpapers.size() <= 0) return;
-                        int i = new Random().nextInt(wallpapers.size());
-                        Wallpaper randomWallpaper = wallpapers.get(i);
-                        setImageForMuzei(randomWallpaper.getName(), randomWallpaper.getAuthor(),
-                                randomWallpaper.getURL());
-                        Log.d(Utils.LOG_TAG, "Setting picture: " + randomWallpaper.getName());
-                    } catch (Exception e) {
-                        Log.d(Utils.LOG_TAG, "Muzei error: " + e.getMessage());
-                    }
-                }
-            }).execute();
+                    };
+            try {
+                downloadJSON.execute();
+            } catch (Exception e) {
+                Log.d(Utils.LOG_TAG, "Muzei error: " + e.getMessage());
+            }
         } catch (Exception e) {
             Log.d(Utils.LOG_TAG, "Error updating Muzei: " + e.getMessage());
             throw new RetryException();

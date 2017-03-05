@@ -16,7 +16,6 @@
 
 package jahirfiquitiva.libs.frames.utils;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
@@ -83,9 +82,9 @@ public class ThemeUtils {
         onActivityCreateSetNavBar(activity, mPrefs.canTintNavbar());
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static void onActivityCreateSetNavBar(Activity activity, boolean colorEnabled) {
         coloredNavbar = colorEnabled;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
         activity.getWindow().setNavigationBarColor(colorEnabled ? darkTheme ?
                 ContextCompat.getColor(activity, R.color.dark_theme_navigation_bar) :
                 ContextCompat.getColor(activity, R.color.light_theme_navigation_bar) :

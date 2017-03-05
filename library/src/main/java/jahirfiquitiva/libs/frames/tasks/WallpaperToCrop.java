@@ -161,7 +161,7 @@ public class WallpaperToCrop extends AsyncTask<Void, String, Boolean> {
                 FileOutputStream fos = new FileOutputStream(destFile);
                 inImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
                 fos.close();
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

@@ -258,6 +258,20 @@ public class StudioActivity extends ThemedActivity {
     protected JSONDownloadCallback getCallback() {
         return new JSONDownloadCallback() {
             @Override
+            public void onPreExecute() {
+                if (getPagerAdapter() != null) {
+                    if (getPagerAdapter().getFragmentAtPosition(getCurrentFragmentPosition()) !=
+                            null) {
+                        if (getPagerAdapter().getFragmentAtPosition(getCurrentFragmentPosition())
+                                instanceof CollectionFragment) {
+                            ((CollectionFragment) getPagerAdapter().getFragmentAtPosition
+                                    (getCurrentFragmentPosition())).refreshContent();
+                        }
+                    }
+                }
+            }
+
+            @Override
             public void onSuccess(ArrayList<Collection> collections) {
                 FullListHolder.get().getCollections().createList(collections);
                 setupTabsAndPager();

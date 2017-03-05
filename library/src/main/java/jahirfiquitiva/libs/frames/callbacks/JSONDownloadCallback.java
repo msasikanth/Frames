@@ -20,6 +20,10 @@ import java.util.ArrayList;
 
 import jahirfiquitiva.libs.frames.models.Collection;
 
-public interface JSONDownloadCallback {
-    void onSuccess(ArrayList<Collection> collections);
+public abstract class JSONDownloadCallback {
+    public void onPreExecute() {
+
+    }
+
+    public abstract void onSuccess(ArrayList<Collection> collections);
 }

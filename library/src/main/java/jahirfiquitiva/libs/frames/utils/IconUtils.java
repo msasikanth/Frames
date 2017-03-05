@@ -37,17 +37,17 @@ import jahirfiquitiva.libs.frames.R;
 public class IconUtils {
 
     public static Drawable getTintedDrawable(@NonNull Context context, String name) {
-        return getTintedIcon(context, getIconResId(context.getResources(), context.getPackageName
-                (), name), ThemeUtils.darkOrLight(context, R.color.drawable_tint_dark, R.color
-                .drawable_tint_light));
+        return getTintedIcon(context, getIconResId(context.getResources(),
+                context.getPackageName(), name), ThemeUtils.darkOrLight(context,
+                R.color.drawable_tint_dark, R.color.drawable_tint_light));
     }
 
     public static Drawable getTintedDrawable(@NonNull Context context, String name, @ColorInt int
             color) {
         boolean isLightColor = ColorUtils.isLightColor(color);
-        return getTintedIcon(context, getIconResId(context.getResources(), context.getPackageName
-                (), name), ContextCompat.getColor(context, isLightColor ? R.color
-                .drawable_tint_light : R.color.drawable_tint_light));
+        return getTintedIcon(context, getIconResId(context.getResources(),
+                context.getPackageName(), name), ContextCompat.getColor(context, isLightColor ?
+                R.color.drawable_tint_light : R.color.drawable_tint_dark));
     }
 
     public static Drawable getTintedIcon(@NonNull Context context, @DrawableRes int drawable,

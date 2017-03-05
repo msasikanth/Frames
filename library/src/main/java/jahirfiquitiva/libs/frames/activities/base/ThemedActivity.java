@@ -77,6 +77,7 @@ public class ThemedActivity extends AppCompatActivity {
             getSupportLoaderManager().destroyLoader(0);
         } catch (Exception ignored) {
         }
+        if (getCallback() != null) getCallback().onPreExecute();
         getSupportLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<ArrayList
                 <Collection>>() {
             @Override

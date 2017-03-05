@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.Pair;
@@ -111,8 +112,8 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
         wallpaperViewer.putExtra("nameTransition", ViewCompat.getTransitionName(name));
         wallpaperViewer.putExtra("authorTransition", ViewCompat.getTransitionName(author));
         wallpaperViewer.putExtra("heartTransition", ViewCompat.getTransitionName(heart));
-        if (bitmap != null) {
-            try {
+        try {
+            if (bitmap != null) {
                 String filename = "thumb.png";
                 FileOutputStream stream = activity.openFileOutput(filename, Context
                         .MODE_PRIVATE);
@@ -121,19 +122,23 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
                 stream.flush();
                 stream.close();
                 wallpaperViewer.putExtra("image", filename);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+            Pair<View, String> wallPair = Pair.create((View) wall, ViewCompat.getTransitionName
+                    (wall));
+            Pair<View, String> heartPair = Pair.create((View) heart,
+                    ViewCompat.getTransitionName(heart));
+            Pair<View, String> namePair = Pair.create((View) name, ViewCompat.getTransitionName
+                    (name));
+            Pair<View, String> authorPair = Pair.create((View) author,
+                    ViewCompat.getTransitionName(author));
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation
+                    (activity, wallPair, heartPair, namePair, authorPair);
+            ActivityCompat.startActivityForResult(activity, wallpaperViewer, 12,
+                    options.toBundle());
+        } catch (Exception e) {
+            e.printStackTrace();
+            ActivityCompat.startActivityForResult(activity, wallpaperViewer, 12, null);
         }
-        Pair<View, String> wallPair = Pair.create((View) wall, ViewCompat.getTransitionName(wall));
-        Pair<View, String> heartPair = Pair.create((View) heart,
-                ViewCompat.getTransitionName(heart));
-        Pair<View, String> namePair = Pair.create((View) name, ViewCompat.getTransitionName(name));
-        Pair<View, String> authorPair = Pair.create((View) author,
-                ViewCompat.getTransitionName(author));
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation
-                (activity, wallPair, heartPair, namePair, authorPair);
-        activity.startActivityForResult(wallpaperViewer, 12, options.toBundle());
     }
 
     private void doOnLongPressed(final Wallpaper item) {

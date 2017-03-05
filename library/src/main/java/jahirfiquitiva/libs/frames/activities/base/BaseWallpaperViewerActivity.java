@@ -35,6 +35,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -626,7 +627,12 @@ public class BaseWallpaperViewerActivity extends ThemedActivity {
         int colorFromCachedPic;
 
         if (bmp != null) {
-            colorFromCachedPic = ColorUtils.getPaletteSwatch(bmp).getTitleTextColor();
+            Palette.Swatch swatch = ColorUtils.getPaletteSwatch(bmp);
+            if (swatch != null)
+                colorFromCachedPic = swatch.getTitleTextColor();
+            else
+                colorFromCachedPic = ColorUtils.getMaterialPrimaryTextColor(ThemeUtils
+                        .isDarkTheme());
         } else {
             colorFromCachedPic = ColorUtils.getMaterialPrimaryTextColor(ThemeUtils.isDarkTheme());
         }

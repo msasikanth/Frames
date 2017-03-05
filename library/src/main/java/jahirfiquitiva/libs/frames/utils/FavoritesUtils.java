@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import jahirfiquitiva.libs.frames.models.Wallpaper;
 
+@SuppressWarnings("VisibleForTests")
 public class FavoritesUtils {
 
     private static final String DATABASE_NAME = "FAVS_DB";
@@ -58,21 +59,23 @@ public class FavoritesUtils {
      * Returns true if the item was favorited successfully.
      */
     public static boolean toggleFavorite(Context context, Wallpaper wallpaper) {
-        if (!isFavorited(context, wallpaper.getName())) {
-            favorite(context, wallpaper);
-            return true;
-        } else unfavorite(context, wallpaper.getName());
-        return false;
+        if (!isFavorited(context, wallpaper.getName())) return favorite(context, wallpaper);
+        else return unfavorite(context, wallpaper.getName());
     }
 
     /**
      * Returns true if the item was favorited successfully.
      */
-    public static void favorite(Context context, Wallpaper wallpaper) {
-        Inquiry.get(context)
-                .insert(Wallpaper.class)
-                .values(new Wallpaper[]{wallpaper})
-                .run();
+    public static boolean favorite(Context context, Wallpaper wallpaper) {
+        try {
+            Inquiry.get(context)
+                    .insert(Wallpaper.class)
+                    .values(new Wallpaper[]{wallpaper})
+                    .run();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -80,17 +83,21 @@ public class FavoritesUtils {
      */
     public static boolean unfavorite(Context context, String name) {
         if (isFavorited(context, name)) {
-            Inquiry.get(context)
-                    .delete(Wallpaper.class)
-                    .where("_name = ?", name)
-                    .run();
-            return true;
+            try {
+                Inquiry.get(context)
+                        .delete(Wallpaper.class)
+                        .where("_name = ?", name)
+                        .run();
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
         }
         return false;
     }
 
     /**
-     * Deletes Data Base
+     * Deletes Database
      */
     public static void deleteDB(Context context) {
         Inquiry.get(context).dropTable(Wallpaper.class);

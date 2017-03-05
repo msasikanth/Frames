@@ -26,6 +26,7 @@ import android.support.v7.graphics.Palette;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import jahirfiquitiva.libs.frames.R;
 
@@ -111,11 +112,15 @@ public class ColorUtils {
     }
 
     public static Palette.Swatch getPaletteSwatch(Bitmap bitmap) {
-        //Test areas of 10 and 50*50
-        return getPaletteSwatch(Palette.from(bitmap).resizeBitmapArea(50 * 50).generate());
+        try {
+            //Test areas of 10 and 50*50
+            return getPaletteSwatch(Palette.from(bitmap).resizeBitmapArea(50 * 50).generate());
+        }catch (Exception e){
+            return null;
+        }
     }
 
-    public static Palette.Swatch getPaletteSwatch(Palette palette) {
+    private static Palette.Swatch getPaletteSwatch(Palette palette) {
         if (palette != null) {
             if (palette.getVibrantSwatch() != null) {
                 return palette.getVibrantSwatch();

@@ -88,7 +88,6 @@ public class SearchActivity extends ThemedActivity {
         }
 
         searchField = (EditText) findViewById(R.id.searchField);
-        searchField.setHint(getResources().getString(R.string.search_x, getTabName(lastSelected)));
         searchField.setHintTextColor(ColorUtils.getMaterialTertiaryColor(!(ColorUtils
                 .isLightColor(ThemeUtils.darkOrLight(this, R.color.dark_theme_primary, R.color
                         .light_theme_primary)))));
@@ -99,6 +98,7 @@ public class SearchActivity extends ThemedActivity {
                 .isLightColor(ThemeUtils.darkOrLight(this, R.color.dark_theme_primary, R.color
                         .light_theme_primary)))));
         searchField.setFocusable(true);
+        searchField.setHint(getResources().getString(R.string.search_x, getTabName(lastSelected)));
         searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {

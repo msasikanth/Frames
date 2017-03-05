@@ -182,8 +182,9 @@ public class Utils {
     public static void runLicenseChecker(Context context, boolean ch, String lic, boolean allAma,
                                          SuccessCallback callback) {
         Preferences mPrefs = new Preferences(context);
-        if (ch && isNewVersion(context)) {
-            checkLicense(context, lic, allAma, callback);
+        if (ch) {
+            if (isNewVersion(context) || (!(mPrefs.isDashboardWorking())))
+                checkLicense(context, lic, allAma, callback);
         } else {
             mPrefs.setDashboardWorking(true);
             if (callback != null) callback.onSuccess();

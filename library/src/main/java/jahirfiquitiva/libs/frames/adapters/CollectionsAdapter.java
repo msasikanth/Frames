@@ -106,8 +106,8 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
         collectionDetails.putExtra("collection", (Collection) item);
         collectionDetails.putExtra("wallTransition", ViewCompat.getTransitionName(wall));
         collectionDetails.putExtra("nameTransition", ViewCompat.getTransitionName(name));
-        if (bitmap != null) {
-            try {
+        try {
+            if (bitmap != null) {
                 String filename = "thumb.png";
                 FileOutputStream stream = activity.openFileOutput(filename, Context
                         .MODE_PRIVATE);
@@ -116,15 +116,19 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
                 stream.flush();
                 stream.close();
                 collectionDetails.putExtra("image", filename);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+            Pair<View, String> wallPair = Pair.create((View) wall, ViewCompat.getTransitionName
+                    (wall));
+            Pair<View, String> namePair = Pair.create((View) name, ViewCompat.getTransitionName
+                    (name));
+            ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(activity, wallPair, namePair);
+            ActivityCompat.startActivityForResult(activity, collectionDetails, 11, options
+                    .toBundle());
+        } catch (Exception e) {
+            e.printStackTrace();
+            ActivityCompat.startActivityForResult(activity, collectionDetails, 11, null);
         }
-        Pair<View, String> wallPair = Pair.create((View) wall, ViewCompat.getTransitionName(wall));
-        Pair<View, String> namePair = Pair.create((View) name, ViewCompat.getTransitionName(name));
-        ActivityOptionsCompat options = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(activity, wallPair, namePair);
-        ActivityCompat.startActivityForResult(activity, collectionDetails, 11, options.toBundle());
     }
 
 }

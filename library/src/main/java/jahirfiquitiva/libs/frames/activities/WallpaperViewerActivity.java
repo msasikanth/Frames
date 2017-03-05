@@ -59,7 +59,6 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
         super.setFullScreen(false);
         super.onCreate(savedInstanceState);
 
-        FavoritesUtils.init(this);
         context = this;
 
         setContentView(R.layout.wallpaper_viewer_activity);
@@ -116,7 +115,6 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
 
         final CheckableImageView favIV = (CheckableImageView) findViewById(R.id.fav);
         ViewCompat.setTransitionName(favIV, getIntent().getStringExtra("heartTransition"));
-        favIV.setWallpaperItem(getItem());
         Drawable prev = favIV.getDrawable();
         if (prev != null)
             prev.mutate();
@@ -125,11 +123,21 @@ public class WallpaperViewerActivity extends BaseWallpaperViewerActivity {
                         .light_theme_card_background)) ? R.drawable.light_heart_animated_selector
                 : R.drawable.heart_animated_selector));
         favIV.setChecked(FavoritesUtils.isFavorited(this, getItem().getName()));
-        favIV.setOnWallpaperFavedListener(getOnFavedListener());
         favIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                favIV.toggle();
+                boolean success;
+                if (favIV.isChecked()) {
+                    success = doUnfav(getItem());
+                    if (success) {
+                        favIV.setChecked(false);
+                    }
+                } else {
+                    success = doFav(getItem());
+                    if (success) {
+                        favIV.setChecked(true);
+                    }
+                }
             }
         });
 

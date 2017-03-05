@@ -34,6 +34,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.view.MenuItem;
@@ -61,7 +62,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import jahirfiquitiva.libs.frames.R;
-import jahirfiquitiva.libs.frames.callbacks.OnWallpaperFavedListener;
 import jahirfiquitiva.libs.frames.callbacks.WallpaperDialogsCallback;
 import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
@@ -205,9 +205,9 @@ public class BaseWallpaperViewerActivity extends ThemedActivity {
         if (hasModifiedFavs)
             intent.putExtra("modified", getItem().getName());
         setResult(12, intent);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            supportFinishAfterTransition();
-        } else {
+        try {
+            ActivityCompat.finishAfterTransition(this);
+        } catch (Exception e) {
             finish();
         }
     }
@@ -273,14 +273,26 @@ public class BaseWallpaperViewerActivity extends ThemedActivity {
         } else hideNavBar();
     }
 
-    private void doFav(Wallpaper item) {
-        hasModifiedFavs = true;
-        FavoritesUtils.favorite(this, item);
+    protected boolean doFav(Wallpaper item) {
+        boolean success = false;
+        try {
+            success = FavoritesUtils.favorite(this, item);
+        } catch (Exception ignored) {
+        }
+        if (success && (!hasModifiedFavs))
+            hasModifiedFavs = true;
+        return success;
     }
 
-    private void doUnfav(Wallpaper item) {
-        hasModifiedFavs = true;
-        FavoritesUtils.unfavorite(this, item.getName());
+    protected boolean doUnfav(Wallpaper item) {
+        boolean success = false;
+        try {
+            success = FavoritesUtils.unfavorite(this, item.getName());
+        } catch (Exception ignored) {
+        }
+        if (success && (!hasModifiedFavs))
+            hasModifiedFavs = true;
+        return !success;
     }
 
     protected void runWallpaperSave(Context context) {
@@ -685,20 +697,6 @@ public class BaseWallpaperViewerActivity extends ThemedActivity {
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         progressState = savedInstanceState.getInt("progressState", View.VISIBLE);
-    }
-
-    protected OnWallpaperFavedListener getOnFavedListener() {
-        return new OnWallpaperFavedListener() {
-            @Override
-            public void onFaved(Wallpaper item) {
-                doFav(item);
-            }
-
-            @Override
-            public void onUnfaved(Wallpaper item) {
-                doUnfav(item);
-            }
-        };
     }
 
 }

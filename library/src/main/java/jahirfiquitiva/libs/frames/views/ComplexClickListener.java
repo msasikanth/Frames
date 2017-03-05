@@ -23,8 +23,8 @@ import android.view.ViewConfiguration;
 
 public abstract class ComplexClickListener implements View.OnClickListener {
 
-    private static final int DOUBLE_TAP_TIMEOUT = ViewConfiguration.getDoubleTapTimeout();
-    private static final int TAP_TIMEOUT = ViewConfiguration.getTapTimeout();
+    private static final long DOUBLE_TAP_TIMEOUT = ViewConfiguration.getDoubleTapTimeout() + 100;
+    private static final long TAP_TIMEOUT = ViewConfiguration.getTapTimeout();
 
     private long lastClickTime = 0;
 
@@ -37,16 +37,18 @@ public abstract class ComplexClickListener implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        long elapsedTime = (SystemClock.elapsedRealtime() - lastClickTime);
-        if (elapsedTime < DOUBLE_TAP_TIMEOUT) {
-            handler.removeCallbacks(mRunnable);
-            lastClickTime = 0;
+        onSimpleClick();
+        /*
+        long newClickTime = SystemClock.elapsedRealtime();
+        if (lastClickTime == 0) lastClickTime = newClickTime;
+        long elapsedTime = (newClickTime - lastClickTime);
+        handler.removeCallbacks(mRunnable);
+        if (elapsedTime <= DOUBLE_TAP_TIMEOUT) {
             onDoubleTap();
         } else {
-            handler.removeCallbacks(mRunnable);
             handler.postDelayed(mRunnable, TAP_TIMEOUT);
         }
-        lastClickTime = SystemClock.elapsedRealtime();
+        lastClickTime = newClickTime; */
     }
 
     public abstract void onSimpleClick();

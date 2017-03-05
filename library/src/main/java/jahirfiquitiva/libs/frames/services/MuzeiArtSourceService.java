@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import jahirfiquitiva.libs.frames.R;
 import jahirfiquitiva.libs.frames.models.Collection;
 import jahirfiquitiva.libs.frames.models.Wallpaper;
+import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.JSONParser;
 import jahirfiquitiva.libs.frames.utils.Preferences;
 import jahirfiquitiva.libs.frames.utils.Utils;
@@ -198,18 +199,32 @@ public class MuzeiArtSourceService extends RemoteMuzeiArtSource {
                                     }
                                 }
                             } else {
+                                FavoritesUtils.init(getApplicationContext());
                                 String[] collects = mPrefs.getMuzeiCollections().split(",");
                                 for (String collect : collects) {
-                                    for (Collection collection : collections) {
-                                        if (collection.getName().toLowerCase().equals(collect
-                                                .toLowerCase())) {
-                                            for (Wallpaper wallpaper : collection.getWallpapers()) {
+                                    if (collect.equals("Favorites")) {
+                                        ArrayList<Wallpaper> favs = FavoritesUtils.getFavorites
+                                                (getApplicationContext());
+                                        if (favs != null && favs.size() > 0) {
+                                            for (Wallpaper wallpaper : favs) {
                                                 if (!(wallpapers.contains(wallpaper)))
                                                     wallpapers.add(wallpaper);
                                             }
                                         }
+                                    } else {
+                                        for (Collection collection : collections) {
+                                            if (collection.getName().toLowerCase().equals(collect
+                                                    .toLowerCase())) {
+                                                for (Wallpaper wallpaper : collection
+                                                        .getWallpapers()) {
+                                                    if (!(wallpapers.contains(wallpaper)))
+                                                        wallpapers.add(wallpaper);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
+                                FavoritesUtils.destroy(getApplicationContext());
                             }
                             if (wallpapers.size() <= 0) return;
                             int i = new Random().nextInt(wallpapers.size());

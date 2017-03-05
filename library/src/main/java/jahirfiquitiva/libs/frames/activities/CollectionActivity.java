@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
@@ -158,9 +159,9 @@ public class CollectionActivity extends ThemedActivity {
         }
         intent.putExtra("modified", s.toString());
         setResult(11, intent);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            supportFinishAfterTransition();
-        } else {
+        try {
+            ActivityCompat.finishAfterTransition(this);
+        } catch (Exception e) {
             finish();
         }
     }

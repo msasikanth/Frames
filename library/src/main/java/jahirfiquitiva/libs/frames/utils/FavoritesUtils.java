@@ -44,7 +44,6 @@ public class FavoritesUtils {
         return new ArrayList<>(Arrays.asList(favs));
     }
 
-
     /**
      * Returns true if the item is currently favorited.
      */
@@ -58,7 +57,8 @@ public class FavoritesUtils {
     /**
      * Returns true if the item was favorited successfully.
      */
-    public static boolean toggleFavorite(Context context, Wallpaper wallpaper) {
+    public static boolean toggleFavorite(Context context, Wallpaper wallpaper)
+            throws NotCompletedActionException {
         if (!isFavorited(context, wallpaper.getName())) return favorite(context, wallpaper);
         else return unfavorite(context, wallpaper.getName());
     }
@@ -66,7 +66,8 @@ public class FavoritesUtils {
     /**
      * Returns true if the item was favorited successfully.
      */
-    public static boolean favorite(Context context, Wallpaper wallpaper) {
+    public static boolean favorite(Context context, Wallpaper wallpaper)
+            throws NotCompletedActionException {
         try {
             Inquiry.get(context)
                     .insert(Wallpaper.class)
@@ -74,14 +75,15 @@ public class FavoritesUtils {
                     .run();
             return true;
         } catch (Exception e) {
-            return false;
+            throw new NotCompletedActionException("Not set as favorite", e);
         }
     }
 
     /**
      * Returns true if the item was unfavorited successfully.
      */
-    public static boolean unfavorite(Context context, String name) {
+    public static boolean unfavorite(Context context, String name)
+            throws NotCompletedActionException {
         if (isFavorited(context, name)) {
             try {
                 Inquiry.get(context)
@@ -90,7 +92,7 @@ public class FavoritesUtils {
                         .run();
                 return true;
             } catch (Exception e) {
-                return false;
+                throw new NotCompletedActionException("Not removed from favorites", e);
             }
         }
         return false;
@@ -102,6 +104,12 @@ public class FavoritesUtils {
     public static void deleteDB(Context context) {
         Inquiry.get(context).dropTable(Wallpaper.class);
         destroy(context);
+    }
+
+    public static class NotCompletedActionException extends Exception {
+        NotCompletedActionException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 
 }

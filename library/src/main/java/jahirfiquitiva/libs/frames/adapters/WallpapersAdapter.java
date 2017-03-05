@@ -155,13 +155,11 @@ public class WallpapersAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     private void doFav(Wallpaper item) {
         if (!(modifiedWallpapers.contains(item.getName())))
             modifiedWallpapers.add(item.getName());
-        FavoritesUtils.favorite(activity, item);
     }
 
     private void doUnfav(Wallpaper item) {
         if (!(modifiedWallpapers.contains(item.getName())))
             modifiedWallpapers.add(item.getName());
-        FavoritesUtils.unfavorite(activity, item.getName());
         if (isFavs)
             removeItem(item);
     }

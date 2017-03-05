@@ -24,6 +24,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -65,6 +66,9 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     private Collection collection;
     private BitmapImageViewTarget target;
     private Bitmap picture;
+
+    private OnWallpaperFavedListener onFavedListener;
+
     private int lastPosition = 0;
     private boolean isCollection;
 
@@ -122,11 +126,11 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
             });
         }
 
-        heart.setOnWallpaperFavedListener(onFavedListener);
+        this.onFavedListener = onFavedListener;
         heart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                heart.toggle();
+                doFav(false);
             }
         });
 
@@ -175,7 +179,6 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
         wall.setVisibility(View.VISIBLE);
         wallDetails.setVisibility(View.VISIBLE);
 
-        heart.setWallpaperItem(item);
         heart.setChecked(FavoritesUtils.isFavorited(itemView.getContext(), nItem.getName()));
 
         loadPicture(item.getURL(), item.getThumbnailURL());
@@ -268,52 +271,93 @@ public class WallpaperHolder extends RecyclerView.ViewHolder {
     }
 
     private void doFav() {
+        doFav(true);
+    }
+
+    private void doFav(boolean playAnimation) {
         if (isCollection) return;
-        if (bigHeart != null) {
-            final Preferences mPrefs = new Preferences(itemView.getContext());
-            if (bigHeart.getAnimation() != null) {
-                bigHeart.clearAnimation();
-            }
-            if (heart.isChecked() && (!(mPrefs.isInstagramLikeBehavior()))) {
-                bigHeart.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R
-                        .drawable.ic_simple_broken_heart));
+        boolean isFavorited = FavoritesUtils.isFavorited(itemView.getContext(),
+                item.getName());
+        boolean markAsFavorite = !isFavorited;
+        boolean success = false;
+        try {
+            if (isFavorited) {
+                if (FavoritesUtils.unfavorite(itemView.getContext(), item.getName())) {
+                    markAsFavorite = false;
+                    success = true;
+                }
             } else {
-                bigHeart.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R
-                        .drawable.ic_simple_heart));
+                if (FavoritesUtils.favorite(itemView.getContext(), item)) {
+                    markAsFavorite = true;
+                    success = true;
+                }
             }
-            bigHeart.setScaleX(0.1f);
-            bigHeart.setScaleY(0.1f);
-            bigHeart.setAlpha(0f);
-            bigHeart.setVisibility(View.VISIBLE);
-            bigHeart.animate().alpha(0.8f).scaleX(MAX_SIZE).scaleY(MAX_SIZE).setStartDelay(50)
-                    .setDuration(SHOW_ANIMATION_DURATION)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            if (mPrefs.isInstagramLikeBehavior()) {
-                                if (!heart.isChecked())
-                                    checkHeart();
-                            } else {
-                                heart.toggle();
-                            }
-                            bigHeart.animate().alpha(0).scaleX(0).scaleY(0).setStartDelay
-                                    (SHOWN_DURATION)
-                                    .setDuration(HIDE_ANIMATION_DURATION)
-                                    .setListener(new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            super.onAnimationEnd(animation);
-                                            bigHeart.setVisibility(View.INVISIBLE);
-                                        }
-                                    }).start();
-                        }
-                    }).start();
+        } catch (Exception e) {
+            Log.e(Utils.LOG_TAG, "Exception: " + e.getMessage() + " - due to: " + e.getCause());
+            // e.printStackTrace();
+        }
+        if (success) {
+            final Preferences mPrefs = new Preferences(itemView.getContext());
+            if (playAnimation) {
+                if (bigHeart != null) {
+                    if (bigHeart.getAnimation() != null) {
+                        bigHeart.clearAnimation();
+                    }
+                    if ((!(markAsFavorite)) && (!(mPrefs.isInstagramLikeBehavior()))) {
+                        bigHeart.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R
+                                .drawable.ic_simple_broken_heart));
+                    } else {
+                        bigHeart.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R
+                                .drawable.ic_simple_heart));
+                    }
+                    final boolean reallyMarkAsFavorite = markAsFavorite;
+                    bigHeart.setScaleX(0.1f);
+                    bigHeart.setScaleY(0.1f);
+                    bigHeart.setAlpha(0f);
+                    bigHeart.setVisibility(View.VISIBLE);
+                    bigHeart.animate().alpha(0.8f).scaleX(MAX_SIZE).scaleY(MAX_SIZE)
+                            .setStartDelay(50)
+                            .setDuration(SHOW_ANIMATION_DURATION)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    doHeartCheck(reallyMarkAsFavorite, mPrefs);
+                                    bigHeart.animate().alpha(0).scaleX(0).scaleY(0).setStartDelay
+                                            (SHOWN_DURATION)
+                                            .setDuration(HIDE_ANIMATION_DURATION)
+                                            .setListener(new AnimatorListenerAdapter() {
+                                                @Override
+                                                public void onAnimationEnd(Animator animation) {
+                                                    super.onAnimationEnd(animation);
+                                                    bigHeart.setVisibility(View.INVISIBLE);
+                                                }
+                                            }).start();
+                                }
+                            }).start();
+                }
+            } else {
+                doHeartCheck(markAsFavorite, mPrefs);
+            }
         }
     }
 
-    private void checkHeart() {
-        heart.setChecked(true, true);
+    private void doHeartCheck(boolean markAsFavorite, Preferences mPrefs) {
+        if (heart.isChecked() != markAsFavorite) {
+            if (mPrefs.isInstagramLikeBehavior()) {
+                if (!heart.isChecked()) {
+                    heart.setChecked(true);
+                    if (onFavedListener != null)
+                        onFavedListener.onFaved(item);
+                }
+            } else {
+                heart.setChecked(markAsFavorite);
+                if (onFavedListener != null) {
+                    if (markAsFavorite) onFavedListener.onFaved(item);
+                    else onFavedListener.onUnfaved(item);
+                }
+            }
+        }
     }
 
     public ImageView getHeart() {

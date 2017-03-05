@@ -28,6 +28,7 @@ import jahirfiquitiva.libs.frames.activities.base.ThemedActivity;
 import jahirfiquitiva.libs.frames.dialogs.FramesDialogs;
 import jahirfiquitiva.libs.frames.fragments.SettingsFragment;
 import jahirfiquitiva.libs.frames.utils.ColorUtils;
+import jahirfiquitiva.libs.frames.utils.FavoritesUtils;
 import jahirfiquitiva.libs.frames.utils.PermissionsUtils;
 import jahirfiquitiva.libs.frames.utils.ThemeUtils;
 import jahirfiquitiva.libs.frames.utils.ToolbarColorizer;
@@ -62,6 +63,9 @@ public class SettingsActivity extends ThemedActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        try{
+            FavoritesUtils.destroy(this);
+        }catch (Exception ignored){}
     }
 
     @Override

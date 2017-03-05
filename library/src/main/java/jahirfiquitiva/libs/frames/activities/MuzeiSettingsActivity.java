@@ -259,6 +259,8 @@ public class MuzeiSettingsActivity extends ThemedActivity {
             if (!(collections.contains(collection.getName())))
                 collections.add(collection.getName());
         }
+        collections.add("Favorites");
+
         String[] selectedCollects = selectedCollections.split(",");
         ArrayList<Integer> selected = new ArrayList<>();
         for (int i = 0; i < collections.size(); i++) {
@@ -268,6 +270,7 @@ public class MuzeiSettingsActivity extends ThemedActivity {
                 }
             }
         }
+
         new MaterialDialog.Builder(this)
                 .title(R.string.choose_collections_title)
                 .items(collections)

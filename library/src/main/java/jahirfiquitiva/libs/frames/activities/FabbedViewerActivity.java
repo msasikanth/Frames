@@ -148,11 +148,21 @@ public class FabbedViewerActivity extends BaseWallpaperViewerActivity {
             }
         });
 
-        favFab.setOnWallpaperFavedListener(getOnFavedListener());
         favFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                favFab.toggle();
+                boolean success;
+                if (favFab.isChecked()) {
+                    success = doUnfav(getItem());
+                    if (success) {
+                        favFab.setChecked(false);
+                    }
+                } else {
+                    success = doFav(getItem());
+                    if (success) {
+                        favFab.setChecked(true);
+                    }
+                }
             }
         });
 

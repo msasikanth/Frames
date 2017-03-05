@@ -35,8 +35,8 @@ android {
         applicationId "jahirfiquitiva.walls.frames"
         minSdkVersion 16
         targetSdkVersion TARGET_SDK
-        versionCode 140
-        versionName "1.9.1"
+        versionCode 200
+        versionName "2.0.0"
         vectorDrawables.useSupportLibrary = true
         consumerProguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }

@@ -69,13 +69,13 @@ public class SearchActivity extends ThemedActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        FavoritesUtils.init(this);
+
         if ((FullListHolder.get().getCollections() == null) || (FullListHolder.get()
                 .getCollections().getList() == null) || (FullListHolder.get().getCollections()
                 .getList().size() == 0)) {
             executeJsonTask();
         }
-
-        FavoritesUtils.init(this);
 
         setContentView(R.layout.activity_search);
 

@@ -13,9 +13,14 @@
 	<a target="_blank" href="https://github.com/jahirfiquitiva/Frames-Sample" title="Sample App"><img src="https://img.shields.io/badge/SAMPLE-APP-34bf49.svg" /></a>
 </p>
 
+<br>
 <p align="center">
-	<a href='https://pledgie.com/campaigns/32739'><img alt='Click here to lend your support to: Support Jahir Fiquitiva education and works and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/32739.png?skin_name=chrome' border='0' ></a>
+<h4 align="center"><b>Support my work and get rewards! ;)</b></h4>
 </p>
+<p align="center">
+	<a align="center" href="https://www.patreon.com/bePatron?u=5261073" data-patreon-widget-type="become-patron-button"><img align="center" height="40" width="204" src="https://s3-us-west-1.amazonaws.com/widget-images/become-patron-widget-medium%402x.png" alt="Support on Patreon"></a><script async src="https://cdn6.patreon.com/becomePatronButton.bundle.js"></script>
+</p>
+<br>
 
 # Previews
 
@@ -70,7 +75,7 @@ Help making Frames available in more languages. [Click here to go to the transla
 * Jahir Fiquitiva
 	* Web: https://www.jahirfiquitiva.me/
 	* Google+: https://plus.google.com/+JahirFiquitivaJDev/
-	* [Donate](https://pledgie.com/campaigns/32739)
+	* Support my work and get rewards! ;) https://www.patreon.com/bePatron?u=5261073
 
 
 # Special Thanks

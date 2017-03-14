@@ -167,39 +167,49 @@ public class CollectionActivity extends ThemedActivity {
     }
 
     private void setupCollapsingToolbarPicture(Collection collection, ImageView toolbarHeader) {
-        Bitmap bmp = null;
-        String filename = getIntent().getStringExtra("image");
-        if (filename != null) {
-            try {
-                FileInputStream is = openFileInput(filename);
-                bmp = BitmapFactory.decodeStream(is);
-                is.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
 
-        Drawable d;
-        if (bmp != null) {
-            d = new GlideBitmapDrawable(getResources(), bmp);
-        } else {
-            d = new ColorDrawable(ContextCompat.getColor(this, android.R.color.transparent));
-        }
+        final Bitmap[][] bitmap = {{null}};
+        final String filename = getIntent().getStringExtra("image");
+        final Drawable[] d = new Drawable[1];
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                if (filename != null) {
+                    try {
+                        FileInputStream is = openFileInput(filename);
+                        bitmap[0][0] = BitmapFactory.decodeStream(is);
+                        is.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                if (bitmap[0][0] != null) {
+                    d[0] = new GlideBitmapDrawable(getResources(), bitmap[0][0]);
+                } else {
+                    d[0] = new ColorDrawable(ContextCompat.getColor(CollectionActivity.this, android.R.color.transparent));
+                }
+
+            }
+        }).start();
 
         if (collection != null) {
             if (collection.getPreviewThumbnailURL() != null) {
                 Glide.with(this)
                         .load(collection.getPreviewURL())
                         .priority(Priority.HIGH)
-                        .placeholder(d)
-                        .error(d)
+                        .placeholder(d[0])
+                        .error(d[0])
                         .dontTransform()
                         .dontAnimate()
                         .thumbnail(Glide.with(this)
                                 .load(collection.getPreviewThumbnailURL())
                                 .priority(Priority.IMMEDIATE)
-                                .placeholder(d)
-                                .error(d)
+                                .placeholder(d[0])
+                                .error(d[0])
                                 .dontTransform()
                                 .dontAnimate()
                                 .thumbnail(0.5f))
@@ -209,8 +219,8 @@ public class CollectionActivity extends ThemedActivity {
                 Glide.with(this)
                         .load(collection.getPreviewURL())
                         .priority(Priority.HIGH)
-                        .placeholder(d)
-                        .error(d)
+                        .placeholder(d[0])
+                        .error(d[0])
                         .dontTransform()
                         .dontAnimate()
                         .thumbnail(0.5f)
@@ -222,7 +232,7 @@ public class CollectionActivity extends ThemedActivity {
                     collection.getName()).commit();
         } else {
             Glide.with(this)
-                    .load(d)
+                    .load(d[0])
                     .priority(Priority.IMMEDIATE)
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .into(toolbarHeader);

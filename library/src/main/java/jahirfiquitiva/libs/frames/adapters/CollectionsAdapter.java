@@ -101,34 +101,39 @@ public class CollectionsAdapter extends RecyclerView.Adapter<WallpaperHolder> {
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored", "unchecked"})
-    private void doOnPressed(Object item, Bitmap bitmap, ImageView wall, TextView name) {
-        Intent collectionDetails = new Intent(activity, CollectionActivity.class);
+    private void doOnPressed(Object item, final Bitmap bitmap, final ImageView wall, final TextView name) {
+
+        final Intent collectionDetails = new Intent(activity, CollectionActivity.class);
         collectionDetails.putExtra("collection", (Collection) item);
         collectionDetails.putExtra("wallTransition", ViewCompat.getTransitionName(wall));
         collectionDetails.putExtra("nameTransition", ViewCompat.getTransitionName(name));
-        try {
-            if (bitmap != null) {
-                String filename = "thumb.png";
-                FileOutputStream stream = activity.openFileOutput(filename, Context
-                        .MODE_PRIVATE);
-                bitmap.compress(Bitmap.CompressFormat.PNG,
-                        GlideConfiguration.getPictureMaxRes(activity), stream);
-                stream.flush();
-                stream.close();
-                collectionDetails.putExtra("image", filename);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+
+                    if (bitmap != null) {
+                        String filename = "thumb.png";
+                        FileOutputStream stream = activity.openFileOutput(filename, Context
+                                .MODE_PRIVATE);
+                        bitmap.compress(Bitmap.CompressFormat.PNG,
+                                GlideConfiguration.getPictureMaxRes(activity), stream);
+                        stream.flush();
+                        stream.close();
+                        collectionDetails.putExtra("image", filename);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ActivityCompat.startActivityForResult(activity, collectionDetails, 11, null);
+                }
+
             }
-            Pair<View, String> wallPair = Pair.create((View) wall, ViewCompat.getTransitionName
-                    (wall));
-            Pair<View, String> namePair = Pair.create((View) name, ViewCompat.getTransitionName
-                    (name));
-            ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity, wallPair, namePair);
-            ActivityCompat.startActivityForResult(activity, collectionDetails, 11, options
-                    .toBundle());
-        } catch (Exception e) {
-            e.printStackTrace();
-            ActivityCompat.startActivityForResult(activity, collectionDetails, 11, null);
-        }
+        }).start();
+
+        ActivityCompat.startActivityForResult(activity, collectionDetails, 11, null);
+
     }
 
 }
